@@ -3,9 +3,15 @@
 namespace app;
 
 use app\controller\EquipoController;
+
+use app\controller\RegistroController;
+use app\model\UsuarioModel;
+
 use MustacheRender;
 use MyDatabase;
+
 use Router;
+use Request;
 
 require_once("helper/Autoloader.php");
 
@@ -22,7 +28,15 @@ class Configuration
     public function getEquipoController()
     {
         return new EquipoController(
-            $this->gerRender()
+            $this->getRender()
+        );
+    }
+
+    // instanciamos el controller de registro
+    public function getRegistroController(){
+        return new RegistroController(
+            $this->getUsuarioModel(),
+            $this->getRender()
         );
     }
 
@@ -40,9 +54,15 @@ class Configuration
         );
     }
 
-    private function gerRender()
+    private function getRender()
     {
         return new MustacheRender();
+    }
+
+    private function getUsuarioModel(){
+        return new UsuarioModel(
+            $this->getDatabase()
+        );
     }
 
 

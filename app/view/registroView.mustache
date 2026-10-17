@@ -4,46 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - Juego de Preguntas</title>
+    <link rel="stylesheet" href="/mvc-sept-2026/public/css/estilos.css">
+
+    <!-- Librerías de Leaflet para el Mapa -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 </head>
 <body>
 
 <h2>Crear una Cuenta</h2>
 
-<!-- El formulario envía los datos por el método POST (seguro) hacia nuestro Controlador -->
-<!-- El atributo enctype es OBLIGATORIO para poder subir la foto de perfil -->
-<form action="/registro/procesar" method="POST" enctype="multipart/form-data">
+<!-- Fallback: Muestra errores del servidor si JavaScript falla -->
+{{#error_backend}}
+    <div style="color: white; background-color: red; padding: 10px; margin-bottom: 15px;">
+        {{error_backend}}
+    </div>
+{{/error_backend}}
 
-    <label for="nombre_completo">Nombre Completo:</label>
-    <input type="text" id="nombre_completo" name="nombre_completo" required><br><br>
+<form id="form-registro" action="index.php?controller=registro&method=procesarRegistro" method="POST" enctype="multipart/form-data">    <label for="nombre_completo">Nombre Completo:</label>
+    <input type="text" id="nombre_completo" name="nombre_completo" value="{{nombre_completo}}" required><br><br>
 
     <label for="anio_nacimiento">Año de Nacimiento:</label>
-    <input type="number" id="anio_nacimiento" name="anio_nacimiento" min="1900" max="2026" required><br><br>
+    <input type="number" id="anio_nacimiento" name="anio_nacimiento" min="1900" max="2026" value="{{anio_nacimiento}}" required><br><br>
 
     <label for="sexo">Sexo:</label>
     <select id="sexo" name="sexo" required>
         <option value="">Seleccione...</option>
-        <option value="Masculino">Masculino</option>
-        <option value="Femenino">Femenino</option>
-        <option value="Prefiero no cargarlo">Prefiero no cargarlo</option>
+        <option value="Masculino" {{#is_masculino}}selected{{/is_masculino}}>Masculino</option>
+        <option value="Femenino" {{#is_femenino}}selected{{/is_femenino}}>Femenino</option>
+        <option value="Prefiero no cargarlo" {{#is_prefiero_no}}selected{{/is_prefiero_no}}>Prefiero no cargarlo</option>
     </select><br><br>
 
-    <!-- Estos campos luego los conectaremos con el mapa de Leaflet interactivo -->
     <label for="pais">País:</label>
-    <input type="text" id="pais" name="pais" placeholder="Clic en el mapa..." readonly required><br><br>
+    <input type="text" id="pais" name="pais" placeholder="Clic en el mapa..." value="{{pais}}" readonly required><br><br>
 
     <label for="ciudad">Ciudad:</label>
-    <input type="text" id="ciudad" name="ciudad" placeholder="Clic en el mapa..." readonly required><br><br>
+    <input type="text" id="ciudad" name="ciudad" placeholder="Clic en el mapa..." value="{{ciudad}}" readonly required><br><br>
 
-    <!-- Contenedor para el mapa interactivo -->
-    <div id="mapa-registro">
-        <p>(Acá irá el mapa interactivo)</p>
-    </div>
+    <div id="mapa-registro" style="height: 300px; width: 100%; border: 1px solid #ccc; margin-bottom: 15px;">(Acá irá el mapa interactivo)</div>
 
     <label for="mail">Correo Electrónico:</label>
-    <input type="email" id="mail" name="mail" required><br><br>
+    <input type="email" id="mail" name="mail" value="{{mail}}" required><br><br>
 
     <label for="nombre_usuario">Nombre de Usuario:</label>
-    <input type="text" id="nombre_usuario" name="nombre_usuario" required><br><br>
+    <input type="text" id="nombre_usuario" name="nombre_usuario" value="{{nombre_usuario}}" required><br><br>
 
     <label for="contrasenia">Contraseña:</label>
     <input type="password" id="contrasenia" name="contrasenia" required><br><br>
@@ -51,11 +56,17 @@
     <label for="repetir_contrasenia">Repetir Contraseña:</label>
     <input type="password" id="repetir_contrasenia" name="repetir_contrasenia" required><br><br>
 
+    <!-- Contenedor vacío donde JS mostrará el error en tiempo real -->
+    <div id="error-contrasenia" style="color: red; display: none; margin-bottom: 15px;"></div>
+
     <label for="foto_perfil">Foto de Perfil:</label>
     <input type="file" id="foto_perfil" name="foto_perfil" accept="image/*" required><br><br>
 
     <button type="submit">Registrarme</button>
 </form>
 
+<!-- Scripts -->
+<script src="/mvc-sept-2026/public/js/Validaciones.js"></script>
+<script src="/mvc-sept-2026/public/js/mapa.js"></script> <!-- Nuevo script para el mapa -->
 </body>
 </html>

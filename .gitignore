@@ -1,0 +1,7 @@
+/log/
+/vendor/
+public/images/
+config/config.ini
+__MACOSX/
+.DS_Store
+*.log
