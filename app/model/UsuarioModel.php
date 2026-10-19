@@ -55,24 +55,24 @@ class UsuarioModel
     }
 
     public function verificarCredenciales($usuario_o_mail, $contrasenia_ingresada) {
+        // Buscamos al usuario por su mail o su nombre de usuario
         $sql = "SELECT * FROM usuarios WHERE mail = '$usuario_o_mail' OR nombre_usuario = '$usuario_o_mail'";
         $resultado = $this->database->queryAll($sql);
 
-        // FRENO DE EMERGENCIA PARA VER LOS DATOS
-        echo "Buscando: " . $usuario_o_mail . "<br>";
-        echo "Clave ingresada: " . $contrasenia_ingresada . "<br><br>";
-        die(var_dump($resultado));
-
+        // Si el array vuelve vacío, el usuario no existe
         if (empty($resultado)) {
             return false;
         }
 
+        // Si existe, agarramos la primera fila con sus datos
         $usuario = $resultado[0];
 
+        // Comparamos la contraseña ingresada con el hash de la base de datos
         if (password_verify($contrasenia_ingresada, $usuario['contrasenia'])) {
-            return $usuario;
+            return $usuario; // Las claves coinciden, devolvemos los datos
         }
 
+        // La clave era incorrecta
         return false;
     }
 
