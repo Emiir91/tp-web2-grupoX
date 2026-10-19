@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <!-- LA ETIQUETA MÁS IMPORTANTE PARA CELULARES -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Juego de Preguntas - Ingresar</title>
+
+    <link rel="stylesheet" href="/mvc-sept-2026/public/css/estilo.css">
+</head>
+<body>
+
+<div class="contenedor">
+    <h1>¡Bienvenido al Juego!</h1>
+    <p>Demostrá cuánto sabés y competí con otros jugadores.</p>
+
+    {{#alerta_info}}
+        <div class="alerta alerta-info">{{alerta_info}}</div>
+    {{/alerta_info}}
+
+    {{#alerta_exito}}
+        <div class="alerta alerta-exito">{{alerta_exito}}</div>
+    {{/alerta_exito}}
+
+    <form action="/mvc-sept-2026/index.php?controller=login&method=procesarLogin" method="POST">
+        <label for="usuario_o_mail">Usuario o Correo</label>
+        <input type="text" id="usuario_o_mail" name="usuario_o_mail" placeholder="ej: jugador_test" required>
+
+        <label for="contrasenia">Contraseña</label>
+        <input type="password" id="contrasenia" name="contrasenia" placeholder="••••••••" required>
+
+        <button type="submit">Ingresar</button>
+    </form>
+
+    <hr>
+
+    <h3>¿No tenés cuenta?</h3>
+    <a href="/mvc-sept-2026/index.php?controller=registro" class="btn-secundario">Crear una cuenta</a>
+</div>
+
+</body>
+</html>

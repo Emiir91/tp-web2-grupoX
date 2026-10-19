@@ -53,4 +53,13 @@ class UsuarioModel
             return false;
         }
     }
+
+    public function activarUsuario($token)
+    {
+        // Armamos la consulta inyectando el token directamente (entre comillas simples)
+        $sql = "UPDATE usuarios SET cuenta_validada = 1 WHERE token_validacion = '$token'";
+
+        // Usamos el método execute que ya tenés armado en tu helper MyDatabase
+        return $this->database->execute($sql);
+    }
 }

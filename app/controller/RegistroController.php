@@ -14,7 +14,7 @@ class RegistroController
     }
 
     // Esta función solo se encarga de dibujar el formulario vacío la primera vez
-    public function mostrarFormulario()
+    public function index()
     {
         echo $this->renderer->renderiza('registro');
     }
@@ -101,14 +101,54 @@ class RegistroController
 
             // 8. Decidir qué hacer según la respuesta del Modelo
             if ($registroExitoso) {
-                // Si guardó bien, lo mandamos al login (o a una pantalla de éxito)
-                header("Location: /mvc-sept-2026/index.php?controller=login");
+                // LA VUELTA DE TUERCA: Armamos la URL dinámicamente.
+                // $_SERVER['HTTP_HOST'] detecta si estás en 'localhost' o en tu dominio de InfinityFree.
+                $host = $_SERVER['HTTP_HOST'];
+
+                // Si estás en local, agregamos la carpeta. Si estás en Infinity, la raíz es directa.
+                $rutaProyecto = ($host === 'localhost') ? '/mvc-sept-2026' : '';
+
+                $enlaceActivacion = "http://" . $host . $rutaProyecto . "/index.php?controller=registro&method=activarCuenta&token=" . $tokenValidacion;
+
+                // Armamos el correo
+                $asunto = "Activa tu cuenta en el Juego de Preguntas";
+                $mensaje = "<h2>Hola " . $nombreCompleto . "</h2>";
+                $mensaje .= "<p>Gracias por registrarte. Para activar tu cuenta y empezar a jugar, hacé clic en el siguiente enlace:</p>";
+                $mensaje .= "<a href='" . $enlaceActivacion . "'>Haz clic aquí para activar tu cuenta</a>";
+
+                // Cabeceras obligatorias para que PHP envíe el mail en formato HTML sin usar librerías
+                $cabeceras  = 'MIME-Version: 1.0' . "\r\n";
+                $cabeceras .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+                $cabeceras .= 'From: no-reply@' . $host . "\r\n";
+
+                // Disparamos la función nativa de PHP (En XAMPP dará error silencioso, en InfinityFree se enviará)
+                @mail($mail, $asunto, $mensaje, $cabeceras);
+
+                // Redirigimos a una vista (que podés crear) avisando que revise el mail
+                // Por ahora lo mandamos al login con un aviso
+                header("Location: " . $rutaProyecto . "/index.php?controller=login&mensaje=revisar_mail");
                 exit();
-            } else {
-                // Si falló (ej: el mail ya existía), recargamos la vista avisando el problema
-                $datosParaVista = array_merge($_POST, ['error_backend' => "El mail o el nombre de usuario ya están en uso."]);
-                echo $this->renderer->renderiza('registro', $datosParaVista);
+            } else {}
+        }
+    }
+
+    public function activarCuenta()
+    {
+        // 1. Recibimos el token que viene pegado en la URL del mail
+        $token = $_GET['token'] ?? '';
+
+        if (!empty($token)) {
+            // 2. Le pedimos al Modelo que busque este token y cambie la cuenta a validada (1)
+            $cuentaActivada = $this->usuarioModel->activarUsuario($token);
+
+            if ($cuentaActivada) {
+                // Éxito: Lo mandamos al login avisando que ya puede entrar
+                header("Location: /mvc-sept-2026/index.php?controller=login&mensaje=cuenta_activada");
+                exit();
             }
         }
+
+        // Si el token no existe o falló
+        echo "Error: Enlace de activación inválido o la cuenta ya fue activada.";
     }
 }

@@ -5,6 +5,7 @@ namespace app;
 use app\controller\EquipoController;
 
 use app\controller\RegistroController;
+use app\controller\LoginController;
 use app\model\UsuarioModel;
 
 use MustacheRender;
@@ -40,6 +41,12 @@ class Configuration
         );
     }
 
+    public function getLoginController(){
+        return new LoginController(
+            $this->getRender()
+        );
+    }
+
 
    //los privados
 
@@ -68,6 +75,6 @@ class Configuration
 
     public function getRouter()
     {
-        return new Router($this, "equipo", "index");
+        return new Router($this, "login", "index");
     }
 }
