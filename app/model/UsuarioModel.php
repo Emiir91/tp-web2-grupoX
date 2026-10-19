@@ -55,11 +55,13 @@ class UsuarioModel
     }
 
     public function verificarCredenciales($usuario_o_mail, $contrasenia_ingresada) {
-        // Buscamos al usuario
         $sql = "SELECT * FROM usuarios WHERE mail = '$usuario_o_mail' OR nombre_usuario = '$usuario_o_mail'";
-
-        // LA SOLUCIÓN: usamos queryAll() para que nos devuelva el array con los datos
         $resultado = $this->database->queryAll($sql);
+
+        // FRENO DE EMERGENCIA PARA VER LOS DATOS
+        echo "Buscando: " . $usuario_o_mail . "<br>";
+        echo "Clave ingresada: " . $contrasenia_ingresada . "<br><br>";
+        die(var_dump($resultado));
 
         if (empty($resultado)) {
             return false;
