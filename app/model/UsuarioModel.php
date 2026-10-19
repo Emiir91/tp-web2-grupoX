@@ -58,8 +58,8 @@ class UsuarioModel
         // Buscamos al usuario
         $sql = "SELECT * FROM usuarios WHERE mail = '$usuario_o_mail' OR nombre_usuario = '$usuario_o_mail'";
 
-        // ACÁ ESTABA EL CAMBIO: usamos execute() en lugar de query()
-        $resultado = $this->database->execute($sql);
+        // LA SOLUCIÓN: usamos queryAll() para que nos devuelva el array con los datos
+        $resultado = $this->database->queryAll($sql);
 
         if (empty($resultado)) {
             return false;
