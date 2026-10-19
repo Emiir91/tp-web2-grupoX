@@ -22,6 +22,10 @@
         <div class="alerta alerta-exito">{{alerta_exito}}</div>
     {{/alerta_exito}}
 
+    {{#alerta_error}}
+        <div class="alerta alerta-error">{{alerta_error}}</div>
+    {{/alerta_error}}
+
     <form action="/index.php?controller=login&method=procesarLogin" method="POST">
         <label for="usuario_o_mail">Usuario o Correo</label>
         <input type="text" id="usuario_o_mail" name="usuario_o_mail" placeholder="ej: jugador_test" required>
