@@ -6,6 +6,7 @@ use app\controller\EquipoController;
 
 use app\controller\RegistroController;
 use app\controller\LoginController;
+use app\controller\HomeController;
 use app\model\UsuarioModel;
 
 use MustacheRender;
@@ -43,7 +44,14 @@ class Configuration
 
     public function getLoginController(){
         return new LoginController(
+            $this->getUsuarioModel(), // <-- Tenés que sumarle esta línea
             $this->getRender()
+        );
+    }
+
+    public function getHomeController(){
+        return new HomeController(
+            $this->getRender(),
         );
     }
 

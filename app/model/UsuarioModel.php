@@ -54,6 +54,29 @@ class UsuarioModel
         }
     }
 
+    public function verificarCredenciales($usuario_o_mail, $contrasenia_ingresada) {
+        // Buscamos al usuario tanto por su mail como por su nombre de usuario
+        $sql = "SELECT * FROM usuarios WHERE mail = '$usuario_o_mail' OR nombre_usuario = '$usuario_o_mail'";
+        $resultado = $this->database->query($sql);
+
+        // Si la base de datos no devuelve nada, el usuario no existe
+        if (empty($resultado)) {
+            return false;
+        }
+
+        // Agarramos la primera (y única) fila que nos devolvió la consulta
+        $usuario = $resultado[0];
+
+        // Comparamos la clave que escribió recién con la encriptada en la base de datos
+        // (Asumiendo que usaste password_hash() en el RegistroController)
+        if (password_verify($contrasenia_ingresada, $usuario['contrasenia'])) {
+            return $usuario; // Todo coincide, le devolvemos los datos del usuario al controlador
+        }
+
+        // Si la contraseña no coincide, lo rebotamos
+        return false;
+    }
+
     public function activarUsuario($token)
     {
         // Armamos la consulta inyectando el token directamente (entre comillas simples)
