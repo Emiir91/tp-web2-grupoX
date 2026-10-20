@@ -21,9 +21,16 @@ require_once("helper/Autoloader.php");
 
 class Configuration
 {
-
+    private $config;
     public function __construct()
     {
+        // 1. Leemos el archivo UNA sola vez para toda la aplicación
+        $this->config = parse_ini_file(__DIR__ . "/../config/config.ini");
+
+        // 2. Definimos una constante global para usarla en cualquier lado
+        if (!defined('BASE_URL')) {
+            define('BASE_URL', $this->config['base_url'] ?? '');
+        }
     }
 
     // Instanciamos nuestro nuevo controlador y le pasamos el motor de vistas (Mustache)
@@ -62,10 +69,11 @@ class Configuration
     {
         $config = parse_ini_file(__DIR__ . "/../config/config.ini");
 
-        return new MyDatabase($config["db_host"],
-            $config["db_user"],
-            $config["db_pass"],
-            $config["db_name"]
+        return new MyDatabase(
+            $this->config["db_host"],
+            $this->config["db_user"],
+            $this->config["db_pass"],
+            $this->config["db_name"]
         );
     }
 

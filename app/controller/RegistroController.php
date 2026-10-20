@@ -108,8 +108,7 @@ class RegistroController
                 // Si estás en local, agregamos la carpeta. Si estás en Infinity, la raíz es directa.
                 $rutaProyecto = ($host === 'localhost') ? '/mvc-sept-2026' : '';
 
-                $enlaceActivacion = "http://" . $host . $rutaProyecto . "/index.php?controller=registro&method=activarCuenta&token=" . $tokenValidacion;
-
+                $enlaceActivacion = "http://" . $host . BASE_URL . "/registro/activarCuenta?token=" . $tokenValidacion;
                 // Armamos el correo
                 $asunto = "Activa tu cuenta en el Juego de Preguntas";
                 $mensaje = "<h2>Hola " . $nombreCompleto . "</h2>";
@@ -126,8 +125,7 @@ class RegistroController
 
                 // Redirigimos a una vista (que podés crear) avisando que revise el mail
                 // Por ahora lo mandamos al login con un aviso
-                header("Location: " . $rutaProyecto . "/index.php?controller=login&mensaje=revisar_mail");
-                exit();
+                header("Location: " . BASE_URL . "/login/index?mensaje=revisar_mail");                exit();
             } else {}
         }
     }

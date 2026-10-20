@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Juego de Preguntas - Ingresar</title>
 
-    <link rel="stylesheet" href="/mvc-sept-2026/public/css/estilo.css">
+    <link rel="stylesheet" href="{{base_url}}/public/css/estilo.css">
 </head>
 <body>
 
@@ -26,7 +26,7 @@
         <div class="alerta alerta-error">{{alerta_error}}</div>
     {{/alerta_error}}
 
-    <form action="/mvc-sept-2026/login/procesarLogin" method="POST">
+    <form action="{{base_url}}/login/procesarLogin" method="POST">
         <label for="usuario_o_mail">Usuario o Correo</label>
         <input type="text" id="usuario_o_mail" name="usuario_o_mail" placeholder="ej: jugador_test" required>
 
@@ -39,7 +39,7 @@
     <hr>
 
     <h3>¿No tenés cuenta?</h3>
-    <a href="/mvc-sept-2026/registro/index" class="btn-secundario">Crear una cuenta</a>
+    <a href="{{base_url}}/registro/index" class="btn-secundario">Crear una cuenta</a>
 </div>
 
 </body>

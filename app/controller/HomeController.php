@@ -13,11 +13,10 @@ class HomeController
 
     public function index()
     {
-        session_start();
 
         // Barrera de seguridad: si no hay sesión, lo mandamos al login
         if (!isset($_SESSION['usuario_logueado']) || $_SESSION['usuario_logueado'] !== true) {
-            header("Location: /index.php?controller=login");
+            header("Location: " . BASE_URL . "/login/index");
             exit();
         }
 

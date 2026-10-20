@@ -59,12 +59,12 @@ class LoginController
         }
 
         // ¡Pasó todas las pruebas! Creamos la sesión y mandamos al Home
-        session_start();
+
         $_SESSION['usuario_logueado'] = true;
         $_SESSION['nombre_usuario'] = $usuario['nombre_usuario'];
         $_SESSION['id_rol'] = $usuario['id_rol'];
 
-        header("Location: /index.php?controller=home");
+        header("Location: " . BASE_URL . "/home/index");
         exit();
     }
 }

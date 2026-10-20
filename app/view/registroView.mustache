@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - Juego de Preguntas</title>
-    <link rel="stylesheet" href="/mvc-sept-2026/public/css/estilo.css">
+    <link rel="stylesheet" href="{{base_url}}/public/css/estilo.css">
 
     <!-- Librerías de Leaflet para el Mapa -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -23,7 +23,7 @@
     </div>
 {{/error_backend}}
 
-    <form id="form-registro" action="/mvc-sept-2026/registro/procesarRegistro" method="POST" enctype="multipart/form-data">    <input type="text" id="nombre_completo" name="nombre_completo" value="{{nombre_completo}}" required><br><br>
+    <form id="form-registro" action="{{base_url}}/registro/procesarRegistro" method="POST" enctype="multipart/form-data">    <input type="text" id="nombre_completo" name="nombre_completo" value="{{nombre_completo}}" required><br><br>
 
     <label for="anio_nacimiento">Año de Nacimiento:</label>
     <input type="number" id="anio_nacimiento" name="anio_nacimiento" min="1900" max="2026" value="{{anio_nacimiento}}" required><br><br>
@@ -67,7 +67,7 @@
     </div>
 
 <!-- Scripts -->
-<script src="/mvc-sept-2026/public/js/Validaciones.js"></script>
-<script src="/mvc-sept-2026/public/js/mapa.js"></script> <!-- Nuevo script para el mapa -->
+<script src="{{base_url}}/public/js/Validaciones.js"></script>
+<script src="{{base_url}}/public/js/mapa.js"></script> <!-- Nuevo script para el mapa -->
 </body>
 </html>
