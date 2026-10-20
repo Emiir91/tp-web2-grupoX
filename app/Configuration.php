@@ -60,7 +60,7 @@ class Configuration
 
     private function getDatabase()
     {
-        $config = parse_ini_file("config/config.ini");
+        $config = parse_ini_file(__DIR__ . "/../config/config.ini");
 
         return new MyDatabase($config["db_host"],
             $config["db_user"],
