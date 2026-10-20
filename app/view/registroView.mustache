@@ -23,8 +23,7 @@
     </div>
 {{/error_backend}}
 
-<form id="form-registro" action="index.php?controller=registro&method=procesarRegistro" method="POST" enctype="multipart/form-data">    <label for="nombre_completo">Nombre Completo:</label>
-    <input type="text" id="nombre_completo" name="nombre_completo" value="{{nombre_completo}}" required><br><br>
+    <form id="form-registro" action="/mvc-sept-2026/registro/procesarRegistro" method="POST" enctype="multipart/form-data">    <input type="text" id="nombre_completo" name="nombre_completo" value="{{nombre_completo}}" required><br><br>
 
     <label for="anio_nacimiento">Año de Nacimiento:</label>
     <input type="number" id="anio_nacimiento" name="anio_nacimiento" min="1900" max="2026" value="{{anio_nacimiento}}" required><br><br>

@@ -27,7 +27,7 @@ Options -Indexes
 
     # Raíz desde donde se aplican las reglas (relativo al DocumentRoot).
     # Si el proyecto no está en la raíz de htdocs, cambiar a /nombre-carpeta/
-    RewriteBase /
+    RewriteBase /mvc-sept-2026/
 
     # ── SEGURIDAD: código interno inaccesible por URL directa ──
     # app/, helper/ y vendor/ son PHP interno (controllers, models,
@@ -48,6 +48,7 @@ Options -Indexes
     RewriteCond %{REQUEST_FILENAME} !-f
 
     # Solo reescribir si la URL NO es un directorio real en disco.
+    RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
 
     # ── REGLA 1: /controller/method ──────────────────────
@@ -61,5 +62,5 @@ Options -Indexes
 
     # ── REGLA 2: /controller (sin method) ────────────────
     # Si solo viene el controller, el router usa el método default ('show').
-    RewriteRule ^([^/]+)$         index.php?controller=$1           [L,QSA]
+    RewriteRule ^(.*)$         index.php         [L,QSA]
 </IfModule>
