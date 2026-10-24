@@ -45,7 +45,8 @@ class Configuration
     public function getRegistroController(){
         return new RegistroController(
             $this->getUsuarioModel(),
-            $this->getRender()
+            $this->getRender(),
+            $this->getMailer()
         );
     }
 
@@ -67,8 +68,6 @@ class Configuration
 
     private function getDatabase()
     {
-        $config = parse_ini_file(__DIR__ . "/../config/config.ini");
-
         return new MyDatabase(
             $this->config["db_host"],
             $this->config["db_user"],
@@ -86,6 +85,12 @@ class Configuration
         return new UsuarioModel(
             $this->getDatabase()
         );
+    }
+
+    private function getMailer()
+    {
+        require_once("helper/Mailer.php"); // Lo requerimos para asegurar que lo encuentre
+        return new \Mailer($this->config);
     }
 
 
