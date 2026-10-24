@@ -19,9 +19,9 @@ class Mailer
     {
         // Como no usamos Composer, requerimos los archivos de PHPMailer a mano.
         // Ajustá esta ruta si tu carpeta vendor está en otro lado.
-        require_once __DIR__ . '/../vendor/PHPMailer/Exception.php';
-        require_once __DIR__ . '/../vendor/PHPMailer/PHPMailer.php';
-        require_once __DIR__ . '/../vendor/PHPMailer/SMTP.php';
+        require_once __DIR__ . '/../vendor/phpMailer/Exception.php';
+        require_once __DIR__ . '/../vendor/phpMailer/PHPMailer.php';
+        require_once __DIR__ . '/../vendor/phpMailer/SMTP.php';
 
         // Usamos las clases de PHPMailer
         $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
