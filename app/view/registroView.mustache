@@ -1,78 +1,98 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro - Cortocircuito</title>
+<!-- Librerías de Leaflet para el Mapa (Siempre arriba del CSS) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Corrección 1: Nombre exacto del archivo CSS -->
-    <link rel="stylesheet" href="{{base_url}}/public/css/estilos.css">
+<!-- Archivo CSS específico para el Registro -->
+<link rel="stylesheet" href="{{base_url}}/public/css/registro.css?v=1">
 
-    <!-- Librerías de Leaflet para el Mapa -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-</head>
-<body>
-
-<div class="contenedor">
-    <h2>Crear una Cuenta</h2>
-
-    <!-- Error backend usando las clases del CSS nuevo -->
-    {{#error_backend}}
-        <div class="alerta alerta-error">
-            {{error_backend}}
+<main class="pantalla-registro">
+    <div class="panel-registro">
+        <div class="header-registro">
+            <img src="{{base_url}}/public/images/img/logotipo.png" alt="Cortocircuito" class="logo-registro">
+            <p class="texto-registro">Creá tu cuenta y unite a la competencia.</p>
         </div>
-    {{/error_backend}}
 
-    <!-- Corrección 2: Eliminados los <br><br> innecesarios -->
-    <form id="form-registro" action="{{base_url}}/registro/procesarRegistro" method="POST" enctype="multipart/form-data">
-        <label for="nombre_completo">Nombre Completo:</label>
-        <input type="text" id="nombre_completo" name="nombre_completo" value="{{nombre_completo}}" required>
+        {{#error_backend}}
+            <div class="alerta alerta-error">{{error_backend}}</div>
+        {{/error_backend}}
 
-        <label for="anio_nacimiento">Año de Nacimiento:</label>
-        <input type="number" id="anio_nacimiento" name="anio_nacimiento" min="1900" max="2026" value="{{anio_nacimiento}}" required>
+        <form id="form-registro" action="{{base_url}}/registro/procesarRegistro" method="POST" enctype="multipart/form-data" class="formulario-registro">
 
-        <label for="sexo">Sexo:</label>
-        <select id="sexo" name="sexo" required>
-            <option value="">Seleccione...</option>
-            <option value="Masculino" {{#is_masculino}}selected{{/is_masculino}}>Masculino</option>
-            <option value="Femenino" {{#is_femenino}}selected{{/is_femenino}}>Femenino</option>
-            <option value="Prefiero no cargarlo" {{#is_prefiero_no}}selected{{/is_prefiero_no}}>Prefiero no cargarlo</option>
-        </select>
+            <div class="grupo-input">
+                <label for="nombre_completo">Nombre Completo</label>
+                <input type="text" id="nombre_completo" name="nombre_completo" value="{{nombre_completo}}" class="input-texto" required>
+            </div>
 
-        <label for="pais">País:</label>
-        <input type="text" id="pais" name="pais" placeholder="Clic en el mapa..." value="{{pais}}" readonly required>
+            <div class="grupo-input">
+                <label for="mail">Correo Electrónico</label>
+                <input type="email" id="mail" name="mail" value="{{mail}}" class="input-texto" required>
+            </div>
 
-        <label for="ciudad">Ciudad:</label>
-        <input type="text" id="ciudad" name="ciudad" placeholder="Clic en el mapa..." value="{{ciudad}}" readonly required>
+            <div class="grupo-input">
+                <label for="anio_nacimiento">Año de Nacimiento</label>
+                <input type="number" id="anio_nacimiento" name="anio_nacimiento" min="1900" max="2026" value="{{anio_nacimiento}}" class="input-texto" required>
+            </div>
 
-        <!-- Corrección 3: Eliminado el atributo style, ahora toma el CSS -->
-        <div id="mapa-registro"></div>
+            <div class="grupo-input">
+                <label for="sexo">Sexo</label>
+                <select id="sexo" name="sexo" class="input-texto" required>
+                    <option value="">Seleccione...</option>
+                    <option value="Masculino" {{#is_masculino}}selected{{/is_masculino}}>Masculino</option>
+                    <option value="Femenino" {{#is_femenino}}selected{{/is_femenino}}>Femenino</option>
+                    <option value="Prefiero no cargarlo" {{#is_prefiero_no}}selected{{/is_prefiero_no}}>Prefiero no cargarlo</option>
+                </select>
+            </div>
 
-        <label for="mail">Correo Electrónico:</label>
-        <input type="email" id="mail" name="mail" value="{{mail}}" required>
+            <div class="grupo-input">
+                <label for="nombre_usuario">Nombre de Usuario</label>
+                <input type="text" id="nombre_usuario" name="nombre_usuario" value="{{nombre_usuario}}" class="input-texto" required>
+            </div>
 
-        <label for="nombre_usuario">Nombre de Usuario:</label>
-        <input type="text" id="nombre_usuario" name="nombre_usuario" value="{{nombre_usuario}}" required>
+            <div class="grupo-input">
+                <label for="foto_perfil">Foto de Perfil</label>
+                <input type="file" id="foto_perfil" name="foto_perfil" accept="image/*" class="input-texto input-file" required>
+            </div>
 
-        <label for="contrasenia">Contraseña:</label>
-        <input type="password" id="contrasenia" name="contrasenia" required>
+            <div class="grupo-input">
+                <label for="contrasenia">Contraseña</label>
+                <input type="password" id="contrasenia" name="contrasenia" class="input-texto" required>
+            </div>
 
-        <label for="repetir_contrasenia">Repetir Contraseña:</label>
-        <input type="password" id="repetir_contrasenia" name="repetir_contrasenia" required>
+            <div class="grupo-input">
+                <label for="repetir_contrasenia">Repetir Contraseña</label>
+                <input type="password" id="repetir_contrasenia" name="repetir_contrasenia" class="input-texto" required>
+            </div>
 
-        <!-- Error contraseña usando las clases del CSS nuevo -->
-        <div id="error-contrasenia" class="alerta alerta-error" style="display: none;"></div>
+            <div id="error-contrasenia" class="alerta alerta-error full-width" style="display: none;"></div>
 
-        <label for="foto_perfil">Foto de Perfil:</label>
-        <input type="file" id="foto_perfil" name="foto_perfil" accept="image/*" required style="margin-bottom: 20px; width: 100%;">
+            <!-- Mapa ocupa todo el ancho -->
+            <div class="grupo-input full-width">
+                <label>Ubicación (Clic en el mapa)</label>
+                <div id="mapa-registro" class="mapa-contenedor"></div>
+            </div>
 
-        <button type="submit">Registrarme</button>
-    </form>
-</div>
+            <div class="grupo-input">
+                <label for="pais">País</label>
+                <input type="text" id="pais" name="pais" placeholder="Se autocompleta con el mapa" value="{{pais}}" class="input-texto input-bloqueado" readonly required>
+            </div>
+
+            <div class="grupo-input">
+                <label for="ciudad">Ciudad</label>
+                <input type="text" id="ciudad" name="ciudad" placeholder="Se autocompleta con el mapa" value="{{ciudad}}" class="input-texto input-bloqueado" readonly required>
+            </div>
+
+            <button type="submit" class="btn-jugar btn-ingresar full-width">REGISTRARME</button>
+        </form>
+
+        <div class="separador"></div>
+
+        <div class="seccion-registro">
+            <h3>¿Ya tenés cuenta?</h3>
+            <a href="{{base_url}}/login" class="btn-secundario">Iniciar Sesión</a>
+        </div>
+    </div>
+</main>
 
 <!-- Scripts -->
 <script src="{{base_url}}/public/js/Validaciones.js"></script>
 <script src="{{base_url}}/public/js/mapa.js"></script>
-</body>
-</html>

@@ -1,0 +1,210 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0a0510;
+}
+
+/* ── FONDO PLASMA ── */
+.pantalla-login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    padding: 20px;
+    background-image: url('../images/img/fondo-plasma.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.pantalla-login::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* Capa oscura general */
+    z-index: 1;
+}
+
+/* ── PANEL DE FORMULARIO (Glassmorphism) ── */
+.panel-login {
+    background: rgba(15, 8, 25, 0.85); /* Fondo oscuro translúcido */
+    backdrop-filter: blur(10px); /* Efecto vidrio borroso */
+    border: 1px solid rgba(255, 120, 0, 0.3); /* Borde anaranjado sutil */
+    border-radius: 20px;
+    padding: 30px 20px;
+    width: 100%;
+    max-width: 400px; /* En celular ocupa casi todo, en PC no pasa de 400px */
+    z-index: 2;
+    position: relative;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    color: #ffffff;
+}
+
+.logo-login {
+    width: 85%;
+    max-width: 280px;
+    margin-bottom: 10px;
+    /* Le mantenemos el brillo anaranjado */
+    filter: drop-shadow(0 0 10px rgba(255, 120, 0, 0.5));
+}
+
+.texto-login {
+    font-size: 0.95rem;
+    color: #d1c4e9;
+    margin-bottom: 25px;
+}
+
+/* ── INPUTS ── */
+.grupo-input {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.grupo-input label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #ffc000;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-texto {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.input-texto::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.input-texto:focus {
+    border-color: #ff6a00;
+    box-shadow: 0 0 10px rgba(255, 106, 0, 0.5);
+    background: rgba(0, 0, 0, 0.8);
+}
+
+/* ── BOTONES ── */
+.btn-ingresar {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-jugar {
+    display: inline-block;
+    background: linear-gradient(180deg, #ff6a00 0%, #cc1c00 100%);
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 1.1rem;
+    padding: 15px;
+    border-radius: 35px;
+    border: 2px solid #ffc000;
+    box-shadow: 0 6px 0 #7a0b00, 0 10px 15px rgba(0, 0, 0, 0.6);
+    transition: all 0.1s ease;
+}
+
+.btn-jugar:active {
+    transform: translateY(6px);
+    box-shadow: 0 0px 0 #7a0b00, 0 4px 5px rgba(0, 0, 0, 0.6);
+}
+
+/* ── SEPARADOR Y REGISTRO ── */
+.separador {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    margin: 30px 0;
+}
+
+.seccion-registro h3 {
+    font-size: 0.9rem;
+    color: #d1c4e9;
+    font-weight: normal;
+    margin-bottom: 15px;
+}
+
+.btn-secundario {
+    display: inline-block;
+    width: 100%;
+    background: transparent;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 14px;
+    border-radius: 35px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-secundario:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff;
+}
+
+/* ── ALERTAS GLOBALES ── */
+.alerta {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.alerta-info { background: rgba(0, 150, 255, 0.2); border: 1px solid #0096ff; color: #80d4ff; }
+.alerta-error { background: rgba(255, 0, 0, 0.2); border: 1px solid #ff4d4d; color: #ffb3b3; }
+.alerta-exito { background: rgba(0, 255, 0, 0.2); border: 1px solid #00cc00; color: #b3ffb3; }
+
+/* ── ADAPTACIÓN A PANTALLAS GRANDES (TABLETS Y PC) ── */
+@media (min-width: 768px) {
+    .panel-login {
+        max-width: 550px; /* Panel más ancho en PC */
+        padding: 50px 40px; /* Más espacio interior */
+    }
+
+    .logo-login {
+        max-width: 350px; /* Logo más grande */
+        margin-bottom: 15px;
+    }
+
+    .texto-login {
+        font-size: 1.1rem;
+        margin-bottom: 35px;
+    }
+
+    .grupo-input label {
+        font-size: 0.95rem;
+    }
+
+    .input-texto {
+        padding: 16px;
+        font-size: 1.1rem;
+    }
+
+    .btn-jugar {
+        font-size: 1.3rem;
+        padding: 18px;
+    }
+
+    .btn-secundario {
+        font-size: 1.1rem;
+        padding: 16px;
+    }
+}

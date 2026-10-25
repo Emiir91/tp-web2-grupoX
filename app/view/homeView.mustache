@@ -1,22 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cortocircuito - El juego de trivia</title>
-    <!-- Asegurate de que la ruta apunte correctamente a tu carpeta public -->
-    <link rel="stylesheet" href="/public/css/home.css">
-</head>
-<body>
-<header>
-    <a href="/" class="logo">⚡ Corto<span>circuito</span></a>
-    <a href="/login" class="btn-login">Iniciar Sesión</a>
-</header>
+<link rel="stylesheet" href="{{base_url}}/public/css/home.css?v=1">
 
-<main class="hero">
-    <h1>Que no se te <span>quemen</span> los cables</h1>
-    <p>Desafiá a tus amigos, respondé bajo presión y demostrá quién tiene la mente más rápida en la trivia más electrizante.</p>
-    <a href="/registro" class="btn-jugar">Crear cuenta gratis</a>
+<main class="pantalla-inicio">
+    <img src="{{base_url}}/public/images/img/logotipo.png" alt="Cortocircuito" class="logo-principal">
+
+    <p class="texto-intro">Desafiá a tus amigos, respondé bajo presión y demostrá quién tiene la mente más rápida.</p>
+
+    <a href="{{base_url}}/login" class="btn-jugar">Iniciar Sesión</a>
 </main>
-</body>
-</html>

@@ -1,45 +1,45 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cortocircuito - Ingresar</title>
+<!-- Archivo CSS específico para el Login -->
+<link rel="stylesheet" href="{{base_url}}/public/css/login.css?v=1">
 
-    <link rel="stylesheet" href="{{base_url}}/public/css/estilos.css">
-</head>
-<body>
+<main class="pantalla-login">
+    <div class="panel-login">
+        <div class="header-login">
+            <!-- Usamos la misma imagen del Home, adaptada al panel -->
+            <img src="{{base_url}}/public/images/img/logotipo.png" alt="Cortocircuito" class="logo-login">
+            <p class="texto-login">Ingresá para jugar y demostrar cuánto sabés.</p>
+        </div>
 
-<div class="contenedor">
-    <h1>Cortocircuito ⚡</h1>
-    <p>Ingresá para jugar y demostrar cuánto sabés.</p>
+        {{#alerta_info}}
+            <div class="alerta alerta-info">{{alerta_info}}</div>
+        {{/alerta_info}}
 
-    {{#alerta_info}}
-        <div class="alerta alerta-info">{{alerta_info}}</div>
-    {{/alerta_info}}
+        {{#alerta_exito}}
+            <div class="alerta alerta-exito">{{alerta_exito}}</div>
+        {{/alerta_exito}}
 
-    {{#alerta_exito}}
-        <div class="alerta alerta-exito">{{alerta_exito}}</div>
-    {{/alerta_exito}}
+        {{#alerta_error}}
+            <div class="alerta alerta-error">{{alerta_error}}</div>
+        {{/alerta_error}}
 
-    {{#alerta_error}}
-        <div class="alerta alerta-error">{{alerta_error}}</div>
-    {{/alerta_error}}
+        <form action="{{base_url}}/login/procesarLogin" method="POST" class="formulario-login">
+            <div class="grupo-input">
+                <label for="usuario_o_mail">Usuario o Correo</label>
+                <input type="text" id="usuario_o_mail" name="usuario_o_mail" placeholder="ej: jugador_test" class="input-texto" required>
+            </div>
 
-    <form action="{{base_url}}/login/procesarLogin" method="POST">
-        <label for="usuario_o_mail">Usuario o Correo</label>
-        <input type="text" id="usuario_o_mail" name="usuario_o_mail" placeholder="ej: jugador_test" required>
+            <div class="grupo-input">
+                <label for="contrasenia">Contraseña</label>
+                <input type="password" id="contrasenia" name="contrasenia" placeholder="••••••••" class="input-texto" required>
+            </div>
 
-        <label for="contrasenia">Contraseña</label>
-        <input type="password" id="contrasenia" name="contrasenia" placeholder="••••••••" required>
+            <button type="submit" class="btn-jugar btn-ingresar">INGRESAR</button>
+        </form>
 
-        <button type="submit">Ingresar</button>
-    </form>
+        <div class="separador"></div>
 
-    <hr>
-
-    <h3>¿No tenés cuenta?</h3>
-    <a href="{{base_url}}/registro/index" class="btn-secundario">Crear una cuenta</a>
-</div>
-
-</body>
-</html>
+        <div class="seccion-registro">
+            <h3>¿No tenés cuenta?</h3>
+            <a href="{{base_url}}/registro/index" class="btn-secundario">Crear una cuenta</a>
+        </div>
+    </div>
+</main>
