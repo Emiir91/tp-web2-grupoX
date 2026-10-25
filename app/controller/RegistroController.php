@@ -54,10 +54,10 @@ class RegistroController
 
             $hashContrasenia = password_hash($contrasenia, PASSWORD_BCRYPT);
             $tokenValidacion = bin2hex(random_bytes(16));
-            $rutaFotoBaseDeDatos = 'public/images/default.png';
+            $rutaFotoBaseDeDatos = 'public/uploads/default.png';
 
             if (isset($_FILES['foto_perfil']) && $_FILES['foto_perfil']['error'] === UPLOAD_ERR_OK) {
-                $directorioDestino = __DIR__ . '/../../public/images/perfiles/';
+                $directorioDestino = __DIR__ . '/../../public/uploads/perfiles/';
 
                 if (!file_exists($directorioDestino)) {
                     mkdir($directorioDestino, 0777, true);
@@ -67,7 +67,7 @@ class RegistroController
                 $nombreArchivo = uniqid('perfil_') . '.' . $extension;
 
                 if (move_uploaded_file($_FILES['foto_perfil']['tmp_name'], $directorioDestino . $nombreArchivo)) {
-                    $rutaFotoBaseDeDatos = 'public/images/perfiles/' . $nombreArchivo;
+                    $rutaFotoBaseDeDatos = 'public/uploads/perfiles/' . $nombreArchivo;
                 }
             }
 

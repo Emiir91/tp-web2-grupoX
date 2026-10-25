@@ -1,6 +1,6 @@
 /log/
 /vendor/
-public/images/
+public/uploads/
 config/config.ini
 __MACOSX/
 .DS_Store

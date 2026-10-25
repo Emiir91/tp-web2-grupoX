@@ -18,7 +18,7 @@ CREATE TABLE usuarios (
                           mail VARCHAR(150) NOT NULL UNIQUE,
                           contrasenia VARCHAR(255) NOT NULL, -- VARCHAR(255) es ideal para guardar hashes de contraseñas
                           nombre_usuario VARCHAR(50) NOT NULL UNIQUE,
-                          foto_perfil VARCHAR(255) DEFAULT 'public/images/default.png', -- Ruta por defecto
+                          foto_perfil VARCHAR(255) DEFAULT 'public/uploads/default.png', -- Ruta por defecto
                           id_rol INT NOT NULL DEFAULT 1, -- Por defecto todos nacen siendo 'Jugador' (id 1)
                           cuenta_validada TINYINT(1) DEFAULT 0, -- 0 = No validada, 1 = Validada
                           token_validacion VARCHAR(100) NULL,

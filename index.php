@@ -9,6 +9,6 @@ $configuration = new Configuration();
 $router = $configuration->getRouter();
 
 $router->dispatch(
-    Request::get("controller", "login"), // Cambié "equipo" por "login" como default
+    Request::get("controller", "home"), // por default
     Request::get("method", "index")
 );

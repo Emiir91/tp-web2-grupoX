@@ -5,7 +5,7 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
 .pantalla-registro {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     min-height: 100dvh; padding: 40px 20px;
-    background-image: url('../images/img/fondo-plasma.png');
+    background-image: url('../img/fondo-plasma.png');
     background-size: cover; background-position: center; background-repeat: no-repeat;
     background-attachment: fixed; /* Mantiene el fondo quieto al scrollear en celular */
     position: relative;
