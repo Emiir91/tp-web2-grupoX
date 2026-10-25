@@ -3,71 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro - Juego de Preguntas</title>
-    <link rel="stylesheet" href="{{base_url}}/public/css/estilo.css">
+    <title>Registro - Cortocircuito</title>
+
+    <!-- Corrección 1: Nombre exacto del archivo CSS -->
+    <link rel="stylesheet" href="{{base_url}}/public/css/estilos.css">
 
     <!-- Librerías de Leaflet para el Mapa -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 </head>
 <body>
 
 <div class="contenedor">
-<h2>Crear una Cuenta</h2>
+    <h2>Crear una Cuenta</h2>
 
-<!-- Fallback: Muestra errores del servidor si JavaScript falla -->
-{{#error_backend}}
-    <div style="color: white; background-color: red; padding: 10px; margin-bottom: 15px;">
-        {{error_backend}}
-    </div>
-{{/error_backend}}
+    <!-- Error backend usando las clases del CSS nuevo -->
+    {{#error_backend}}
+        <div class="alerta alerta-error">
+            {{error_backend}}
+        </div>
+    {{/error_backend}}
 
-    <form id="form-registro" action="{{base_url}}/registro/procesarRegistro" method="POST" enctype="multipart/form-data">    <input type="text" id="nombre_completo" name="nombre_completo" value="{{nombre_completo}}" required><br><br>
+    <!-- Corrección 2: Eliminados los <br><br> innecesarios -->
+    <form id="form-registro" action="{{base_url}}/registro/procesarRegistro" method="POST" enctype="multipart/form-data">
+        <label for="nombre_completo">Nombre Completo:</label>
+        <input type="text" id="nombre_completo" name="nombre_completo" value="{{nombre_completo}}" required>
 
-    <label for="anio_nacimiento">Año de Nacimiento:</label>
-    <input type="number" id="anio_nacimiento" name="anio_nacimiento" min="1900" max="2026" value="{{anio_nacimiento}}" required><br><br>
+        <label for="anio_nacimiento">Año de Nacimiento:</label>
+        <input type="number" id="anio_nacimiento" name="anio_nacimiento" min="1900" max="2026" value="{{anio_nacimiento}}" required>
 
-    <label for="sexo">Sexo:</label>
-    <select id="sexo" name="sexo" required>
-        <option value="">Seleccione...</option>
-        <option value="Masculino" {{#is_masculino}}selected{{/is_masculino}}>Masculino</option>
-        <option value="Femenino" {{#is_femenino}}selected{{/is_femenino}}>Femenino</option>
-        <option value="Prefiero no cargarlo" {{#is_prefiero_no}}selected{{/is_prefiero_no}}>Prefiero no cargarlo</option>
-    </select><br><br>
+        <label for="sexo">Sexo:</label>
+        <select id="sexo" name="sexo" required>
+            <option value="">Seleccione...</option>
+            <option value="Masculino" {{#is_masculino}}selected{{/is_masculino}}>Masculino</option>
+            <option value="Femenino" {{#is_femenino}}selected{{/is_femenino}}>Femenino</option>
+            <option value="Prefiero no cargarlo" {{#is_prefiero_no}}selected{{/is_prefiero_no}}>Prefiero no cargarlo</option>
+        </select>
 
-    <label for="pais">País:</label>
-    <input type="text" id="pais" name="pais" placeholder="Clic en el mapa..." value="{{pais}}" readonly required><br><br>
+        <label for="pais">País:</label>
+        <input type="text" id="pais" name="pais" placeholder="Clic en el mapa..." value="{{pais}}" readonly required>
 
-    <label for="ciudad">Ciudad:</label>
-    <input type="text" id="ciudad" name="ciudad" placeholder="Clic en el mapa..." value="{{ciudad}}" readonly required><br><br>
+        <label for="ciudad">Ciudad:</label>
+        <input type="text" id="ciudad" name="ciudad" placeholder="Clic en el mapa..." value="{{ciudad}}" readonly required>
 
-    <div id="mapa-registro" style="height: 300px; width: 100%; border: 1px solid #ccc; margin-bottom: 15px;">(Acá irá el mapa interactivo)</div>
+        <!-- Corrección 3: Eliminado el atributo style, ahora toma el CSS -->
+        <div id="mapa-registro"></div>
 
-    <label for="mail">Correo Electrónico:</label>
-    <input type="email" id="mail" name="mail" value="{{mail}}" required><br><br>
+        <label for="mail">Correo Electrónico:</label>
+        <input type="email" id="mail" name="mail" value="{{mail}}" required>
 
-    <label for="nombre_usuario">Nombre de Usuario:</label>
-    <input type="text" id="nombre_usuario" name="nombre_usuario" value="{{nombre_usuario}}" required><br><br>
+        <label for="nombre_usuario">Nombre de Usuario:</label>
+        <input type="text" id="nombre_usuario" name="nombre_usuario" value="{{nombre_usuario}}" required>
 
-    <label for="contrasenia">Contraseña:</label>
-    <input type="password" id="contrasenia" name="contrasenia" required><br><br>
+        <label for="contrasenia">Contraseña:</label>
+        <input type="password" id="contrasenia" name="contrasenia" required>
 
-    <label for="repetir_contrasenia">Repetir Contraseña:</label>
-    <input type="password" id="repetir_contrasenia" name="repetir_contrasenia" required><br><br>
+        <label for="repetir_contrasenia">Repetir Contraseña:</label>
+        <input type="password" id="repetir_contrasenia" name="repetir_contrasenia" required>
 
-    <!-- Contenedor vacío donde JS mostrará el error en tiempo real -->
-    <div id="error-contrasenia" style="color: red; display: none; margin-bottom: 15px;"></div>
+        <!-- Error contraseña usando las clases del CSS nuevo -->
+        <div id="error-contrasenia" class="alerta alerta-error" style="display: none;"></div>
 
-    <label for="foto_perfil">Foto de Perfil:</label>
-    <input type="file" id="foto_perfil" name="foto_perfil" accept="image/*" required><br><br>
+        <label for="foto_perfil">Foto de Perfil:</label>
+        <input type="file" id="foto_perfil" name="foto_perfil" accept="image/*" required style="margin-bottom: 20px; width: 100%;">
 
-    <button type="submit">Registrarme</button>
-</form>
-    </div>
+        <button type="submit">Registrarme</button>
+    </form>
+</div>
 
 <!-- Scripts -->
 <script src="{{base_url}}/public/js/Validaciones.js"></script>
-<script src="{{base_url}}/public/js/mapa.js"></script> <!-- Nuevo script para el mapa -->
+<script src="{{base_url}}/public/js/mapa.js"></script>
 </body>
 </html>

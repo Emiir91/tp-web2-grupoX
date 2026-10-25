@@ -1,5 +1,4 @@
 <?php
-
 namespace app\controller;
 
 class HomeController
@@ -13,18 +12,7 @@ class HomeController
 
     public function index()
     {
-
-        // Barrera de seguridad: si no hay sesión, lo mandamos al login
-        if (!isset($_SESSION['usuario_logueado']) || $_SESSION['usuario_logueado'] !== true) {
-            header("Location: " . BASE_URL . "/login/index");
-            exit();
-        }
-
-        // Si pasó, le mandamos sus datos a la vista
-        $datosParaVista = [
-            'nombre_usuario' => $_SESSION['nombre_usuario']
-        ];
-
-        $this->renderer->renderiza('home', $datosParaVista);
+        // Usá render() o renderiza() según cómo esté en tu clase MustacheRender
+        $this->renderer->renderiza("home");
     }
 }

@@ -7,6 +7,7 @@ use app\controller\EquipoController;
 use app\controller\RegistroController;
 use app\controller\LoginController;
 use app\controller\HomeController;
+use app\controller\LobbyController;
 use app\model\UsuarioModel;
 
 use MustacheRender;
@@ -63,6 +64,12 @@ class Configuration
         );
     }
 
+    public function getLobbyController(){
+        return new LobbyController(
+            $this->getRender()
+        );
+    }
+
 
    //los privados
 
@@ -96,6 +103,6 @@ class Configuration
 
     public function getRouter()
     {
-        return new Router($this, "login", "index");
+        return new Router($this, "home", "index");
     }
 }

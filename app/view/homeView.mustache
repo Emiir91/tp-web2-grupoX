@@ -1,9 +1,22 @@
-{{> header}}
-<div class="contenedor">
-    <h1>¡Bienvenido/a, {{nombre_usuario}}!</h1>
-    <p>Lograste entrar al sistema correctamente. Tu cuenta está validada.</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cortocircuito - El juego de trivia</title>
+    <!-- Asegurate de que la ruta apunte correctamente a tu carpeta public -->
+    <link rel="stylesheet" href="/public/css/home.css">
+</head>
+<body>
+<header>
+    <a href="/" class="logo">⚡ Corto<span>circuito</span></a>
+    <a href="/login" class="btn-login">Iniciar Sesión</a>
+</header>
 
-    <!-- Un botón para cerrar sesión luego -->
-    <a href="{{base_url}}/login/cerrarSesion" class="btn">Cerrar Sesión</a>
-</div>
-{{> footer}}
+<main class="hero">
+    <h1>Que no se te <span>quemen</span> los cables</h1>
+    <p>Desafiá a tus amigos, respondé bajo presión y demostrá quién tiene la mente más rápida en la trivia más electrizante.</p>
+    <a href="/registro" class="btn-jugar">Crear cuenta gratis</a>
+</main>
+</body>
+</html>

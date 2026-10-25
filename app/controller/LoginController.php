@@ -64,7 +64,7 @@ class LoginController
         $_SESSION['nombre_usuario'] = $usuario['nombre_usuario'];
         $_SESSION['id_rol'] = $usuario['id_rol'];
 
-        header("Location: " . BASE_URL . "/home/index");
+        header("Location: " . BASE_URL . "/lobby/index");
         exit();
     }
 }
