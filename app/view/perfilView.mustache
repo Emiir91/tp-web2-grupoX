@@ -1,0 +1,60 @@
+<main class="pantalla-perfil">
+    <div class="panel-perfil">
+
+        <!-- Encabezado superior con la foto centrada -->
+        <div class="encabezado-perfil">
+            <img src="{{base_url}}/{{foto_perfil}}" alt="Foto de perfil" class="foto-perfil">
+            <h2>Perfil de <span>{{nombre_usuario}}</span></h2>
+            <p class="subtitulo-perfil">Acá podés revisar tu información personal.</p>
+        </div>
+
+        <!-- Grilla de 2 columnas para PC / 1 columna para celular -->
+        <div class="perfil-grid-principal">
+
+            <!-- Columna Izquierda: Todos los datos del usuario -->
+            <div class="columna-datos">
+                <div class="grupo-input">
+                    <label>Nombre Completo</label>
+                    <div class="dato-valor">{{nombre_completo}}</div>
+                </div>
+
+                <div class="grupo-input">
+                    <label>Correo Electrónico</label>
+                    <div class="dato-valor">{{mail}}</div>
+                </div>
+
+                <div class="grupo-input">
+                    <label>Año de Nacimiento</label>
+                    <div class="dato-valor">{{anio_nacimiento}}</div>
+                </div>
+
+                <div class="grupo-input">
+                    <label>Sexo</label>
+                    <div class="dato-valor">{{sexo}}</div>
+                </div>
+
+                <div class="grupo-input">
+                    <label>Nombre de Usuario</label>
+                    <div class="dato-valor">{{nombre_usuario}}</div>
+                </div>
+
+                <div class="grupo-input">
+                    <label>País / Ciudad</label>
+                    <div class="dato-valor">{{pais}}, {{ciudad}}</div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: El Mapa bien distribuido -->
+            <div class="columna-mapa">
+                <div class="grupo-input full-width-mapa">
+                    <label>Tu Ubicación de Registro</label>
+                    <div id="mapa-perfil" class="mapa-contenedor" data-pais="{{pais}}" data-ciudad="{{ciudad}}"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<script src="<?= BASE_URL ?>/public/js/perfil.js"></script>

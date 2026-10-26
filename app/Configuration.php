@@ -8,6 +8,7 @@ use app\controller\RegistroController;
 use app\controller\LoginController;
 use app\controller\HomeController;
 use app\controller\LobbyController;
+use app\controller\PerfilController;
 use app\model\UsuarioModel;
 
 use MustacheRender;
@@ -66,6 +67,15 @@ class Configuration
 
     public function getLobbyController(){
         return new LobbyController(
+            $this->getRender()
+        );
+    }
+
+    public function getPerfilController()
+    {
+        // Le pasamos el UsuarioModel porque es el que tiene la función buscarUsuario()
+        return new PerfilController(
+            $this->getUsuarioModel(),
             $this->getRender()
         );
     }
