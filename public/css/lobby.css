@@ -1,0 +1,233 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0a0510;
+    color: #ffffff;
+
+    /* Fondo con capa oscura y plasma unificados en el body */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../img/fondo-plasma.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* ── FONDO Y CONTENEDOR ── */
+.pantalla-lobby {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    padding: 40px 20px;
+    position: relative;
+    /* Se borraron los background y el ::before de acá */
+}
+
+/* ── PANEL PRINCIPAL ── */
+.panel-lobby {
+    background: rgba(15, 8, 25, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 120, 0, 0.3);
+    border-radius: 20px;
+    padding: 30px 20px;
+    width: 100%;
+    max-width: 500px; /* En celular ocupa hasta 500px */
+    z-index: 2;
+    position: relative;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+}
+
+/* ── ESTRUCTURA GRID (Para dividir en 2 columnas en PC) ── */
+.lobby-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* En celular es 1 sola columna */
+    gap: 30px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* ── INFO JUGADOR Y PUNTAJE ── */
+.info-jugador {
+    text-align: center;
+}
+
+.saludo-lobby {
+    font-size: 1.5rem;
+    color: #d1c4e9;
+    font-weight: normal;
+    text-align: center;
+}
+
+.saludo-lobby span {
+    color: #ffc000;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.caja-puntaje {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 106, 0, 0.5);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.etiqueta-puntaje {
+    font-size: 0.85rem;
+    color: #ffc000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.valor-puntaje {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(255, 106, 0, 0.8);
+}
+
+/* ── BOTONES DE ACCIÓN ── */
+.acciones-lobby {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn-jugar, .btn-secundario {
+    display: block;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    padding: 15px;
+    border-radius: 35px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    transition: all 0.2s ease;
+}
+
+.btn-jugar {
+    background: linear-gradient(180deg, #ff6a00 0%, #cc1c00 100%);
+    color: #ffffff;
+    border: 2px solid #ffc000;
+    box-shadow: 0 6px 0 #7a0b00, 0 10px 15px rgba(0, 0, 0, 0.6);
+}
+
+.btn-jugar:active {
+    transform: translateY(6px);
+    box-shadow: 0 0px 0 #7a0b00, 0 4px 5px rgba(0, 0, 0, 0.6);
+}
+
+.btn-secundario {
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secundario:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff;
+}
+
+/* ── HISTORIAL DE PARTIDAS ── */
+.seccion-historial h3 {
+    font-size: 1rem;
+    color: #d1c4e9;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.lista-partidas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.item-partida {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    padding: 12px 15px;
+    border-left: 4px solid #ff6a00;
+    font-size: 0.9rem;
+}
+
+.fecha-partida { color: #999; font-size: 0.8rem; width: 30%; text-align: left; }
+.resultado-partida { font-weight: bold; text-transform: uppercase; width: 40%; text-align: center; }
+.puntos-partida { font-weight: bold; color: #fff; width: 30%; text-align: right; }
+
+.Victoria { color: #00cc00; text-shadow: 0 0 5px rgba(0, 204, 0, 0.5); }
+.Derrota { color: #ff4d4d; text-shadow: 0 0 5px rgba(255, 77, 77, 0.5); }
+
+/* ── ALERTAS ── */
+.alerta { padding: 12px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; }
+.alerta-info { background: rgba(0, 150, 255, 0.2); border: 1px solid #0096ff; color: #80d4ff; }
+
+/* ── ADAPTACIÓN A PANTALLA GRANDE (PC) ── */
+@media (min-width: 992px) {
+    .panel-lobby {
+        max-width: 1400px;
+        width: 90%;
+        min-height: 70vh; /* Obliga al panel a ocupar al menos el 70% del alto de la pantalla */
+        padding: 50px 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Centra todo verticalmente en el nuevo espacio */
+    }
+
+    .saludo-lobby {
+        font-size: 2.2rem;
+        margin-bottom: 40px;
+    }
+
+    .lobby-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 80px; /* Mucho más espacio de separación entre columnas */
+        align-items: start;
+    }
+
+    .info-jugador, .seccion-historial h3 {
+        text-align: left;
+    }
+
+    .seccion-historial h3 {
+        font-size: 1.5rem;
+        margin-bottom: 25px;
+    }
+
+    /* Agrandamos los elementos para que llenen la pantalla */
+    .valor-puntaje {
+        font-size: 4rem;
+    }
+
+    .btn-jugar {
+        font-size: 1.4rem;
+        padding: 20px;
+    }
+
+    .btn-secundario {
+        font-size: 1.2rem;
+        padding: 18px;
+    }
+
+    .item-partida {
+        padding: 20px 30px;
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+}

@@ -1,2 +1,47 @@
-<h1>Bienvenido al Lobby, {{nombre_usuario}}</h1>
-<a href="/login/logout">Cerrar sesión</a>
+<main class="pantalla-lobby">
+    <div class="panel-lobby">
+        <h2 class="saludo-lobby">Lobby de <span>{{nombre_usuario}}</span></h2>
+
+        <div class="lobby-grid">
+
+            <!-- Columna Izquierda (Puntaje y Botones) -->
+            <div class="info-jugador">
+                <div class="caja-puntaje">
+                    <p class="etiqueta-puntaje">Puntaje Acumulado</p>
+                    <h3 class="valor-puntaje">{{puntaje_total}}</h3>
+                </div>
+
+                <div class="acciones-lobby">
+                    <a href="/partida/nueva" class="btn-jugar">⚡ NUEVA PARTIDA ⚡</a>
+                    <a href="/ranking" class="btn-secundario">Ver Ranking Global</a>
+                </div>
+            </div>
+
+            <!-- Columna Derecha (Historial) -->
+            <div class="seccion-historial">
+                <h3>Tus últimas partidas</h3>
+                <div class="lista-partidas">
+
+                    <!-- Bucle Mustache para recorrer el array de partidas desde el Controller -->
+                    {{#partidas}}
+                        <div class="item-partida">
+                            <span class="fecha-partida">{{fecha}}</span>
+                            <!-- Inyectamos {{resultado}} también en la clase para que pinte verde o rojo -->
+                            <span class="resultado-partida {{resultado}}">{{resultado}}</span>
+                            <span class="puntos-partida">{{puntos}}</span>
+                        </div>
+                    {{/partidas}}
+
+                    <!-- Si el array está vacío (el usuario es nuevo y no jugó) -->
+                    {{^partidas}}
+                        <div class="alerta alerta-info" style="text-align: center;">
+                            Todavía no jugaste ninguna partida. ¡Animate a la primera!
+                        </div>
+                    {{/partidas}}
+
+                </div>
+            </div>
+
+        </div> <!-- Cierra lobby-grid -->
+    </div> <!-- Cierra panel-lobby -->
+</main>

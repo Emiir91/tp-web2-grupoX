@@ -1,19 +1,23 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0a0510; }
 
-/* ── FONDO PLASMA ── */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0a0510;
+
+    /* Fondo con capa oscura y plasma unificados en el body */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../img/fondo-plasma.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* ── FONDO Y CONTENEDOR ── */
 .pantalla-registro {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     min-height: 100dvh; padding: 40px 20px;
-    background-image: url('../img/fondo-plasma.png');
-    background-size: cover; background-position: center; background-repeat: no-repeat;
-    background-attachment: fixed; /* Mantiene el fondo quieto al scrollear en celular */
     position: relative;
-}
-
-.pantalla-registro::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.6); z-index: 1;
+    /* Borramos el background y el pseudo-elemento ::before */
 }
 
 /* ── PANEL (Glassmorphism) ── */

@@ -8,6 +8,13 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #0a0510;
     color: #ffffff;
+
+    /* Unificamos el filtro oscuro y la imagen en el body para que el header flote limpio */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../img/fondo-plasma.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 /* ── DISEÑO BASE (CELULARES) ── */
@@ -16,40 +23,29 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /* Usamos 100dvh (Dynamic Viewport Height) para que no lo tape la barra de navegación en iOS/Android */
     min-height: 100dvh;
     padding: 20px;
     text-align: center;
-    background-image: url('../img/fondo-plasma.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     position: relative;
+    /* Eliminamos el ::before y los background de acá */
 }
 
-.pantalla-inicio::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 1;
-}
-
+/* Corregimos el selector para asegurar que los elementos queden por encima */
 .pantalla-inicio > * {
     z-index: 2;
     position: relative;
 }
 
 .logo-principal {
-    width: 90%; /* Ocupa casi todo el ancho del celular */
-    max-width: 320px; /* Límite para que no se pase en celulares grandes */
+    width: 90%;
+    max-width: 320px;
     margin-bottom: 20px;
     filter: drop-shadow(0 0 10px rgba(255, 120, 0, 0.5));
     animation: flotar 3s ease-in-out infinite;
 }
 
 .texto-intro {
-    font-size: 1rem; /* Tamaño de lectura ideal para celular */
+    font-size: 1rem;
     line-height: 1.4;
     margin-bottom: 30px;
     width: 90%;
@@ -63,7 +59,7 @@ body {
     color: #ffffff;
     text-decoration: none;
     font-weight: 800;
-    font-size: 1.1rem; /* Botón amigable para el dedo (Touch target) */
+    font-size: 1.1rem;
     text-transform: uppercase;
     padding: 14px 35px;
     border-radius: 35px;

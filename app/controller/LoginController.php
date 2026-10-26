@@ -67,4 +67,18 @@ class LoginController
         header("Location: " . BASE_URL . "/lobby/index");
         exit();
     }
+
+    // 4. Agregamos la función para cerrar sesión
+    public function logout()
+    {
+        // Vaciamos todas las variables de la sesión actual
+        session_unset();
+
+        // Destruimos la sesión por completo
+        session_destroy();
+
+        // Redirigimos al usuario al login (o al home, donde prefieras)
+        header("Location: " . BASE_URL . "/login");
+        exit();
+    }
 }

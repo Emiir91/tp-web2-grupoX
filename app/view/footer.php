@@ -1,8 +1,13 @@
+<?php
+// Los scripts de validación y mapa solo son necesarios en el registro
+if (strtolower($view) === 'registro'):
+    ?>
+    <script src="<?= BASE_URL ?>/public/js/Validaciones.js"></script>
+    <script src="<?= BASE_URL ?>/public/js/mapa.js"></script>
+<?php endif; ?>
 
-<footer class="w3-container footer-evento w3-padding-16 w3-center w3-margin-top">
-    <p></p>
-
-</footer>
+<!-- Script global de la barra de navegación -->
+<script src="<?= BASE_URL ?>/public/js/header.js"></script>
 
 </body>
 </html>
