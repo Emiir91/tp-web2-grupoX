@@ -82,7 +82,7 @@ class JuegoController
 
             $_SESSION['id_pregunta_actual'] = $pregunta['id_pregunta'];
             $_SESSION['tiempo_inicio_pregunta'] = time();
-            
+
             $tiempo_restante = 10;
         }
 
@@ -156,7 +156,7 @@ class JuegoController
         }
 
         $id_partida = $_SESSION['id_partida'];
-        
+
         $this->limpiarSesionPregunta();
         $this->partidaModel->finalizarPartida($id_partida, 'tiempo_agotado');
 
@@ -172,9 +172,9 @@ class JuegoController
         }
 
         $id_partida = $_SESSION['id_partida'];
-       
+
         $this->limpiarSesionPregunta();
-      
+
         $this->partidaModel->finalizarPartida($id_partida, 'abandonada');
 
         header("Location: " . BASE_URL . "/juego/resultados");

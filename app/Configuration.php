@@ -10,7 +10,6 @@ use app\controller\HomeController;
 use app\controller\JuegoController;
 use app\controller\PerfilController;
 use app\controller\LobbyController;
-use app\controller\PerfilController;
 use app\model\UsuarioModel;
 use app\model\PartidaModel;
 
