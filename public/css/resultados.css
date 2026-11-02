@@ -1,0 +1,165 @@
+.pantalla-resultados {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    padding: 40px 20px;
+    position: relative;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../img/fondo-plasma.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.panel-resultados {
+    background: rgba(15, 8, 25, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 120, 0, 0.3);
+    border-radius: 20px;
+    padding: 30px 20px;
+    width: 100%;
+    max-width: 500px;
+    z-index: 2;
+    position: relative;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+}
+
+.header-resultados {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header-resultados h1 {
+    font-size: 2rem;
+    color: #ffc000;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 15px rgba(255, 106, 0, 0.8);
+}
+
+.mensaje-final {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    border-left: 4px solid #ff6a00;
+}
+
+.mensaje-final h2 {
+    font-size: 1.3rem;
+    color: #d1c4e9;
+    line-height: 1.5;
+}
+
+.estadisticas {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.estadistica {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(255, 106, 0, 0.3);
+}
+
+.estadistica h3 {
+    font-size: 0.85rem;
+    color: #ffc000;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.estadistica .valor {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(255, 106, 0, 0.8);
+}
+
+.acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn-jugar, .btn-secundario {
+    display: block;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    padding: 15px;
+    border-radius: 35px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    transition: all 0.2s ease;
+}
+
+.btn-jugar {
+    background: linear-gradient(180deg, #ff6a00 0%, #cc1c00 100%);
+    color: #ffffff;
+    border: 2px solid #ffc000;
+    box-shadow: 0 6px 0 #7a0b00, 0 10px 15px rgba(0, 0, 0, 0.6);
+}
+
+.btn-jugar:hover {
+    background: linear-gradient(180deg, #ff8533 0%, #e62600 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 0 #7a0b00, 0 12px 20px rgba(0, 0, 0, 0.7);
+}
+
+.btn-jugar:active {
+    transform: translateY(6px);
+    box-shadow: 0 0px 0 #7a0b00, 0 4px 5px rgba(0, 0, 0, 0.6);
+}
+
+.btn-secundario {
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secundario:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff;
+}
+
+@media (min-width: 768px) {
+    .panel-resultados {
+        max-width: 600px;
+        padding: 50px 60px;
+    }
+
+    .header-resultados h1 {
+        font-size: 2.5rem;
+    }
+
+    .estadisticas {
+        flex-direction: row;
+        justify-content: space-around;
+        gap: 20px;
+    }
+
+    .estadistica {
+        flex: 1;
+    }
+
+    .estadistica .valor {
+        font-size: 3rem;
+    }
+
+    .btn-jugar, .btn-secundario {
+        font-size: 1.2rem;
+        padding: 18px;
+    }
+}

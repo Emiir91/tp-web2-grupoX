@@ -1,9 +1,42 @@
-<!-- <link rel="stylesheet" href="{{base_url}}/public/css/home.css?v=1"> -->
+<main class="pantalla-home">
+    <div class="panel-home">
+        <h2 class="saludo-home">Inicio de <span>{{nombre_usuario}}</span></h2>
 
-<main class="pantalla-inicio">
-    <img src="{{base_url}}/public/img/logotipo.png" alt="Cortocircuito" class="logo-principal">
+        <div class="home-grid">
 
-    <p class="texto-intro">Desafiá a tus amigos, respondé bajo presión y demostrá quién tiene la mente más rápida.</p>
+            <div class="info-jugador">
+                <div class="caja-puntaje">
+                    <p class="etiqueta-puntaje">Puntaje Acumulado</p>
+                    <h3 class="valor-puntaje">{{puntaje_total}}</h3>
+                </div>
 
-    <a href="{{base_url}}/login" class="btn-jugar">Iniciar Sesión</a>
+                <div class="acciones-home">
+                    <a href="{{base_url}}/juego/iniciar" class="btn-jugar">⚡ NUEVA PARTIDA ⚡</a>
+                    <a href="{{base_url}}/ranking" class="btn-secundario">Ver Ranking Global</a>
+                </div>
+            </div>
+
+            <div class="seccion-historial">
+                <h3>Tus últimas partidas</h3>
+                <div class="lista-partidas">
+
+                    {{#partidas}}
+                        <div class="item-partida">
+                            <span class="fecha-partida">{{fecha}}</span>
+                            <span class="resultado-partida {{resultado}}">{{resultado}}</span>
+                            <span class="puntos-partida">{{puntos}}</span>
+                        </div>
+                    {{/partidas}}
+
+                    {{^partidas}}
+                        <div class="alerta alerta-info" style="text-align: center;">
+                            Todavía no jugaste ninguna partida. ¡Animate a la primera!
+                        </div>
+                    {{/partidas}}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 </main>

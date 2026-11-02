@@ -1,0 +1,40 @@
+<main class="pantalla-juego" data-tiempo="{{tiempo_restante}}">
+    <div class="panel-juego">
+        <div class="header-juego">
+            <h1>⚡ TRIVIADOR ⚡</h1>
+            <h2>Tiempo restante: <span id="temporizador">{{tiempo_restante}}</span>s</h2>
+        </div>
+
+        <div class="categoria">
+            <h3>{{categoria}}</h3>
+        </div>
+
+        <div class="pregunta">
+            <h2>{{pregunta}}</h2>
+        </div>
+
+        <div class="respuestas">
+            {{#respuestas}}
+            <form action="{{base_url}}/juego/procesarRespuesta" method="POST" class="form-respuesta">
+                <input type="hidden" name="id_respuesta" value="{{id_respuesta}}">
+                <button type="submit" class="btn-respuesta">{{texto_respuesta}}</button>
+            </form>
+            {{/respuestas}}
+        </div>
+    </div>
+<div id="modal-abandonar" class="modal-overlay modal-oculto">
+    <div class="panel-home modal-caja">
+        <h3>¿Abandonar partida?</h3>
+        <p>Si sales ahora, perderás tu progreso y se registrará como una derrota en tu historial.</p>
+        <div class="acciones-modal">
+            <button id="btn-cancelar-abandono" class="btn-secundario">Volver al juego</button>
+            <button id="btn-confirmar-abandono" class="btn-jugar">Sí, abandonar</button>
+        </div>
+    </div>
+</div>
+</main>
+
+<form id="formTimeout" action="{{base_url}}/juego/tiempoAgotado" method="POST" style="display: none;">
+</form>
+
+<script src="{{base_url}}/public/js/juego.js"></script>

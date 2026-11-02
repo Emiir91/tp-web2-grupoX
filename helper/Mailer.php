@@ -50,8 +50,7 @@ class Mailer
 
             $mail->send();
             return true;
-        } catch (Exception $e) {
-            // Si falla, podemos registrar el error o devolver false
+        } catch (\PHPMailer\PHPMailer\Exception $e) {
             error_log("Error al enviar correo: {$mail->ErrorInfo}");
             return false;
         }

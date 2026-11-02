@@ -19,8 +19,28 @@ class MustacheRender
     public function renderiza($view, $data = [])
     {
         $data['base_url'] = BASE_URL;
-        require_once($this->viewPath . "/header.php");
+        $data['vista'] = $view;
+
+        $data['usuario_logueado'] = isset($_SESSION['usuario_logueado']) && $_SESSION['usuario_logueado'] === true;
+        $data['nombre_usuario'] = $_SESSION['nombre_usuario'] ?? '';
+
+        $data['requiere_mapa'] = $data['requiere_mapa'] ?? false;
+        $data['requiere_perfil'] = $data['requiere_perfil'] ?? false;
+
+        $ocultarLayout = $data['ocultar_layout'] ?? false;
+
+        echo $this->mustache->render('head', $data);
+
+        if (!$ocultarLayout) {
+            echo $this->mustache->render('navbar', $data);
+        }
+
         echo $this->mustache->render($view . "View", $data);
-        require_once($this->viewPath . "/footer.php");
+
+        if (!$ocultarLayout) {
+            echo $this->mustache->render('footer', $data);
+        }
+
+        echo $this->mustache->render('scripts', $data);
     }
 }

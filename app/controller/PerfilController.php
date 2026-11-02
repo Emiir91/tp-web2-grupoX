@@ -26,6 +26,8 @@ class PerfilController
         $datosUsuario = $this->model->buscarUsuario($nombre_usuario);
 
         // Manda los datos a la vista
+        $datosUsuario['requiere_mapa'] = true;
+        $datosUsuario['requiere_perfil'] = true;
         $this->renderer->renderiza('perfil', $datosUsuario);
     }
 }
