@@ -20,7 +20,7 @@
 <header class="barra-superior">
     <div class="barra-logo">
         <a href="<?= BASE_URL ?>/home">
-            <img src="<?= BASE_URL ?>/public/img/logotipo.png" alt="Cortocircuito" class="logo-nav">
+            <img src="<?= BASE_URL ?>/public/img/logotipox.png" alt="Cortocircuito" class="logo-nav">
         </a>
     </div>
 

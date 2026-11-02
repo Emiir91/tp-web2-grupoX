@@ -31,7 +31,8 @@ class Configuration
 
         // 2. Definimos una constante global para usarla en cualquier lado
         if (!defined('BASE_URL')) {
-            define('BASE_URL', $this->config['base_url'] ?? '');
+            define('BASE_URL', 'http://localhost/tp-web2-grupoX/');
+
         }
     }
 

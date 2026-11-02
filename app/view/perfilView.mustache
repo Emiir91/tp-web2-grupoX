@@ -50,11 +50,19 @@
                     <label>Tu Ubicación de Registro</label>
                     <div id="mapa-perfil" class="mapa-contenedor" data-pais="{{pais}}" data-ciudad="{{ciudad}}"></div>
                 </div>
-            </div>
+           <!-- Código QR Público -->
+                           <div class="grupo-input seccion-qr" style="text-align: center; margin-top: 20px;">
+                               <label>Tu Código QR Público</label>
+                               <div class="dato-valor" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px;">
+                                   <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=<?= BASE_URL ?>perfil/publico?usuario={{nombre_usuario}}" alt="Código QR del Perfil" style="background: white; padding: 8px; border-radius: 8px;">
+                                   <p style="font-size: 0.8rem; color: #aaa; margin-top: 8px;">Escaneá para ver tu perfil en modo lectura.</p>
+                               </div>
+                           </div>
+                       </div>
 
-        </div>
+                   </div>
 
-    </div>
-</main>
+               </div>
+           </main>
 
-<script src="<?= BASE_URL ?>/public/js/perfil.js"></script>
+           <script src="<?= BASE_URL ?>/public/js/perfil.js"></script>
