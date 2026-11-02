@@ -13,6 +13,7 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    min-height: 100vh;
 }
 
 .pantalla-home {
@@ -21,16 +22,16 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 100dvh;
-    padding: 40px 20px;
+    padding: 20px 15px; /* Reducido para aprovechar mejor el ancho en celulares */
     position: relative;
 }
 
 .panel-home {
-    background: rgba(15, 8, 25, 0.85);
+    background: rgba(15, 8, 25, 0.88);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 120, 0, 0.3);
     border-radius: 20px;
-    padding: 30px 20px;
+    padding: 25px 15px; /* Más compacto en mobile */
     width: 100%;
     max-width: 500px;
     z-index: 2;
@@ -42,9 +43,9 @@ body {
 .home-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 25px;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .info-jugador {
@@ -52,10 +53,11 @@ body {
 }
 
 .saludo-home {
-    font-size: 1.5rem;
+    font-size: 1.25rem; /* Reducido para celulares */
     color: #d1c4e9;
     font-weight: normal;
     text-align: center;
+    word-break: break-word; /* Evita que nombres largos rompan el diseño */
 }
 
 .saludo-home span {
@@ -68,15 +70,15 @@ body {
     background: rgba(0, 0, 0, 0.6);
     border: 1px solid rgba(255, 106, 0, 0.5);
     border-radius: 12px;
-    padding: 15px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .etiqueta-puntaje {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #ffc000;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -84,7 +86,7 @@ body {
 }
 
 .valor-puntaje {
-    font-size: 2.5rem;
+    font-size: 2.2rem; /* Adaptado para pantallas chicas */
     font-weight: 800;
     color: #ffffff;
     text-shadow: 0 0 15px rgba(255, 106, 0, 0.8);
@@ -93,7 +95,7 @@ body {
 .acciones-home {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 
 .btn-jugar,
@@ -102,9 +104,9 @@ body {
     width: 100%;
     text-align: center;
     text-decoration: none;
-    padding: 15px;
+    padding: 14px;
     border-radius: 35px;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 800;
     transition: all 0.2s ease;
 }
@@ -113,12 +115,12 @@ body {
     background: linear-gradient(180deg, #ff6a00 0%, #cc1c00 100%);
     color: #ffffff;
     border: 2px solid #ffc000;
-    box-shadow: 0 6px 0 #7a0b00, 0 10px 15px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 5px 0 #7a0b00, 0 8px 12px rgba(0, 0, 0, 0.6);
 }
 
 .btn-jugar:active {
-    transform: translateY(6px);
-    box-shadow: 0 0px 0 #7a0b00, 0 4px 5px rgba(0, 0, 0, 0.6);
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 #7a0b00, 0 3px 4px rgba(0, 0, 0, 0.6);
 }
 
 .btn-secundario {
@@ -127,32 +129,33 @@ body {
     border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-.btn-secundario:hover {
+.btn-secundario:hover,
+.btn-secundario:active {
     background: rgba(255, 255, 255, 0.1);
     border-color: #ffffff;
 }
 
 .seccion-historial h3 {
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #d1c4e9;
     font-weight: 600;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     text-transform: uppercase;
     letter-spacing: 1px;
     text-align: center;
 }
 
 .lista-partidas {
-    max-height: 220px;
+    max-height: 200px;
     overflow-y: auto;
-    padding-right: 10px;
+    padding-right: 5px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .lista-partidas::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
 }
 
 .lista-partidas::-webkit-scrollbar-track {
@@ -165,10 +168,6 @@ body {
     border-radius: 4px;
 }
 
-.lista-partidas::-webkit-scrollbar-thumb:hover {
-    background: #e68a00;
-}
-
 .item-partida {
     display: flex;
     justify-content: space-between;
@@ -176,22 +175,24 @@ body {
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
-    padding: 15px;
+    padding: 10px 12px; /* Más compacto para mobile */
     width: 100%;
+    font-size: 0.85rem; /* Ajustado para que quepa bien en celulares */
 }
 
 .fecha-partida {
-    color: #999;
-    font-size: 0.8rem;
-    width: 30%;
+    color: #aaa;
+    font-size: 0.75rem;
+    width: 32%;
     text-align: left;
 }
 
 .resultado-partida {
     font-weight: bold;
     text-transform: uppercase;
-    width: 40%;
+    width: 38%;
     text-align: center;
+    font-size: 0.8rem;
 }
 
 .puntos-partida {
@@ -212,9 +213,9 @@ body {
 }
 
 .alerta {
-    padding: 12px;
+    padding: 10px;
     border-radius: 8px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
 }
 
@@ -224,7 +225,14 @@ body {
     color: #80d4ff;
 }
 
+/* ------------------------------------------------ */
+/* ESTILOS PARA COMPUTADORAS Y PANTALLAS GRANDES    */
+/* ------------------------------------------------ */
 @media (min-width: 992px) {
+    .pantalla-home {
+        padding: 40px 20px;
+    }
+
     .panel-home {
         max-width: 1400px;
         width: 90%;
@@ -269,14 +277,19 @@ body {
         font-size: 1.2rem;
         padding: 18px;
     }
-    
+
     .lista-partidas {
-        max-height: 350px; 
+        max-height: 350px;
     }
 
     .item-partida {
         padding: 20px 30px;
         font-size: 1.2rem;
         margin-bottom: 5px;
+    }
+
+    .fecha-partida, .resultado-partida, .puntos-partida {
+        font-size: inherit;
+        width: auto;
     }
 }
