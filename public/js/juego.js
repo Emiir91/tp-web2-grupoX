@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (tiempoRestante <= 0) {
             clearInterval(intervalo);
+            salidaLegitima = true;
             formTimeout.submit();
         }
     }, 1000);
