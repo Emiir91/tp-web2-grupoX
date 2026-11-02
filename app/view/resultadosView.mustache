@@ -1,0 +1,33 @@
+<main class="pantalla-resultados">
+    <div class="panel-resultados">
+        <div class="header-resultados">
+            <h1>Resultados de la Partida</h1>
+        </div>
+
+        <div class="mensaje-final">
+            <h2>{{mensaje}}</h2>
+        </div>
+
+        <div class="estadisticas">
+            <div class="estadistica">
+                <h3>Puntaje Final</h3>
+                <p class="valor">{{puntaje}}</p>
+            </div>
+
+            <div class="estadistica">
+                <h3>Racha Máxima</h3>
+                <p class="valor">{{racha}}</p>
+            </div>
+
+            <div class="estadistica">
+                <h3>Estado</h3>
+                <p class="valor">{{estado}}</p>
+            </div>
+        </div>
+
+        <div class="acciones">
+            <a href="{{base_url}}/juego/iniciar" class="btn-jugar">⚡ NUEVA PARTIDA ⚡</a>
+            <a href="{{base_url}}/home/index" class="btn-secundario">Volver al Inicio</a>
+        </div>
+    </div>
+</main>

@@ -24,3 +24,34 @@ CREATE TABLE usuarios (
                           token_validacion VARCHAR(100) NULL,
                           FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
 );
+
+CREATE TABLE pregunta (
+    id_pregunta INT AUTO_INCREMENT PRIMARY KEY,
+    texto_pregunta VARCHAR(500) NOT NULL,
+    categoria VARCHAR(100) NOT NULL,
+    activa TINYINT(1) DEFAULT 1
+);
+
+CREATE TABLE respuesta (
+    id_respuesta INT AUTO_INCREMENT PRIMARY KEY,
+    id_pregunta INT NOT NULL,
+    texto_respuesta VARCHAR(300) NOT NULL,
+    es_correcta TINYINT(1) NOT NULL,
+    FOREIGN KEY (id_pregunta) REFERENCES pregunta(id_pregunta)
+);
+
+CREATE TABLE partida (
+    id_partida INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    puntaje INT DEFAULT 0,
+    racha INT DEFAULT 0,
+    estado VARCHAR(20) DEFAULT 'en_curso',
+    fecha_inicio DATETIME NOT NULL,
+    ultima_pregunta_id INT NULL,
+    tiempo_inicio_pregunta DATETIME NULL,
+    fecha_fin DATETIME NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+    FOREIGN KEY (ultima_pregunta_id) REFERENCES pregunta(id_pregunta)
+);
+
+ALTER TABLE partida ADD COLUMN preguntas_usadas TEXT NULL;

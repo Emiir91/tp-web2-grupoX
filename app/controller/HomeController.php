@@ -12,7 +12,31 @@ class HomeController
 
     public function index()
     {
-        // Usá render() o renderiza() según cómo esté en tu clase MustacheRender
-        $this->renderer->renderiza("home");
+        if (!isset($_SESSION['usuario_logueado']) || $_SESSION['usuario_logueado'] !== true) {
+            $datosParaVista = [
+                'usuario_logueado' => false
+            ];
+            $this->renderer->renderiza("home", $datosParaVista);
+            return;
+        }
+
+        $nombreUsuario = $_SESSION['nombre_usuario'];
+
+        $puntajeSimulado = 1250;
+
+        $historialSimulado = [
+            ['fecha' => '26/10/2026', 'resultado' => 'Victoria', 'puntos' => '+50'],
+            ['fecha' => '25/10/2026', 'resultado' => 'Derrota',  'puntos' => '-10'],
+            ['fecha' => '20/10/2026', 'resultado' => 'Victoria', 'puntos' => '+40']
+        ];
+
+        $datosParaVista = [
+            'usuario_logueado' => true,
+            'nombre_usuario' => $nombreUsuario,
+            'puntaje_total' => $puntajeSimulado,
+            'partidas' => $historialSimulado
+        ];
+
+        $this->renderer->renderiza("home", $datosParaVista);
     }
 }

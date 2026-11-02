@@ -2,6 +2,8 @@
 
 namespace app\model;
 
+use Exception;
+
 class UsuarioModel
 {
 

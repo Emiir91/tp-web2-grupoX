@@ -7,6 +7,13 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #0a0510;
+
+    /* Agregamos el filtro oscuro y la imagen juntos en el body para que cubran el 100% de la pantalla */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../img/fondo-plasma.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 /* ── FONDO PLASMA ── */
@@ -17,20 +24,10 @@ body {
     justify-content: center;
     min-height: 100dvh;
     padding: 20px;
-    background-image: url('../img/fondo-plasma.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     position: relative;
+    /* Se borraron el background-image y el ::before porque ahora están en el body */
 }
 
-.pantalla-login::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.5); /* Capa oscura general */
-    z-index: 1;
-}
 
 /* ── PANEL DE FORMULARIO (Glassmorphism) ── */
 .panel-login {

@@ -6,9 +6,8 @@ class RegistroController
 {
     private $usuarioModel;
     private $renderer;
-    private $mailer; // 1. Declaramos la propiedad para el Mailer
+    private $mailer;
 
-    // 2. Recibimos el Mailer como tercer parámetro
     public function __construct($usuarioModel, $renderer, $mailer)
     {
         $this->usuarioModel = $usuarioModel;
@@ -18,7 +17,8 @@ class RegistroController
 
     public function index()
     {
-        echo $this->renderer->renderiza('registro');
+        $datosParaVista = ['requiere_mapa' => true, 'ocultar_layout' => true];
+        echo $this->renderer->renderiza('registro', $datosParaVista);
     }
 
     public function procesarRegistro()
@@ -46,7 +46,9 @@ class RegistroController
                     'pais' => $pais,
                     'ciudad' => $ciudad,
                     'mail' => $mail,
-                    'nombre_usuario' => $nombreUsuario
+                    'nombre_usuario' => $nombreUsuario,
+                    'requiere_mapa' => true,
+                    'ocultar_layout' => true
                 ];
                 echo $this->renderer->renderiza('registro', $datosParaVista);
                 return;
@@ -87,11 +89,9 @@ class RegistroController
             $registroExitoso = $this->usuarioModel->registrarUsuario($datosUsuario);
 
             if ($registroExitoso) {
-                // Armamos la URL dinámica, validando si usa HTTP o HTTPS
                 $protocolo = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
                 $host = $_SERVER['HTTP_HOST'];
 
-                // Usamos la constante BASE_URL en lugar de adivinar rutas
                 $enlaceActivacion = $protocolo . "://" . $host . BASE_URL . "/registro/activarCuenta?token=" . $tokenValidacion;
 
                 $asunto = "Activa tu cuenta en el Juego de Preguntas";
@@ -99,13 +99,10 @@ class RegistroController
                 $mensaje .= "<p>Gracias por registrarte. Para activar tu cuenta y empezar a jugar, hacé clic en el siguiente enlace:</p>";
                 $mensaje .= "<a href='" . $enlaceActivacion . "'>Haz clic aquí para activar tu cuenta</a>";
 
-                // 3. Usamos nuestro Helper en lugar del mail() nativo
                 $this->mailer->enviarCorreo($mail, $asunto, $mensaje);
 
                 header("Location: " . BASE_URL . "/login/index?mensaje=revisar_mail");
                 exit();
-            } else {
-                // Acá podrías enviar a una vista de error si el mail ya está registrado
             }
         }
     }
@@ -118,7 +115,6 @@ class RegistroController
             $cuentaActivada = $this->usuarioModel->activarUsuario($token);
 
             if ($cuentaActivada) {
-                // 4. Limpiamos la ruta hardcodeada y usamos la URL amigable
                 header("Location: " . BASE_URL . "/login/index?mensaje=cuenta_activada");
                 exit();
             }

@@ -1,0 +1,129 @@
+.barra-superior {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: transparent;
+    backdrop-filter: blur(3px);
+    /* Hacemos la línea de 3px de grosor y le subimos un poco la opacidad al color naranja */
+    border-bottom: 3px solid rgba(255, 165, 0, 0.6);
+
+    /* Le agregamos un resplandor (glow) hacia abajo para seguir la estética de plasma */
+    box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
+
+    position: sticky; /* Vuelve a empujar el contenido hacia abajo correctamente */
+    top: 0;
+    z-index: 1000;
+}
+
+.logo-nav {
+    max-height: 70px; /* Aumentamos el tamaño (antes estaba en 40px) */
+    width: auto;
+    transition: max-height 0.3s ease;
+}
+
+.barra-opciones {
+    display: flex;
+    align-items: center;
+}
+
+/* --- USUARIO INVITADO (Botón Iniciar Sesión) --- */
+.btn-iniciar-sesion {
+    background: linear-gradient(90deg, #ff4500, #ff8c00);
+    color: white;
+    text-decoration: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-iniciar-sesion:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 140, 0, 0.6);
+}
+
+/* --- USUARIO LOGUEADO (Menú Perfil) --- */
+.menu-perfil-contenedor {
+    position: relative;
+}
+
+.btn-icono-perfil {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.btn-icono-perfil:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #ff8c00;
+}
+
+/* Menú desplegable oculto por defecto */
+.dropdown-oculto {
+    display: none;
+    position: absolute;
+    top: 120%;
+    right: 0;
+    background: rgba(20, 20, 25, 0.95);
+    border: 1px solid rgba(255, 165, 0, 0.5);
+    border-radius: 10px;
+    min-width: 150px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+    overflow: hidden;
+    flex-direction: column;
+}
+
+/* La clase que agrega JavaScript para mostrarlo */
+.dropdown-oculto.mostrar {
+    display: flex;
+}
+
+.dropdown-oculto a {
+    color: white;
+    text-decoration: none;
+    padding: 12px 20px;
+    text-align: center;
+    transition: background 0.2s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-oculto a:last-child {
+    border-bottom: none;
+}
+
+.dropdown-oculto a:hover {
+    background: rgba(255, 140, 0, 0.2);
+}
+
+.dropdown-oculto .cerrar-sesion:hover {
+    background: rgba(255, 0, 0, 0.3);
+    color: #ff6b6b;
+}
+
+/* --- ADAPTACIÓN A CELULARES (RESPONSIVE) --- */
+@media (max-width: 768px) {
+    .barra-superior {
+        padding: 10px 15px; /* Achicamos los márgenes laterales */
+    }
+
+    .logo-nav {
+        max-height: 45px; /* En celular también lo hacemos un poco más grande */
+    }
+
+    .btn-icono-perfil {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+
+    .btn-iniciar-sesion {
+        font-size: 14px;
+        padding: 6px 15px;
+    }
+}

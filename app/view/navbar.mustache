@@ -1,0 +1,26 @@
+<header class="barra-superior">
+    <div class="barra-logo">
+        <a href="{{base_url}}/home">
+            <img src="{{base_url}}/public/img/logotipo.png" alt="Cortocircuito" class="logo-nav">
+        </a>
+    </div>
+
+    <div class="barra-opciones">
+        {{#usuario_logueado}}
+        <div class="menu-perfil-contenedor">
+            <button id="btn-perfil" class="btn-icono-perfil">
+                👤 {{nombre_usuario}} ▼
+            </button>
+
+            <div id="menu-desplegable" class="dropdown-oculto">
+                <a href="{{base_url}}/perfil">Mi Perfil</a>
+                <a href="{{base_url}}/login/logout" class="cerrar-sesion">Cerrar Sesión</a>
+            </div>
+        </div>
+        {{/usuario_logueado}}
+
+        {{^usuario_logueado}}
+        <a href="{{base_url}}/login" class="btn-iniciar-sesion">Iniciar Sesión</a>
+        {{/usuario_logueado}}
+    </div>
+</header>

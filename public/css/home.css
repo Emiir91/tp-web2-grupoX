@@ -8,68 +8,111 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #0a0510;
     color: #ffffff;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../img/fondo-plasma.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
-/* ── DISEÑO BASE (CELULARES) ── */
-.pantalla-inicio {
+.pantalla-home {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /* Usamos 100dvh (Dynamic Viewport Height) para que no lo tape la barra de navegación en iOS/Android */
     min-height: 100dvh;
-    padding: 20px;
-    text-align: center;
-    background-image: url('../img/fondo-plasma.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    padding: 40px 20px;
     position: relative;
 }
 
-.pantalla-inicio::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 1;
-}
-
-.pantalla-inicio > * {
+.panel-home {
+    background: rgba(15, 8, 25, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 120, 0, 0.3);
+    border-radius: 20px;
+    padding: 30px 20px;
+    width: 100%;
+    max-width: 500px;
     z-index: 2;
     position: relative;
-}
-
-.logo-principal {
-    width: 90%; /* Ocupa casi todo el ancho del celular */
-    max-width: 320px; /* Límite para que no se pase en celulares grandes */
-    margin-bottom: 20px;
-    filter: drop-shadow(0 0 10px rgba(255, 120, 0, 0.5));
-    animation: flotar 3s ease-in-out infinite;
-}
-
-.texto-intro {
-    font-size: 1rem; /* Tamaño de lectura ideal para celular */
-    line-height: 1.4;
-    margin-bottom: 30px;
-    width: 90%;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
     color: #ffffff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+}
+
+.home-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.info-jugador {
+    text-align: center;
+}
+
+.saludo-home {
+    font-size: 1.5rem;
+    color: #d1c4e9;
+    font-weight: normal;
+    text-align: center;
+}
+
+.saludo-home span {
+    color: #ffc000;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.caja-puntaje {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 106, 0, 0.5);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.etiqueta-puntaje {
+    font-size: 0.85rem;
+    color: #ffc000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.valor-puntaje {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(255, 106, 0, 0.8);
+}
+
+.acciones-home {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn-jugar, .btn-secundario {
+    display: block;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    padding: 15px;
+    border-radius: 35px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    transition: all 0.2s ease;
 }
 
 .btn-jugar {
-    display: inline-block;
     background: linear-gradient(180deg, #ff6a00 0%, #cc1c00 100%);
     color: #ffffff;
-    text-decoration: none;
-    font-weight: 800;
-    font-size: 1.1rem; /* Botón amigable para el dedo (Touch target) */
-    text-transform: uppercase;
-    padding: 14px 35px;
-    border-radius: 35px;
     border: 2px solid #ffc000;
     box-shadow: 0 6px 0 #7a0b00, 0 10px 15px rgba(0, 0, 0, 0.6);
-    transition: all 0.1s ease;
 }
 
 .btn-jugar:active {
@@ -77,27 +120,102 @@ body {
     box-shadow: 0 0px 0 #7a0b00, 0 4px 5px rgba(0, 0, 0, 0.6);
 }
 
-@keyframes flotar {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-8px); }
-    100% { transform: translateY(0px); }
+.btn-secundario {
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-/* ── ADAPTACIÓN A PANTALLAS GRANDES (TABLETS Y PC) ── */
-@media (min-width: 768px) {
-    .logo-principal {
-        max-width: 450px;
-        margin-bottom: 30px;
+.btn-secundario:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff;
+}
+
+.seccion-historial h3 {
+    font-size: 1rem;
+    color: #d1c4e9;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.lista-partidas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.item-partida {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    padding: 12px 15px;
+    border-left: 4px solid #ff6a00;
+    font-size: 0.9rem;
+}
+
+.fecha-partida { color: #999; font-size: 0.8rem; width: 30%; text-align: left; }
+.resultado-partida { font-weight: bold; text-transform: uppercase; width: 40%; text-align: center; }
+.puntos-partida { font-weight: bold; color: #fff; width: 30%; text-align: right; }
+
+.Victoria { color: #00cc00; text-shadow: 0 0 5px rgba(0, 204, 0, 0.5); }
+.Derrota { color: #ff4d4d; text-shadow: 0 0 5px rgba(255, 77, 77, 0.5); }
+
+.alerta { padding: 12px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; }
+.alerta-info { background: rgba(0, 150, 255, 0.2); border: 1px solid #0096ff; color: #80d4ff; }
+
+@media (min-width: 992px) {
+    .panel-home {
+        max-width: 1400px;
+        width: 90%;
+        min-height: 70vh;
+        padding: 50px 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
-    .texto-intro {
-        font-size: 1.2rem;
-        max-width: 500px;
+    .saludo-home {
+        font-size: 2.2rem;
         margin-bottom: 40px;
     }
 
+    .home-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: start;
+    }
+
+    .info-jugador, .seccion-historial h3 {
+        text-align: left;
+    }
+
+    .seccion-historial h3 {
+        font-size: 1.5rem;
+        margin-bottom: 25px;
+    }
+
+    .valor-puntaje {
+        font-size: 4rem;
+    }
+
     .btn-jugar {
-        font-size: 1.3rem;
-        padding: 16px 45px;
+        font-size: 1.4rem;
+        padding: 20px;
+    }
+
+    .btn-secundario {
+        font-size: 1.2rem;
+        padding: 18px;
+    }
+
+    .item-partida {
+        padding: 20px 30px;
+        font-size: 1.2rem;
+        margin-bottom: 15px;
     }
 }

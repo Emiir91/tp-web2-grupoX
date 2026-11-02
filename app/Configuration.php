@@ -7,8 +7,10 @@ use app\controller\EquipoController;
 use app\controller\RegistroController;
 use app\controller\LoginController;
 use app\controller\HomeController;
-use app\controller\LobbyController;
+use app\controller\JuegoController;
+use app\controller\PerfilController;
 use app\model\UsuarioModel;
+use app\model\PartidaModel;
 
 use MustacheRender;
 use MyDatabase;
@@ -18,31 +20,18 @@ use Request;
 
 require_once("helper/Autoloader.php");
 
-
-
 class Configuration
 {
-    private $config;
+    private array $config;
     public function __construct()
     {
-        // 1. Leemos el archivo UNA sola vez para toda la aplicación
         $this->config = parse_ini_file(__DIR__ . "/../config/config.ini");
 
-        // 2. Definimos una constante global para usarla en cualquier lado
         if (!defined('BASE_URL')) {
             define('BASE_URL', $this->config['base_url'] ?? '');
         }
     }
 
-    // Instanciamos nuestro nuevo controlador y le pasamos el motor de vistas (Mustache)
-    public function getEquipoController()
-    {
-        return new EquipoController(
-            $this->getRender()
-        );
-    }
-
-    // instanciamos el controller de registro
     public function getRegistroController(){
         return new RegistroController(
             $this->getUsuarioModel(),
@@ -53,7 +42,7 @@ class Configuration
 
     public function getLoginController(){
         return new LoginController(
-            $this->getUsuarioModel(), // <-- Tenés que sumarle esta línea
+            $this->getUsuarioModel(),
             $this->getRender()
         );
     }
@@ -64,14 +53,21 @@ class Configuration
         );
     }
 
-    public function getLobbyController(){
-        return new LobbyController(
+    public function getJuegoController()
+    {
+        return new JuegoController(
+            $this->getPartidaModel(),
             $this->getRender()
         );
     }
 
-
-   //los privados
+    public function getPerfilController()
+    {
+        return new PerfilController(
+            $this->getUsuarioModel(),
+            $this->getRender()
+        );
+    }
 
     private function getDatabase()
     {
@@ -94,12 +90,17 @@ class Configuration
         );
     }
 
-    private function getMailer()
-    {
-        require_once("helper/Mailer.php"); // Lo requerimos para asegurar que lo encuentre
-        return new \Mailer($this->config);
+    private function getPartidaModel(){
+        return new PartidaModel(
+            $this->getDatabase()
+        );
     }
 
+    private function getMailer()
+    {
+        require_once("helper/Mailer.php");
+        return new \Mailer($this->config);
+    }
 
     public function getRouter()
     {
