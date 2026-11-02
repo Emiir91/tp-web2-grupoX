@@ -44,11 +44,22 @@
                 </div>
             </div>
 
-            <!-- Columna Derecha: El Mapa bien distribuido -->
+            <!-- Columna Derecha: El Mapa y el Código QR -->
             <div class="columna-mapa">
                 <div class="grupo-input full-width-mapa">
                     <label>Tu Ubicación de Registro</label>
                     <div id="mapa-perfil" class="mapa-contenedor" data-pais="{{pais}}" data-ciudad="{{ciudad}}"></div>
+                </div>
+
+                <!-- Bloque del Código QR integrado -->
+                <div class="grupo-input full-width-qr mt-3 text-center">
+                    <label>Código QR de tu Perfil</label>
+                    <div class="qr-contenedor p-2 rounded d-flex justify-content-center align-items-center">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{base_url}}/usuario/perfil?id={{id_usuario}}"
+                             alt="Código QR del perfil"
+                             class="img-fluid rounded shadow-sm"
+                             style="background: white; padding: 8px; border-radius: 8px;">
+                    </div>
                 </div>
             </div>
 
