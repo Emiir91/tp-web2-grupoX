@@ -11,6 +11,10 @@ class JuegoController
     {
         $this->partidaModel = $partidaModel;
         $this->renderer = $renderer;
+
+        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+        header("Cache-Control: post-check=0, pre-check=0", false);
+        header("Pragma: no-cache");
     }
 
     public function iniciar()
@@ -155,6 +159,23 @@ class JuegoController
         
         $this->limpiarSesionPregunta();
         $this->partidaModel->finalizarPartida($id_partida, 'tiempo_agotado');
+
+        header("Location: " . BASE_URL . "/juego/resultados");
+        exit();
+    }
+
+    public function abandonar()
+    {
+        if (!isset($_SESSION['id_partida'])) {
+            header("Location: " . BASE_URL . "/home/index");
+            exit();
+        }
+
+        $id_partida = $_SESSION['id_partida'];
+       
+        $this->limpiarSesionPregunta();
+      
+        $this->partidaModel->finalizarPartida($id_partida, 'abandonada');
 
         header("Location: " . BASE_URL . "/juego/resultados");
         exit();

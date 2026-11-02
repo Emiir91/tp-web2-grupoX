@@ -120,6 +120,102 @@
     box-shadow: 0 0px 0 #7a0b00, 0 4px 5px rgba(0, 0, 0, 0.6);
 }
 
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-oculto {
+    display: none;
+}
+
+.modal-caja {
+    background: rgba(15, 8, 25, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 120, 0, 0.3);
+    border-radius: 20px;
+    padding: 30px 20px;
+    width: 100%;
+    max-width: 400px;
+    color: #ffffff;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+}
+
+.modal-caja h3 {
+    font-size: 1.5rem;
+    color: #ffc000;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.modal-caja p {
+    font-size: 1rem;
+    color: #ffffff;
+    line-height: 1.5;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.acciones-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn-jugar, .btn-secundario {
+    display: block;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    padding: 15px;
+    border-radius: 35px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-jugar {
+    background: linear-gradient(180deg, #ff6a00 0%, #cc1c00 100%);
+    color: #ffffff;
+    border: 2px solid #ffc000;
+    box-shadow: 0 6px 0 #7a0b00, 0 10px 15px rgba(0, 0, 0, 0.6);
+}
+
+.btn-jugar:hover {
+    background: linear-gradient(180deg, #ff8533 0%, #e62600 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 0 #7a0b00, 0 12px 20px rgba(0, 0, 0, 0.7);
+}
+
+.btn-jugar:active {
+    transform: translateY(6px);
+    box-shadow: 0 0px 0 #7a0b00, 0 4px 5px rgba(0, 0, 0, 0.6);
+}
+
+.btn-secundario {
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secundario:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff;
+}
+
 @media (min-width: 768px) {
     .panel-juego {
         max-width: 800px;
@@ -145,5 +241,9 @@
     .btn-respuesta {
         font-size: 1.2rem;
         padding: 20px 25px;
+    }
+
+    .acciones-modal {
+        flex-direction: row;
     }
 }

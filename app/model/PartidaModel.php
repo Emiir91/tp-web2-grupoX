@@ -202,4 +202,37 @@ class PartidaModel
         $resultado = $this->database->queryOne($sql, [$id_partida]);
         return $resultado ?: false;
     }
+
+    public function obtenerHistorialUsuario($id_usuario)
+    {
+        $sql = "SELECT puntaje as puntos, fecha_fin as fecha, estado
+                FROM partida
+                WHERE id_usuario = ? AND estado != 'en_curso'
+                ORDER BY fecha_fin DESC
+                LIMIT 10"; 
+
+        $partidas = $this->database->queryAll($sql, [$id_usuario]);
+
+        if ($partidas) {
+            foreach ($partidas as &$partida) {
+                
+                $partida['fecha'] = $partida['fecha'] ? date('d/m/Y H:i', strtotime($partida['fecha'])) : 'Desconocida';
+
+                if ($partida['puntos'] >= 50) {
+                    $partida['resultado'] = 'victoria';
+                } else {
+                    $partida['resultado'] = 'derrota';
+                }
+            }
+        }
+
+        return $partidas ?: [];
+    }
+
+    public function obtenerPuntajeTotalUsuario($id_usuario)
+    {
+        $sql = "SELECT SUM(puntaje) as total FROM partida WHERE id_usuario = ? AND estado != 'en_curso'";
+        $resultado = $this->database->queryOne($sql, [$id_usuario]);
+        return $resultado ? ($resultado['total'] ?? 0) : 0;
+    }
 }

@@ -96,7 +96,8 @@ body {
     gap: 15px;
 }
 
-.btn-jugar, .btn-secundario {
+.btn-jugar,
+.btn-secundario {
     display: block;
     width: 100%;
     text-align: center;
@@ -142,31 +143,86 @@ body {
 }
 
 .lista-partidas {
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 10px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.lista-partidas::-webkit-scrollbar {
+    width: 6px;
+}
+
+.lista-partidas::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.lista-partidas::-webkit-scrollbar-thumb {
+    background: #ff9800;
+    border-radius: 4px;
+}
+
+.lista-partidas::-webkit-scrollbar-thumb:hover {
+    background: #e68a00;
 }
 
 .item-partida {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
-    padding: 12px 15px;
-    border-left: 4px solid #ff6a00;
-    font-size: 0.9rem;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    width: 100%;
 }
 
-.fecha-partida { color: #999; font-size: 0.8rem; width: 30%; text-align: left; }
-.resultado-partida { font-weight: bold; text-transform: uppercase; width: 40%; text-align: center; }
-.puntos-partida { font-weight: bold; color: #fff; width: 30%; text-align: right; }
+.fecha-partida {
+    color: #999;
+    font-size: 0.8rem;
+    width: 30%;
+    text-align: left;
+}
 
-.Victoria { color: #00cc00; text-shadow: 0 0 5px rgba(0, 204, 0, 0.5); }
-.Derrota { color: #ff4d4d; text-shadow: 0 0 5px rgba(255, 77, 77, 0.5); }
+.resultado-partida {
+    font-weight: bold;
+    text-transform: uppercase;
+    width: 40%;
+    text-align: center;
+}
 
-.alerta { padding: 12px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; }
-.alerta-info { background: rgba(0, 150, 255, 0.2); border: 1px solid #0096ff; color: #80d4ff; }
+.puntos-partida {
+    font-weight: bold;
+    color: #fff;
+    width: 30%;
+    text-align: right;
+}
+
+.victoria {
+    color: #4caf50;
+    text-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+}
+
+.derrota {
+    color: #f44336;
+    text-shadow: 0 0 5px rgba(244, 67, 54, 0.4);
+}
+
+.alerta {
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.alerta-info {
+    background: rgba(0, 150, 255, 0.2);
+    border: 1px solid #0096ff;
+    color: #80d4ff;
+}
 
 @media (min-width: 992px) {
     .panel-home {
@@ -190,7 +246,8 @@ body {
         align-items: start;
     }
 
-    .info-jugador, .seccion-historial h3 {
+    .info-jugador,
+    .seccion-historial h3 {
         text-align: left;
     }
 
@@ -212,10 +269,14 @@ body {
         font-size: 1.2rem;
         padding: 18px;
     }
+    
+    .lista-partidas {
+        max-height: 350px; 
+    }
 
     .item-partida {
         padding: 20px 30px;
         font-size: 1.2rem;
-        margin-bottom: 15px;
+        margin-bottom: 5px;
     }
 }

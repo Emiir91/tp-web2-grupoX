@@ -1,42 +1,29 @@
 <?php
+
 namespace app\controller;
 
 class HomeController
 {
     private $renderer;
+    private $partidaModel;
 
-    public function __construct($renderer)
+    public function __construct($renderer, $partidaModel = null)
     {
         $this->renderer = $renderer;
+        $this->partidaModel = $partidaModel;
     }
 
     public function index()
     {
-        if (!isset($_SESSION['usuario_logueado']) || $_SESSION['usuario_logueado'] !== true) {
-            $datosParaVista = [
-                'usuario_logueado' => false
-            ];
-            $this->renderer->renderiza("home", $datosParaVista);
-            return;
+        $datosParaVista = [];
+
+        if (isset($_SESSION['usuario_logueado']) && $_SESSION['usuario_logueado'] === true) {
+            $id_usuario = $_SESSION['id_usuario'];
+            
+            $datosParaVista['partidas'] = $this->partidaModel->obtenerHistorialUsuario($id_usuario);
+            $datosParaVista['puntaje_total'] = $this->partidaModel->obtenerPuntajeTotalUsuario($id_usuario);
         }
 
-        $nombreUsuario = $_SESSION['nombre_usuario'];
-
-        $puntajeSimulado = 1250;
-
-        $historialSimulado = [
-            ['fecha' => '26/10/2026', 'resultado' => 'Victoria', 'puntos' => '+50'],
-            ['fecha' => '25/10/2026', 'resultado' => 'Derrota',  'puntos' => '-10'],
-            ['fecha' => '20/10/2026', 'resultado' => 'Victoria', 'puntos' => '+40']
-        ];
-
-        $datosParaVista = [
-            'usuario_logueado' => true,
-            'nombre_usuario' => $nombreUsuario,
-            'puntaje_total' => $puntajeSimulado,
-            'partidas' => $historialSimulado
-        ];
-
-        $this->renderer->renderiza("home", $datosParaVista);
+        $this->renderer->renderiza('home', $datosParaVista);
     }
 }

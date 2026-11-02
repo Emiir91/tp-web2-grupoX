@@ -31,3 +31,11 @@
         </div>
     </div>
 </main>
+
+<script>
+    history.pushState(null, null, location.href);
+
+    window.addEventListener('popstate', function (event) {
+        window.location.replace('{{base_url}}/home/index');
+    });
+</script>

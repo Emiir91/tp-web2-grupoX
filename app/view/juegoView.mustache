@@ -22,6 +22,16 @@
             {{/respuestas}}
         </div>
     </div>
+<div id="modal-abandonar" class="modal-overlay modal-oculto">
+    <div class="panel-home modal-caja">
+        <h3>¿Abandonar partida?</h3>
+        <p>Si sales ahora, perderás tu progreso y se registrará como una derrota en tu historial.</p>
+        <div class="acciones-modal">
+            <button id="btn-cancelar-abandono" class="btn-secundario">Volver al juego</button>
+            <button id="btn-confirmar-abandono" class="btn-jugar">Sí, abandonar</button>
+        </div>
+    </div>
+</div>
 </main>
 
 <form id="formTimeout" action="{{base_url}}/juego/tiempoAgotado" method="POST" style="display: none;">

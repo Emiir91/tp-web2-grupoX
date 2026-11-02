@@ -47,9 +47,11 @@ class Configuration
         );
     }
 
-    public function getHomeController(){
+    public function getHomeController()
+    {
         return new HomeController(
             $this->getRender(),
+            $this->getPartidaModel() 
         );
     }
 
