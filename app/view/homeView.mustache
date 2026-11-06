@@ -11,7 +11,21 @@
                 </div>
 
                 <div class="acciones-home">
-                    <a href="{{base_url}}/juego/iniciar" class="btn-jugar">⚡ NUEVA PARTIDA ⚡</a>
+                    <form action="{{base_url}}/juego/iniciar" method="POST" class="form-modo-juego">
+
+                        <!-- Botones interactivos de modo de juego -->
+                        <div class="selector-modos">
+                            <button type="button" class="btn-modo activo" data-modo="progresivo">⚡ Progresivo</button>
+                            <button type="button" class="btn-modo" data-modo="facil">🟢 Fácil</button>
+                            <button type="button" class="btn-modo" data-modo="intermedio">🟡 Intermedio</button>
+                            <button type="button" class="btn-modo" data-modo="dificil">🔴 Difícil</button>
+                        </div>
+
+                        <!-- Campo oculto que viaja por POST con el modo elegido -->
+                        <input type="hidden" name="modo_juego" id="input_modo_juego" value="progresivo">
+
+                        <button type="submit" class="btn-jugar">⚡ NUEVA PARTIDA ⚡</button>
+                    </form>
                     <a href="{{base_url}}/ranking" class="btn-secundario">Ver Ranking Global</a>
                 </div>
             </div>
@@ -40,3 +54,4 @@
         </div>
     </div>
 </main>
+

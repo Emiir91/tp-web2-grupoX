@@ -226,6 +226,49 @@ body {
 }
 
 /* ------------------------------------------------ */
+/* ESTILOS PARA LOS BOTONES DE MODOS DE JUEGO       */
+/* ------------------------------------------------ */
+.form-modo-juego {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.selector-modos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+}
+
+.btn-modo {
+    background: rgba(0, 0, 0, 0.6);
+    color: #bbb;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    font-size: 13px;
+}
+
+.btn-modo:hover {
+    border-color: rgba(255, 106, 0, 0.8);
+    color: #fff;
+}
+
+.btn-modo.activo {
+    background: linear-gradient(135deg, #ff6a00, #ee0979);
+    color: #fff;
+    border-color: #ff6a00;
+    box-shadow: 0 0 10px rgba(255, 106, 0, 0.4);
+}
+
+/* ------------------------------------------------ */
 /* ESTILOS PARA COMPUTADORAS Y PANTALLAS GRANDES    */
 /* ------------------------------------------------ */
 @media (min-width: 992px) {

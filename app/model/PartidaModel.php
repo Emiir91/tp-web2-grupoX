@@ -11,17 +11,23 @@ class PartidaModel
         $this->database = $database;
     }
 
-    public function iniciarPartida($id_usuario)
+    public function iniciarPartida($id_usuario, $modo_juego = 'progresivo')
     {
+        $nivel_inicial = ($modo_juego === 'progresivo' || in_array($modo_juego, ['facil', 'intermedio', 'dificil']))
+            ? ($modo_juego === 'progresivo' ? 'facil' : $modo_juego)
+            : 'facil';
+
         $sql = "INSERT INTO partida (
                     id_usuario,
                     puntaje,
                     racha,
                     estado,
+                    modo_juego,
+                    nivel_actual,
                     fecha_inicio
-                ) VALUES (?, 0, 0, 'en_curso', NOW())";
+                ) VALUES (?, 0, 0, 'en_curso', ?, ?, NOW())";
 
-        $parametros = [$id_usuario];
+        $parametros = [$id_usuario, $modo_juego, $nivel_inicial];
 
         try {
             $this->database->execute($sql, $parametros);
@@ -33,30 +39,56 @@ class PartidaModel
 
     public function obtenerPreguntaAleatoria($id_partida)
     {
-        $sql_partida = "SELECT preguntas_usadas FROM partida WHERE id_partida = ?";
+        $sql_partida = "SELECT modo_juego, nivel_actual, preguntas_usadas FROM partida WHERE id_partida = ?";
         $resultado_partida = $this->database->queryOne($sql_partida, [$id_partida]);
 
-        $preguntas_usadas = '';
-        if ($resultado_partida && !empty($resultado_partida['preguntas_usadas'])) {
-            $preguntas_usadas = $resultado_partida['preguntas_usadas'];
+        if (!$resultado_partida) {
+            return false;
         }
+
+        $modo_juego = $resultado_partida['modo_juego'];
+        $nivel_actual = $resultado_partida['nivel_actual'];
+        $preguntas_usadas = $resultado_partida['preguntas_usadas'] ?? '';
+
+        $sql = "SELECT * FROM pregunta
+                WHERE activa = 1 
+                AND dificultad = ?";
+
+        $parametros = [$nivel_actual];
 
         if (!empty($preguntas_usadas)) {
-            $sql = "SELECT * FROM pregunta
-                    WHERE activa = 1
-                    AND id_pregunta NOT IN ($preguntas_usadas)
-                    ORDER BY RAND()
-                    LIMIT 1";
-        } else {
-            $sql = "SELECT * FROM pregunta
-                    WHERE activa = 1
-                    ORDER BY RAND()
-                    LIMIT 1";
+            $sql .= " AND id_pregunta NOT IN ($preguntas_usadas)";
         }
 
-        $pregunta = $this->database->queryOne($sql);
+        $sql .= " ORDER BY RAND() LIMIT 1";
 
-        return $pregunta ?: false;
+        $pregunta = $this->database->queryOne($sql, $parametros);
+
+        if (!$pregunta) {
+            if ($modo_juego === 'progresivo') {
+                $nuevo_nivel = $this->siguienteNivel($nivel_actual);
+                if ($nuevo_nivel) {
+                    $this->actualizarNivelPartida($id_partida, $nuevo_nivel);
+                    return $this->obtenerPreguntaAleatoria($id_partida);
+                }
+            }
+            return false;
+        }
+
+        return $pregunta;
+    }
+
+    private function siguienteNivel($nivelActual)
+    {
+        if ($nivelActual === 'facil') return 'intermedio';
+        if ($nivelActual === 'intermedio') return 'dificil';
+        return null;
+    }
+
+    public function actualizarNivelPartida($id_partida, $nuevo_nivel)
+    {
+        $sql = "UPDATE partida SET nivel_actual = ? WHERE id_partida = ?";
+        return $this->database->execute($sql, [$nuevo_nivel, $id_partida]);
     }
 
     public function obtenerPreguntaPorId($id_pregunta)
@@ -198,7 +230,7 @@ class PartidaModel
 
     public function obtenerDatosPartida($id_partida)
     {
-        $sql = "SELECT puntaje, racha, estado FROM partida WHERE id_partida = ?";
+        $sql = "SELECT puntaje, racha, estado, nivel_actual FROM partida WHERE id_partida = ?";
         $resultado = $this->database->queryOne($sql, [$id_partida]);
         return $resultado ?: false;
     }
@@ -209,13 +241,12 @@ class PartidaModel
                 FROM partida
                 WHERE id_usuario = ? AND estado != 'en_curso'
                 ORDER BY fecha_fin DESC
-                LIMIT 10"; 
+                LIMIT 10";
 
         $partidas = $this->database->queryAll($sql, [$id_usuario]);
 
         if ($partidas) {
             foreach ($partidas as &$partida) {
-                
                 $partida['fecha'] = $partida['fecha'] ? date('d/m/Y H:i', strtotime($partida['fecha'])) : 'Desconocida';
 
                 if ($partida['puntos'] >= 50) {

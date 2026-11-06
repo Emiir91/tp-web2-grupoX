@@ -20,7 +20,7 @@
     border-radius: 20px;
     padding: 30px 20px;
     width: 100%;
-    max-width: 500px;
+    max-width: 550px;
     z-index: 2;
     position: relative;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
@@ -29,11 +29,11 @@
 
 .header-resultados {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
 .header-resultados h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: #ffc000;
     font-weight: 800;
     text-transform: uppercase;
@@ -43,48 +43,56 @@
 
 .mensaje-final {
     text-align: center;
-    margin-bottom: 30px;
-    padding: 20px;
+    margin-bottom: 25px;
+    padding: 15px;
     background: rgba(0, 0, 0, 0.4);
     border-radius: 12px;
     border-left: 4px solid #ff6a00;
 }
 
 .mensaje-final h2 {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     color: #d1c4e9;
-    line-height: 1.5;
+    line-height: 1.4;
 }
 
+/* Grilla de 3 columnas limpia */
 .estadisticas {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 25px;
+    width: 100%;
 }
 
-.estadistica {
+/* Tarjetas individuales */
+.estadistica-item {
     text-align: center;
     background: rgba(0, 0, 0, 0.4);
     border-radius: 12px;
-    padding: 20px;
+    padding: 15px 8px;
     border: 1px solid rgba(255, 106, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
 }
 
-.estadistica h3 {
-    font-size: 0.85rem;
+.estadistica-item h3 {
+    font-size: 0.65rem;
     color: #ffc000;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
 }
 
-.estadistica .valor {
-    font-size: 2.5rem;
+.estadistica-item .valor {
+    font-size: 1.1rem;
     font-weight: 800;
     color: #ffffff;
-    text-shadow: 0 0 15px rgba(255, 106, 0, 0.8);
+    text-shadow: 0 0 8px rgba(255, 106, 0, 0.8);
+    word-break: break-word;
 }
 
 .acciones {
@@ -93,7 +101,7 @@
     gap: 15px;
 }
 
-.btn-jugar, .btn-secundario {
+.btn-jugar {
     display: block;
     width: 100%;
     text-align: center;
@@ -103,9 +111,6 @@
     font-size: 1.1rem;
     font-weight: 800;
     transition: all 0.2s ease;
-}
-
-.btn-jugar {
     background: linear-gradient(180deg, #ff6a00 0%, #cc1c00 100%);
     color: #ffffff;
     border: 2px solid #ffc000;
@@ -123,43 +128,17 @@
     box-shadow: 0 0px 0 #7a0b00, 0 4px 5px rgba(0, 0, 0, 0.6);
 }
 
-.btn-secundario {
-    background: transparent;
-    color: #ffffff;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.btn-secundario:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: #ffffff;
-}
-
 @media (min-width: 768px) {
     .panel-resultados {
         max-width: 600px;
-        padding: 50px 60px;
+        padding: 40px 50px;
     }
 
     .header-resultados h1 {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
     }
 
-    .estadisticas {
-        flex-direction: row;
-        justify-content: space-around;
-        gap: 20px;
-    }
-
-    .estadistica {
-        flex: 1;
-    }
-
-    .estadistica .valor {
-        font-size: 3rem;
-    }
-
-    .btn-jugar, .btn-secundario {
-        font-size: 1.2rem;
-        padding: 18px;
+    .estadistica-item .valor {
+        font-size: 1.3rem;
     }
 }

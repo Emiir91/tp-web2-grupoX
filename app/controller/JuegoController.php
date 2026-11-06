@@ -25,7 +25,9 @@ class JuegoController
         }
 
         $id_usuario = $_SESSION['id_usuario'];
-        $id_partida = $this->partidaModel->iniciarPartida($id_usuario);
+        $modo_juego = $_POST['modo_juego'] ?? 'progresivo';
+
+        $id_partida = $this->partidaModel->iniciarPartida($id_usuario, $modo_juego);
 
         if (!$id_partida) {
             header("Location: " . BASE_URL . "/home/index");
@@ -134,18 +136,29 @@ class JuegoController
         $es_correcta = $this->partidaModel->validarRespuesta($id_respuesta);
 
         if ($es_correcta) {
-            $nuevo_puntaje = $this->partidaModel->obtenerPuntajeActual($id_partida) + 10;
+            // Obtenemos los datos actuales de la partida para evaluar el nivel en el que se encuentra
+            $datos_partida = $this->partidaModel->obtenerDatosPartida($id_partida);
+            $nivel_actual = $datos_partida['nivel_actual'] ?? 'facil';
+
+            // Asignamos puntos dinámicos según la dificultad actual (funciona tanto para fija como progresiva)
+            $puntos_a_sumar = 10; // Fácil
+            if ($nivel_actual === 'intermedio') {
+                $puntos_a_sumar = 15;
+            } elseif ($nivel_actual === 'dificil') {
+                $puntos_a_sumar = 20;
+            }
+
+            $nuevo_puntaje = $this->partidaModel->obtenerPuntajeActual($id_partida) + $puntos_a_sumar;
             $nueva_racha = $this->partidaModel->obtenerRachaActual($id_partida) + 1;
 
             $this->partidaModel->registrarRespuestaCorrecta($id_partida, $nuevo_puntaje, $nueva_racha);
-
-            header("Location: " . BASE_URL . "/juego/mostrar");
-            exit();
         } else {
-            $this->partidaModel->finalizarPartida($id_partida, 'finalizada');
-            header("Location: " . BASE_URL . "/juego/resultados");
-            exit();
+            $nuevo_puntaje = $this->partidaModel->obtenerPuntajeActual($id_partida);
+            $this->partidaModel->registrarRespuestaCorrecta($id_partida, $nuevo_puntaje, 0);
         }
+
+        header("Location: " . BASE_URL . "/juego/mostrar");
+        exit();
     }
 
     public function tiempoAgotado()
@@ -215,6 +228,7 @@ class JuegoController
 
     private function generarMensajeSegunPuntaje($puntaje)
     {
+        if ($puntaje >= 150) return "¡Impresionante! Dominas todas las categorías al máximo.";
         if ($puntaje >= 100) return "¡Excelente! Eres un verdadero experto en Triviador.";
         if ($puntaje >= 50) return "¡Muy bien! Tienes buenos conocimientos.";
         if ($puntaje >= 20) return "¡Buen intento! Sigue practicando.";
