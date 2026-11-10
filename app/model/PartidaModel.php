@@ -266,4 +266,24 @@ class PartidaModel
         $resultado = $this->database->queryOne($sql, [$id_usuario]);
         return $resultado ? ($resultado['total'] ?? 0) : 0;
     }
+
+    public function obtenerRankingMensualGlobal($limite = 10)
+    {
+        $limite = (int) $limite;
+
+        $sql = "SELECT u.nombre_usuario AS usuario, SUM(p.puntaje) AS puntaje_total
+            FROM partida p
+            JOIN usuarios u ON p.id_usuario = u.id_usuario
+            WHERE p.estado != 'en_curso'
+              AND MONTH(p.fecha_fin) = MONTH(CURRENT_DATE()) 
+              AND YEAR(p.fecha_fin) = YEAR(CURRENT_DATE())
+            GROUP BY p.id_usuario, u.nombre_usuario
+            ORDER BY puntaje_total DESC
+            LIMIT $limite";
+
+        return $this->database->queryAll($sql);
+    }
+
+
+
 }

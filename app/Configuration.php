@@ -10,6 +10,7 @@ use app\controller\HomeController;
 use app\controller\JuegoController;
 use app\controller\PerfilController;
 use app\controller\LobbyController;
+use app\controller\RankingController;
 use app\model\UsuarioModel;
 use app\model\PartidaModel;
 
@@ -109,4 +110,13 @@ class Configuration
     {
         return new Router($this, "home", "index");
     }
+
+    public function getRankingController()
+    {
+        return new RankingController(
+            $this->getRender(),
+            $this->getPartidaModel()
+        );
+    }
+
 }
