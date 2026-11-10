@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking Mensual - Cortocircuito</title>
+    <link rel="stylesheet" href="/public/css/header.css">
+    <link rel="stylesheet" href="/public/css/home.css">
+    <link rel="stylesheet" href="/public/css/ranking.css">
+</head>
+<body>
+
+    <main class="pantalla-home">
+        <div class="panel-home ranking-panel">
+            <h2 class="ranking-title">⚡ Ranking Global Mensual ⚡</h2>
+
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Jugador</th>
+                        <th>Puntaje Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#ranking}}
+                    <tr>
+                        <td>{{posicion}}</td>
+                        <td>{{usuario}}</td>
+                        <td>{{puntaje_total}} pts</td>
+                    </tr>
+                    {{/ranking}}
+                    {{^ranking}}
+                    <tr>
+                        <td colspan="3" class="sin-datos">Todavía no hay partidas registradas este mes. ¡Sé el primero!</td>
+                    </tr>
+                    {{/ranking}}
+                </tbody>
+            </table>
+
+            <a href="{{base_url}}/home" class="btn-volver">← Volver al Inicio</a>
+        </div>
+    </main>
+
+</body>
+</html>
