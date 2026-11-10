@@ -17,10 +17,18 @@ class RankingController
     {
         $datosParaVista = [];
 
-        // Traemos el top 10 del ranking mensual global
-        $datosParaVista['ranking'] = $this->partidaModel->obtenerRankingMensualGlobal(10);
+        // Traemos el ranking
+        $ranking = $this->partidaModel->obtenerRankingMensualGlobal(10);
 
-        // Renderizamos la vista independiente
+        // Le asignamos un número de posición a cada elemento (1, 2, 3...)
+        $contador = 1;
+        foreach ($ranking as &$jugador) {
+            $jugador['posicion'] = $contador++;
+        }
+
+        $datosParaVista['ranking'] = $ranking;
+
+        // Renderizamos la vista
         $this->renderer->renderiza('ranking', $datosParaVista);
     }
 }
