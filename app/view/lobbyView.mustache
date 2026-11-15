@@ -1,0 +1,57 @@
+<main class="pantalla-lobby">
+    <div class="panel-lobby">
+        <h2 class="saludo-lobby">Lobby de <span>{{nombre_usuario}}</span></h2>
+
+        <div class="lobby-grid">
+
+            <div class="info-jugador">
+                <div class="caja-puntaje">
+                    <p class="etiqueta-puntaje">Puntaje Acumulado</p>
+                    <h3 class="valor-puntaje">{{puntaje_total}}</h3>
+                </div>
+
+                <div class="acciones-lobby">
+                    <form action="{{base_url}}/juego/iniciar" method="POST" class="form-modo-juego">
+
+                        <!-- Botones interactivos de modo de juego -->
+                        <div class="selector-modos">
+                            <button type="button" class="btn-modo activo" data-modo="progresivo">⚡ Progresivo</button>
+                            <button type="button" class="btn-modo" data-modo="facil">🟢 Fácil</button>
+                            <button type="button" class="btn-modo" data-modo="intermedio">🟡 Intermedio</button>
+                            <button type="button" class="btn-modo" data-modo="dificil">🔴 Difícil</button>
+                        </div>
+
+                        <!-- Campo oculto que viaja por POST con el modo elegido -->
+                        <input type="hidden" name="modo_juego" id="input_modo_juego" value="progresivo">
+
+                        <button type="submit" class="btn-jugar">⚡ NUEVA PARTIDA ⚡</button>
+                    </form>
+                    <a href="{{base_url}}/ranking" class="btn-secundario">Ver Ranking Global</a>
+                </div>
+            </div>
+
+            <div class="seccion-historial">
+                <h3>Tus últimas partidas</h3>
+                <div class="lista-partidas">
+
+                    {{#partidas}}
+                        <div class="item-partida">
+                            <span class="fecha-partida">{{fecha}}</span>
+                            <span class="resultado-partida {{resultado}}">{{resultado}}</span>
+                            <span class="puntos-partida">{{puntos}}</span>
+                        </div>
+                    {{/partidas}}
+
+                    {{^partidas}}
+                        <div class="alerta alerta-info" style="text-align: center;">
+                            Todavía no jugaste ninguna partida. ¡Animate a la primera!
+                        </div>
+                    {{/partidas}}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+

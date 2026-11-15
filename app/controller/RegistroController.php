@@ -17,7 +17,7 @@ class RegistroController
 
     public function index()
     {
-        $datosParaVista = ['requiere_mapa' => true, 'ocultar_layout' => true];
+        $datosParaVista = ['requiere_mapa' => true];
         echo $this->renderer->renderiza('registro', $datosParaVista);
     }
 
@@ -47,8 +47,7 @@ class RegistroController
                     'ciudad' => $ciudad,
                     'mail' => $mail,
                     'nombre_usuario' => $nombreUsuario,
-                    'requiere_mapa' => true,
-                    'ocultar_layout' => true
+                    'requiere_mapa' => true
                 ];
                 echo $this->renderer->renderiza('registro', $datosParaVista);
                 return;

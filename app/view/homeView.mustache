@@ -1,57 +1,29 @@
 <main class="pantalla-home">
     <div class="panel-home">
-        <h2 class="saludo-home">Inicio de <span>{{nombre_usuario}}</span></h2>
+        <img src="{{base_url}}/public/img/logotipo2.png" alt="Cortocircuito - La trivia más eléctrica" class="logo-home">
 
-        <div class="home-grid">
+        <p class="frase-home">
+            Tenés <span>10 segundos</span> por pregunta.<br>
+            ¿Tu cerebro aguanta la descarga?
+        </p>
 
-            <div class="info-jugador">
-                <div class="caja-puntaje">
-                    <p class="etiqueta-puntaje">Puntaje Acumulado</p>
-                    <h3 class="valor-puntaje">{{puntaje_total}}</h3>
-                </div>
+        <ul class="caracteristicas-home">
+            <li>⏱️ Contrarreloj</li>
+            <li>🧠 3 niveles de dificultad</li>
+            <li>🏆 Ranking mensual</li>
+        </ul>
 
-                <div class="acciones-home">
-                    <form action="{{base_url}}/juego/iniciar" method="POST" class="form-modo-juego">
+        <div class="acciones-home">
+            {{#usuario_logueado}}
+            <p class="bienvenida-home">¡Hola de nuevo, <span>{{nombre_usuario}}</span>!</p>
+            <a href="{{base_url}}/lobby" class="btn-jugar">⚡ IR AL LOBBY ⚡</a>
+            <a href="{{base_url}}/login/logout" class="btn-secundario">Cerrar sesión</a>
+            {{/usuario_logueado}}
 
-                        <!-- Botones interactivos de modo de juego -->
-                        <div class="selector-modos">
-                            <button type="button" class="btn-modo activo" data-modo="progresivo">⚡ Progresivo</button>
-                            <button type="button" class="btn-modo" data-modo="facil">🟢 Fácil</button>
-                            <button type="button" class="btn-modo" data-modo="intermedio">🟡 Intermedio</button>
-                            <button type="button" class="btn-modo" data-modo="dificil">🔴 Difícil</button>
-                        </div>
-
-                        <!-- Campo oculto que viaja por POST con el modo elegido -->
-                        <input type="hidden" name="modo_juego" id="input_modo_juego" value="progresivo">
-
-                        <button type="submit" class="btn-jugar">⚡ NUEVA PARTIDA ⚡</button>
-                    </form>
-                    <a href="{{base_url}}/ranking" class="btn-secundario">Ver Ranking Global</a>
-                </div>
-            </div>
-
-            <div class="seccion-historial">
-                <h3>Tus últimas partidas</h3>
-                <div class="lista-partidas">
-
-                    {{#partidas}}
-                        <div class="item-partida">
-                            <span class="fecha-partida">{{fecha}}</span>
-                            <span class="resultado-partida {{resultado}}">{{resultado}}</span>
-                            <span class="puntos-partida">{{puntos}}</span>
-                        </div>
-                    {{/partidas}}
-
-                    {{^partidas}}
-                        <div class="alerta alerta-info" style="text-align: center;">
-                            Todavía no jugaste ninguna partida. ¡Animate a la primera!
-                        </div>
-                    {{/partidas}}
-
-                </div>
-            </div>
-
+            {{^usuario_logueado}}
+            <a href="{{base_url}}/login" class="btn-jugar">⚡ INICIAR SESIÓN ⚡</a>
+            <a href="{{base_url}}/registro/index" class="btn-secundario">Crear una cuenta</a>
+            {{/usuario_logueado}}
         </div>
     </div>
 </main>
-

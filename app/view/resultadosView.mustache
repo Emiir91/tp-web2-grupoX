@@ -26,7 +26,7 @@
         </div>
 
         <div class="acciones">
-            <a href="{{base_url}}/home/index" class="btn-jugar">⚡ VOLVER AL INICIO ⚡</a>
+            <a href="{{base_url}}/lobby" class="btn-jugar">⚡ VOLVER AL LOBBY ⚡</a>
         </div>
     </div>
 </main>
@@ -35,6 +35,6 @@
     history.pushState(null, null, location.href);
 
     window.addEventListener('popstate', function (event) {
-        window.location.replace('{{base_url}}/home/index');
+        window.location.replace('{{base_url}}/lobby');
     });
 </script>

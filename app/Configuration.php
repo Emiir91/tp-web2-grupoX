@@ -2,8 +2,6 @@
 
 namespace app;
 
-use app\controller\EquipoController;
-
 use app\controller\RegistroController;
 use app\controller\LoginController;
 use app\controller\HomeController;
@@ -52,6 +50,13 @@ class Configuration
     public function getHomeController()
     {
         return new HomeController(
+            $this->getRender()
+        );
+    }
+
+    public function getLobbyController()
+    {
+        return new LobbyController(
             $this->getRender(),
             $this->getPartidaModel()
         );
