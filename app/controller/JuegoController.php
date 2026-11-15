@@ -30,7 +30,7 @@ class JuegoController
         $id_partida = $this->partidaModel->iniciarPartida($id_usuario, $modo_juego);
 
         if (!$id_partida) {
-            header("Location: " . BASE_URL . "/home/index");
+            header("Location: " . BASE_URL . "/lobby");
             exit();
         }
 
@@ -43,7 +43,7 @@ class JuegoController
     public function mostrar()
     {
         if (!isset($_SESSION['id_partida'])) {
-            header("Location: " . BASE_URL . "/home/index");
+            header("Location: " . BASE_URL . "/lobby");
             exit();
         }
 
@@ -78,7 +78,7 @@ class JuegoController
             $asignada = $this->partidaModel->asignarPreguntaAPartida($id_partida, $pregunta['id_pregunta']);
 
             if (!$asignada) {
-                header("Location: " . BASE_URL . "/home/index");
+                header("Location: " . BASE_URL . "/lobby");
                 exit();
             }
 
@@ -105,14 +105,14 @@ class JuegoController
     public function procesarRespuesta()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header("Location: " . BASE_URL . "/home/index");
+            header("Location: " . BASE_URL . "/lobby");
             exit();
         }
 
         $id_respuesta = $_POST['id_respuesta'] ?? null;
 
         if (!$id_respuesta || !isset($_SESSION['id_partida'])) {
-            header("Location: " . BASE_URL . "/home/index");
+            header("Location: " . BASE_URL . "/lobby");
             exit();
         }
 
@@ -164,7 +164,7 @@ class JuegoController
     public function tiempoAgotado()
     {
         if (!isset($_SESSION['id_partida'])) {
-            header("Location: " . BASE_URL . "/home/index");
+            header("Location: " . BASE_URL . "/lobby");
             exit();
         }
 
@@ -180,7 +180,7 @@ class JuegoController
     public function abandonar()
     {
         if (!isset($_SESSION['id_partida'])) {
-            header("Location: " . BASE_URL . "/home/index");
+            header("Location: " . BASE_URL . "/lobby");
             exit();
         }
 
@@ -197,7 +197,7 @@ class JuegoController
     public function resultados()
     {
         if (!isset($_SESSION['id_partida'])) {
-            header("Location: " . BASE_URL . "/home/index");
+            header("Location: " . BASE_URL . "/lobby");
             exit();
         }
 
@@ -206,7 +206,7 @@ class JuegoController
 
         if (!$datos_partida) {
             unset($_SESSION['id_partida']);
-            header("Location: " . BASE_URL . "/home/index");
+            header("Location: " . BASE_URL . "/lobby");
             exit();
         }
 

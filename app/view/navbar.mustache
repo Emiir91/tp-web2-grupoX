@@ -20,7 +20,9 @@
         {{/usuario_logueado}}
 
         {{^usuario_logueado}}
+        {{^en_login}}
         <a href="{{base_url}}/login" class="btn-iniciar-sesion">Iniciar Sesión</a>
+        {{/en_login}}
         {{/usuario_logueado}}
     </div>
 </header>

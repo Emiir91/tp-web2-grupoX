@@ -1,0 +1,177 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0a0510;
+    color: #ffffff;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../img/fondo-plasma.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* ── CONTENEDOR ── */
+.pantalla-landing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    padding: 20px;
+}
+
+/* Si arriba está el header (usuario logueado), le restamos su alto
+   para que la portada siga centrada sin generar scroll */
+.barra-superior + .pantalla-landing {
+    min-height: calc(100dvh - 110px);
+}
+
+/* ── PANEL (mismo estilo vidrio que login y home) ── */
+.panel-landing {
+    background: rgba(15, 8, 25, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 120, 0, 0.3);
+    border-radius: 20px;
+    padding: 30px 20px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+    text-align: center;
+}
+
+/* ── LOGO con un "latido" eléctrico ── */
+.logo-landing {
+    width: 100%;
+    max-width: 320px;
+    filter: drop-shadow(0 0 10px rgba(255, 120, 0, 0.5));
+    animation: chispazo 3s ease-in-out infinite;
+}
+
+@keyframes chispazo {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 120, 0, 0.5)); }
+    50%      { filter: drop-shadow(0 0 22px rgba(255, 192, 0, 0.85)); }
+}
+
+/* ── FRASE ── */
+.frase-landing {
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: #d1c4e9;
+    margin: 15px 0 20px;
+}
+
+.frase-landing span {
+    color: #ffc000;
+    font-weight: 700;
+}
+
+/* ── CARACTERÍSTICAS ── */
+.caracteristicas-landing {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 28px;
+}
+
+.caracteristicas-landing li {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 106, 0, 0.4);
+}
+
+/* ── SALUDO (si ya está logueado) ── */
+.bienvenida-landing {
+    color: #d1c4e9;
+    margin-bottom: 4px;
+}
+
+.bienvenida-landing span {
+    color: #ffc000;
+    font-weight: 700;
+}
+
+/* ── BOTONES ── */
+.acciones-landing {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.btn-jugar,
+.btn-secundario {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+    color: #ffffff;
+    padding: 15px;
+    border-radius: 35px;
+    font-size: 1.05rem;
+}
+
+.btn-jugar {
+    background: linear-gradient(180deg, #ff6a00 0%, #cc1c00 100%);
+    font-weight: 800;
+    border: 2px solid #ffc000;
+    box-shadow: 0 6px 0 #7a0b00, 0 10px 15px rgba(0, 0, 0, 0.6);
+    transition: all 0.1s ease;
+}
+
+.btn-jugar:active {
+    transform: translateY(6px);
+    box-shadow: 0 0 0 #7a0b00, 0 4px 5px rgba(0, 0, 0, 0.6);
+}
+
+.btn-secundario {
+    font-weight: 700;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-secundario:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff;
+}
+
+/* ── PANTALLAS GRANDES ── */
+@media (min-width: 768px) {
+    .panel-landing {
+        max-width: 560px;
+        padding: 50px 45px;
+    }
+
+    .logo-landing {
+        max-width: 420px;
+    }
+
+    .frase-landing {
+        font-size: 1.25rem;
+    }
+
+    .caracteristicas-landing li {
+        font-size: 0.9rem;
+    }
+
+    .btn-jugar,
+    .btn-secundario {
+        font-size: 1.2rem;
+        padding: 17px;
+    }
+
+    /* Con header arriba, la hacemos un poco más compacta para que entre sin scroll */
+    .barra-superior + .pantalla-landing .panel-landing {
+        padding: 30px 45px;
+    }
+
+    .barra-superior + .pantalla-landing .logo-landing {
+        max-width: 320px;
+    }
+}

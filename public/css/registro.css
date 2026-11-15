@@ -103,3 +103,10 @@ select.input-texto option { background: #0f0819; color: #fff; }
     .input-texto { padding: 16px; font-size: 1.1rem; }
     .btn-jugar { font-size: 1.3rem; padding: 18px; }
 }
+
+
+/* ── CON HEADER ARRIBA ──
+   Le restamos el alto del header para que el panel quede centrado sin generar scroll de más */
+.barra-superior + .pantalla-registro {
+    min-height: calc(100dvh - 110px);
+}

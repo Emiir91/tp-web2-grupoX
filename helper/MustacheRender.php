@@ -16,10 +16,24 @@ class MustacheRender
         ]);
     }
 
+    private function versionCss($nombre)
+    {
+        $archivo = dirname(__DIR__) . "/public/css/" . $nombre . ".css";
+        return file_exists($archivo) ? filemtime($archivo) : 1;
+    }
+
     public function renderiza($view, $data = [])
     {
         $data['base_url'] = BASE_URL;
         $data['vista'] = $view;
+
+        // Versión de los CSS = fecha de última modificación del archivo.
+        // Así, cada vez que se edita un CSS, el navegador lo vuelve a descargar en vez de usar el de la caché.
+        $data['version_css'] = $this->versionCss($view);
+        $data['version_header_css'] = $this->versionCss('header');
+
+        // En la pantalla de login no mostramos el botón "Iniciar Sesión" del header (ya estás ahí)
+        $data['en_login'] = ($view === 'login');
 
         $data['usuario_logueado'] = isset($_SESSION['usuario_logueado']) && $_SESSION['usuario_logueado'] === true;
         $data['nombre_usuario'] = $_SESSION['nombre_usuario'] ?? '';

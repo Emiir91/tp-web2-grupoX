@@ -5,25 +5,20 @@ namespace app\controller;
 class HomeController
 {
     private $renderer;
-    private $partidaModel;
 
-    public function __construct($renderer, $partidaModel = null)
+    public function __construct($renderer)
     {
         $this->renderer = $renderer;
-        $this->partidaModel = $partidaModel;
     }
 
+    // Portada pública: la ve cualquiera, esté logueado o no.
+    // La vista cambia los botones según haya sesión (usuario_logueado lo agrega MustacheRender).
     public function index()
     {
-        $datosParaVista = [];
+        // El header solo se muestra si está logueado (para ir al perfil, al lobby o cerrar sesión).
+        // A un invitado no se lo mostramos porque repetiría el botón de "Iniciar sesión".
+        $estaLogueado = !empty($_SESSION['usuario_logueado']);
 
-        if (isset($_SESSION['usuario_logueado']) && $_SESSION['usuario_logueado'] === true) {
-            $id_usuario = $_SESSION['id_usuario'];
-            
-            $datosParaVista['partidas'] = $this->partidaModel->obtenerHistorialUsuario($id_usuario);
-            $datosParaVista['puntaje_total'] = $this->partidaModel->obtenerPuntajeTotalUsuario($id_usuario);
-        }
-
-        $this->renderer->renderiza('home', $datosParaVista);
+        $this->renderer->renderiza('home', ['ocultar_layout' => !$estaLogueado]);
     }
 }

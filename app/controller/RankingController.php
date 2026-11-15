@@ -15,6 +15,12 @@ class RankingController
 
     public function index()
     {
+        // Si no está logueado, no puede ver esta pantalla: lo mandamos al login
+        if (empty($_SESSION['usuario_logueado'])) {
+            header("Location: " . BASE_URL . "/login");
+            exit();
+        }
+
         $datosParaVista = [];
 
         // Traemos el ranking
@@ -31,4 +37,4 @@ class RankingController
         // Renderizamos la vista
         $this->renderer->renderiza('ranking', $datosParaVista);
     }
-}
+}
