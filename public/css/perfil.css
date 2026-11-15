@@ -47,6 +47,40 @@ body {
     font-size: 0.9rem; color: #d1c4e9; margin-top: 5px;
 }
 
+/* ── ESTADÍSTICAS (puntaje y partidas) ── */
+.estadisticas-perfil {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+.caja-estadistica {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 14px 10px; border-radius: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 106, 0, 0.4);
+}
+.valor-estadistica {
+    font-size: 1.8rem; font-weight: 800; color: #ffc000;
+    text-shadow: 0 0 10px rgba(255, 192, 0, 0.4);
+}
+.etiqueta-estadistica {
+    font-size: 0.8rem; color: #d1c4e9; text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+/* ── QR ── */
+.texto-qr {
+    font-size: 0.8rem; color: #d1c4e9; margin-top: 8px; text-align: center;
+}
+
+/* ── PERFIL NO ENCONTRADO ── */
+.btn-volver-perfil {
+    display: inline-block; margin-top: 20px; padding: 12px 25px;
+    border-radius: 35px; text-decoration: none; color: #ffffff; font-weight: 700;
+    background: linear-gradient(180deg, #ff6a00 0%, #cc1c00 100%);
+    border: 2px solid #ffc000;
+}
+
 /* ── FORMULARIO Y GRILLA (Celular: 1 columna) ── */
 .perfil-grid-principal {
     display: flex;
@@ -108,4 +142,10 @@ body {
 
     .encabezado-perfil h2 { font-size: 2rem; }
     .subtitulo-perfil { font-size: 1rem; margin-bottom: 30px; }
+}
+
+
+/* ── CON HEADER ARRIBA ── */
+.barra-superior + .pantalla-perfil {
+    min-height: calc(100dvh - 110px);
 }

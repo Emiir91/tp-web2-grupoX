@@ -1,7 +1,7 @@
 <main class="pantalla-juego" data-tiempo="{{tiempo_restante}}">
     <div class="panel-juego">
         <div class="header-juego">
-            <h1>⚡ TRIVIADOR ⚡</h1>
+            <h1>⚡ CORTOCIRCUITO ⚡</h1>
             <h2>Tiempo restante: <span id="temporizador">{{tiempo_restante}}</span>s</h2>
         </div>
 
@@ -14,7 +14,7 @@
         </div>
 
         <div class="respuestas">
-            {{#respuestas}}
+            {{#respuestas}}git
             <form action="{{base_url}}/juego/procesarRespuesta" method="POST" class="form-respuesta">
                 <input type="hidden" name="id_respuesta" value="{{id_respuesta}}">
                 <button type="submit" class="btn-respuesta">{{texto_respuesta}}</button>

@@ -74,7 +74,8 @@ class Configuration
     {
         return new PerfilController(
             $this->getUsuarioModel(),
-            $this->getRender()
+            $this->getRender(),
+            $this->getPartidaModel()
         );
     }
 

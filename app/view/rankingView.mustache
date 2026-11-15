@@ -12,9 +12,12 @@
             </thead>
             <tbody>
                 {{#ranking}}
-                <tr>
+                <tr {{#soy_yo}}class="fila-propia"{{/soy_yo}}>
                     <td>{{posicion}}</td>
-                    <td>{{usuario}}</td>
+                    <td>
+                        <a href="{{url_perfil}}" class="link-jugador" title="Ver el perfil de {{usuario}}">{{usuario}}</a>
+                        {{#soy_yo}}<span class="etiqueta-vos">vos</span>{{/soy_yo}}
+                    </td>
                     <td>{{puntaje_total}} pts</td>
                 </tr>
                 {{/ranking}}
@@ -25,6 +28,8 @@
                 {{/ranking}}
             </tbody>
         </table>
+
+        <p class="ayuda-ranking">Tocá el nombre de un jugador para ver su perfil.</p>
 
         <a href="{{base_url}}/lobby" class="btn-volver">← Volver al Lobby</a>
     </div>

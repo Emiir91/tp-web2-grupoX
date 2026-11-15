@@ -267,6 +267,13 @@ class PartidaModel
         return $resultado ? ($resultado['total'] ?? 0) : 0;
     }
 
+    public function obtenerCantidadPartidasUsuario($id_usuario)
+    {
+        $sql = "SELECT COUNT(*) as cantidad FROM partida WHERE id_usuario = ? AND estado != 'en_curso'";
+        $resultado = $this->database->queryOne($sql, [$id_usuario]);
+        return $resultado ? (int) $resultado['cantidad'] : 0;
+    }
+
     public function obtenerRankingMensualGlobal($limite = 10)
     {
         $limite = (int) $limite;
