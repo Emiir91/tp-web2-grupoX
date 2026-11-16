@@ -69,6 +69,7 @@ CREATE TABLE partida (
                          FOREIGN KEY (ultima_pregunta_id) REFERENCES pregunta(id_pregunta)
 );
 
+ALTER TABLE partida ADD COLUMN vidas INT DEFAULT 3;
 
 INSERT INTO roles (nombre_rol) VALUES ('Jugador'), ('Editor'), ('Administrador');
 
