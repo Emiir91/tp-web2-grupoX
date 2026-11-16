@@ -1,0 +1,29 @@
+<main class="pantalla-landing">
+    <div class="panel-landing">
+        <img src="{{base_url}}/public/img/logotipo2.png" alt="Cortocircuito - La trivia más eléctrica" class="logo-landing">
+
+        <p class="frase-landing">
+            Tenés <span>10 segundos</span> por pregunta.<br>
+            ¿Tu cerebro aguanta la descarga?
+        </p>
+
+        <ul class="caracteristicas-landing">
+            <li>⏱️ Contrarreloj</li>
+            <li>🧠 3 niveles de dificultad</li>
+            <li>🏆 Ranking mensual</li>
+        </ul>
+
+        <div class="acciones-landing">
+            {{#usuario_logueado}}
+            <p class="bienvenida-landing">¡Hola de nuevo, <span>{{nombre_usuario}}</span>!</p>
+            <a href="{{base_url}}/lobby" class="btn-jugar">⚡ IR AL LOBBY ⚡</a>
+            <a href="{{base_url}}/login/logout" class="btn-secundario">Cerrar sesión</a>
+            {{/usuario_logueado}}
+
+            {{^usuario_logueado}}
+            <a href="{{base_url}}/login" class="btn-jugar">⚡ INICIAR SESIÓN ⚡</a>
+            <a href="{{base_url}}/registro/index" class="btn-secundario">Crear una cuenta</a>
+            {{/usuario_logueado}}
+        </div>
+    </div>
+</main>

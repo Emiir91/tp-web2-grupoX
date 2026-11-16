@@ -1,0 +1,31 @@
+<main class="pantalla-home">
+    <div class="panel-home ranking-panel">
+        <h2 class="ranking-title">⚡ Ranking Global Mensual ⚡</h2>
+
+        <table class="ranking-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Jugador</th>
+                    <th>Puntaje Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#ranking}}
+                <tr>
+                    <td>{{posicion}}</td>
+                    <td>{{usuario}}</td>
+                    <td>{{puntaje_total}} pts</td>
+                </tr>
+                {{/ranking}}
+                {{^ranking}}
+                <tr>
+                    <td colspan="3" class="sin-datos">Todavía no hay partidas registradas este mes. ¡Sé el primero!</td>
+                </tr>
+                {{/ranking}}
+            </tbody>
+        </table>
+
+        <a href="{{base_url}}/lobby" class="btn-volver">← Volver al Lobby</a>
+    </div>
+</main>

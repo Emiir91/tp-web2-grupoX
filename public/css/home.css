@@ -13,326 +13,165 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    min-height: 100vh;
 }
 
+/* ── CONTENEDOR ── */
 .pantalla-home {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 100dvh;
-    padding: 20px 15px; /* Reducido para aprovechar mejor el ancho en celulares */
-    position: relative;
+    padding: 20px;
 }
 
+/* Si arriba está el header (usuario logueado), le restamos su alto
+   para que la portada siga centrada sin generar scroll */
+.barra-superior + .pantalla-home {
+    min-height: calc(100dvh - 110px);
+}
+
+/* ── PANEL (mismo estilo vidrio que login y home) ── */
 .panel-home {
-    background: rgba(15, 8, 25, 0.88);
+    background: rgba(15, 8, 25, 0.85);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 120, 0, 0.3);
     border-radius: 20px;
-    padding: 25px 15px; /* Más compacto en mobile */
+    padding: 30px 20px;
     width: 100%;
-    max-width: 500px;
-    z-index: 2;
-    position: relative;
+    max-width: 420px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
-    color: #ffffff;
+    text-align: center;
 }
 
-.home-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 25px;
+/* ── LOGO con un "latido" eléctrico ── */
+.logo-home {
     width: 100%;
-    margin-top: 15px;
+    max-width: 320px;
+    filter: drop-shadow(0 0 10px rgba(255, 120, 0, 0.5));
+    animation: chispazo 3s ease-in-out infinite;
 }
 
-.info-jugador {
-    text-align: center;
+@keyframes chispazo {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 120, 0, 0.5)); }
+    50%      { filter: drop-shadow(0 0 22px rgba(255, 192, 0, 0.85)); }
 }
 
-.saludo-home {
-    font-size: 1.25rem; /* Reducido para celulares */
+/* ── FRASE ── */
+.frase-home {
+    font-size: 1.05rem;
+    line-height: 1.5;
     color: #d1c4e9;
-    font-weight: normal;
-    text-align: center;
-    word-break: break-word; /* Evita que nombres largos rompan el diseño */
+    margin: 15px 0 20px;
 }
 
-.saludo-home span {
+.frase-home span {
     color: #ffc000;
-    font-weight: bold;
-    text-transform: uppercase;
+    font-weight: 700;
 }
 
-.caja-puntaje {
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 106, 0, 0.5);
-    border-radius: 12px;
-    padding: 12px;
+/* ── CARACTERÍSTICAS ── */
+.caracteristicas-home {
+    list-style: none;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 28px;
 }
 
-.etiqueta-puntaje {
+.caracteristicas-home li {
     font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 106, 0, 0.4);
+}
+
+/* ── SALUDO (si ya está logueado) ── */
+.bienvenida-home {
+    color: #d1c4e9;
+    margin-bottom: 4px;
+}
+
+.bienvenida-home span {
     color: #ffc000;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 5px;
+    font-weight: 700;
 }
 
-.valor-puntaje {
-    font-size: 2.2rem; /* Adaptado para pantallas chicas */
-    font-weight: 800;
-    color: #ffffff;
-    text-shadow: 0 0 15px rgba(255, 106, 0, 0.8);
-}
-
+/* ── BOTONES ── */
 .acciones-home {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
 }
 
 .btn-jugar,
 .btn-secundario {
     display: block;
     width: 100%;
-    text-align: center;
     text-decoration: none;
-    padding: 14px;
+    color: #ffffff;
+    padding: 15px;
     border-radius: 35px;
-    font-size: 1rem;
-    font-weight: 800;
-    transition: all 0.2s ease;
+    font-size: 1.05rem;
 }
 
 .btn-jugar {
     background: linear-gradient(180deg, #ff6a00 0%, #cc1c00 100%);
-    color: #ffffff;
+    font-weight: 800;
     border: 2px solid #ffc000;
-    box-shadow: 0 5px 0 #7a0b00, 0 8px 12px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 6px 0 #7a0b00, 0 10px 15px rgba(0, 0, 0, 0.6);
+    transition: all 0.1s ease;
 }
 
 .btn-jugar:active {
-    transform: translateY(4px);
-    box-shadow: 0 1px 0 #7a0b00, 0 3px 4px rgba(0, 0, 0, 0.6);
+    transform: translateY(6px);
+    box-shadow: 0 0 0 #7a0b00, 0 4px 5px rgba(0, 0, 0, 0.6);
 }
 
 .btn-secundario {
+    font-weight: 700;
     background: transparent;
-    color: #ffffff;
     border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
 }
 
-.btn-secundario:hover,
-.btn-secundario:active {
+.btn-secundario:hover {
     background: rgba(255, 255, 255, 0.1);
     border-color: #ffffff;
 }
 
-.seccion-historial h3 {
-    font-size: 0.95rem;
-    color: #d1c4e9;
-    font-weight: 600;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-align: center;
-}
-
-.lista-partidas {
-    max-height: 200px;
-    overflow-y: auto;
-    padding-right: 5px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.lista-partidas::-webkit-scrollbar {
-    width: 4px;
-}
-
-.lista-partidas::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
-}
-
-.lista-partidas::-webkit-scrollbar-thumb {
-    background: #ff9800;
-    border-radius: 4px;
-}
-
-.item-partida {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 10px 12px; /* Más compacto para mobile */
-    width: 100%;
-    font-size: 0.85rem; /* Ajustado para que quepa bien en celulares */
-}
-
-.fecha-partida {
-    color: #aaa;
-    font-size: 0.75rem;
-    width: 32%;
-    text-align: left;
-}
-
-.resultado-partida {
-    font-weight: bold;
-    text-transform: uppercase;
-    width: 38%;
-    text-align: center;
-    font-size: 0.8rem;
-}
-
-.puntos-partida {
-    font-weight: bold;
-    color: #fff;
-    width: 30%;
-    text-align: right;
-}
-
-.victoria {
-    color: #4caf50;
-    text-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
-}
-
-.derrota {
-    color: #f44336;
-    text-shadow: 0 0 5px rgba(244, 67, 54, 0.4);
-}
-
-.alerta {
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.alerta-info {
-    background: rgba(0, 150, 255, 0.2);
-    border: 1px solid #0096ff;
-    color: #80d4ff;
-}
-
-/* ------------------------------------------------ */
-/* ESTILOS PARA LOS BOTONES DE MODOS DE JUEGO       */
-/* ------------------------------------------------ */
-.form-modo-juego {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
-    margin-bottom: 12px;
-}
-
-.selector-modos {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    width: 100%;
-}
-
-.btn-modo {
-    background: rgba(0, 0, 0, 0.6);
-    color: #bbb;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 10px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: center;
-    font-size: 13px;
-}
-
-.btn-modo:hover {
-    border-color: rgba(255, 106, 0, 0.8);
-    color: #fff;
-}
-
-.btn-modo.activo {
-    background: linear-gradient(135deg, #ff6a00, #ee0979);
-    color: #fff;
-    border-color: #ff6a00;
-    box-shadow: 0 0 10px rgba(255, 106, 0, 0.4);
-}
-
-/* ------------------------------------------------ */
-/* ESTILOS PARA COMPUTADORAS Y PANTALLAS GRANDES    */
-/* ------------------------------------------------ */
-@media (min-width: 992px) {
-    .pantalla-home {
-        padding: 40px 20px;
-    }
-
+/* ── PANTALLAS GRANDES ── */
+@media (min-width: 768px) {
     .panel-home {
-        max-width: 1400px;
-        width: 90%;
-        min-height: 70vh;
-        padding: 50px 80px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+        max-width: 560px;
+        padding: 50px 45px;
     }
 
-    .saludo-home {
-        font-size: 2.2rem;
-        margin-bottom: 40px;
+    .logo-home {
+        max-width: 420px;
     }
 
-    .home-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 80px;
-        align-items: start;
+    .frase-home {
+        font-size: 1.25rem;
     }
 
-    .info-jugador,
-    .seccion-historial h3 {
-        text-align: left;
+    .caracteristicas-home li {
+        font-size: 0.9rem;
     }
 
-    .seccion-historial h3 {
-        font-size: 1.5rem;
-        margin-bottom: 25px;
-    }
-
-    .valor-puntaje {
-        font-size: 4rem;
-    }
-
-    .btn-jugar {
-        font-size: 1.4rem;
-        padding: 20px;
-    }
-
+    .btn-jugar,
     .btn-secundario {
         font-size: 1.2rem;
-        padding: 18px;
+        padding: 17px;
     }
 
-    .lista-partidas {
-        max-height: 350px;
+    /* Con header arriba, la hacemos un poco más compacta para que entre sin scroll */
+    .barra-superior + .pantalla-home .panel-home {
+        padding: 30px 45px;
     }
 
-    .item-partida {
-        padding: 20px 30px;
-        font-size: 1.2rem;
-        margin-bottom: 5px;
-    }
-
-    .fecha-partida, .resultado-partida, .puntos-partida {
-        font-size: inherit;
-        width: auto;
+    .barra-superior + .pantalla-home .logo-home {
+        max-width: 320px;
     }
 }

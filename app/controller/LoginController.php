@@ -16,7 +16,7 @@ class LoginController
     public function index()
     {
         $mensaje = $_GET['mensaje'] ?? '';
-        $datosParaVista = ['ocultar_layout' => true];
+        $datosParaVista = [];
 
         if ($mensaje === 'revisar_mail') {
             $datosParaVista['alerta_info'] = "Registro exitoso. Por favor, revisá tu casilla de correo (y la carpeta de SPAM) para activar tu cuenta.";
@@ -35,19 +35,19 @@ class LoginController
         $usuario = $this->model->buscarUsuario($usuario_o_mail);
 
         if (!$usuario) {
-            $datosParaVista = ['alerta_error' => 'No estás registrado con este correo o usuario. ¡Creá una cuenta!', 'ocultar_layout' => true];
+            $datosParaVista = ['alerta_error' => 'No estás registrado con este correo o usuario. ¡Creá una cuenta!'];
             $this->renderer->renderiza('login', $datosParaVista);
             return;
         }
 
         if (!password_verify($contrasenia, $usuario['contrasenia'])) {
-            $datosParaVista = ['alerta_error' => 'La contraseña es incorrecta. Intentá de nuevo.', 'ocultar_layout' => true];
+            $datosParaVista = ['alerta_error' => 'La contraseña es incorrecta. Intentá de nuevo.'];
             $this->renderer->renderiza('login', $datosParaVista);
             return;
         }
 
         if ($usuario['cuenta_validada'] == 0) {
-            $datosParaVista = ['alerta_error' => 'Tu cuenta aún no está activada. Por favor, revisá tu correo (y la carpeta SPAM).', 'ocultar_layout' => true];
+            $datosParaVista = ['alerta_error' => 'Tu cuenta aún no está activada. Por favor, revisá tu correo (y la carpeta SPAM).'];
             $this->renderer->renderiza('login', $datosParaVista);
             return;
         }
@@ -57,7 +57,7 @@ class LoginController
         $_SESSION['id_rol'] = $usuario['id_rol'];
         $_SESSION['id_usuario'] = $usuario['id_usuario'];
 
-        header("Location: " . BASE_URL . "/home/index");
+        header("Location: " . BASE_URL . "/lobby");
         exit();
     }
 
@@ -65,7 +65,8 @@ class LoginController
     {
         session_unset();
         session_destroy();
-        header("Location: " . BASE_URL . "/login");
+        // Al cerrar sesión volvemos a la portada (home), ya como invitado
+        header("Location: " . BASE_URL . "/home");
         exit();
     }
 }

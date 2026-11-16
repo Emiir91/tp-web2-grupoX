@@ -205,3 +205,10 @@ body {
         padding: 16px;
     }
 }
+
+
+/* ── CON HEADER ARRIBA ──
+   Le restamos el alto del header para que el panel quede centrado sin generar scroll de más */
+.barra-superior + .pantalla-login {
+    min-height: calc(100dvh - 110px);
+}
