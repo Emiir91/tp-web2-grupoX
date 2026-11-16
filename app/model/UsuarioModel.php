@@ -69,6 +69,15 @@ class UsuarioModel
         return $resultado[0];
     }
 
+    // Busca un usuario con la cuenta ya validada por su nombre de usuario (consulta preparada)
+    public function buscarPorNombreUsuario($nombre_usuario)
+    {
+        $sql = "SELECT * FROM usuarios WHERE nombre_usuario = ? AND cuenta_validada = 1";
+        $resultado = $this->database->queryOne($sql, [$nombre_usuario]);
+
+        return $resultado ?: false;
+    }
+
     public function activarUsuario($token)
     {
         // Armamos la consulta inyectando el token directamente (entre comillas simples)

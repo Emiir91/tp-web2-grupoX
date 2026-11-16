@@ -1,11 +1,33 @@
 <main class="pantalla-perfil">
     <div class="panel-perfil">
 
+        {{#perfil_no_encontrado}}
+        <div class="encabezado-perfil">
+            <h2>Jugador <span>no encontrado</span></h2>
+            <p class="subtitulo-perfil">El perfil que buscás no existe o todavía no activó su cuenta.</p>
+            <a href="{{base_url}}/home" class="btn-volver-perfil">Volver al inicio</a>
+        </div>
+        {{/perfil_no_encontrado}}
+
+        {{#perfil}}
         <!-- Encabezado superior con la foto centrada -->
         <div class="encabezado-perfil">
             <img src="{{base_url}}/{{foto_perfil}}" alt="Foto de perfil" class="foto-perfil">
             <h2>Perfil de <span>{{nombre_usuario}}</span></h2>
-            <p class="subtitulo-perfil">Acá podés revisar tu información personal.</p>
+            {{#es_propio}}<p class="subtitulo-perfil">Acá podés revisar tu información personal.</p>{{/es_propio}}
+            {{^es_propio}}<p class="subtitulo-perfil">Mirá cómo le viene yendo a este jugador.</p>{{/es_propio}}
+        </div>
+
+        <!-- Estadísticas del jugador -->
+        <div class="estadisticas-perfil">
+            <div class="caja-estadistica">
+                <span class="valor-estadistica">{{puntaje_total}}</span>
+                <span class="etiqueta-estadistica">Puntaje total</span>
+            </div>
+            <div class="caja-estadistica">
+                <span class="valor-estadistica">{{cantidad_partidas}}</span>
+                <span class="etiqueta-estadistica">Partidas jugadas</span>
+            </div>
         </div>
 
         <!-- Grilla de 2 columnas para PC / 1 columna para celular -->
@@ -18,10 +40,12 @@
                     <div class="dato-valor">{{nombre_completo}}</div>
                 </div>
 
+                {{#es_propio}}
                 <div class="grupo-input">
                     <label>Correo Electrónico</label>
                     <div class="dato-valor">{{mail}}</div>
                 </div>
+                {{/es_propio}}
 
                 <div class="grupo-input">
                     <label>Año de Nacimiento</label>
@@ -47,25 +71,27 @@
             <!-- Columna Derecha: El Mapa y el Código QR -->
             <div class="columna-mapa">
                 <div class="grupo-input full-width-mapa">
-                    <label>Tu Ubicación de Registro</label>
+                    <label>{{#es_propio}}Tu Ubicación de Registro{{/es_propio}}{{^es_propio}}Ubicación{{/es_propio}}</label>
                     <div id="mapa-perfil" class="mapa-contenedor" data-pais="{{pais}}" data-ciudad="{{ciudad}}"></div>
                 </div>
 
-                <!-- Bloque del Código QR integrado -->
+                <!-- Código QR: lleva al perfil público de este jugador -->
                 <div class="grupo-input full-width-qr mt-3 text-center">
-                    <label>Código QR de tu Perfil</label>
+                    <label>Código QR del Perfil</label>
                     <div class="qr-contenedor p-2 rounded d-flex justify-content-center align-items-center">
-                       <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://tp-web2-grupox.lovestoblog.com/perfil/publico?usuario={{nombre_usuario}}"
-                            alt="Código QR del perfil"
-                            class="img-fluid rounded shadow-sm"
-                            style="background: white; padding: 8px; border-radius: 8px;">
+                        <a href="{{url_perfil_publico}}" title="Abrir el perfil público">
+                            <img src="{{url_qr}}"
+                                 alt="Código QR del perfil de {{nombre_usuario}}"
+                                 class="img-fluid rounded shadow-sm"
+                                 style="background: white; padding: 8px; border-radius: 8px;">
+                        </a>
                     </div>
+                    <p class="texto-qr">Escanealo para abrir el perfil desde el celular</p>
                 </div>
             </div>
 
         </div>
+        {{/perfil}}
 
     </div>
 </main>
-
-<script src="<?= BASE_URL ?>/public/js/perfil.js"></script>
