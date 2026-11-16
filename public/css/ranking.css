@@ -1,89 +1,174 @@
-/* Fondo general oscuro con la misma onda del juego */
-body {
-    background-color: #0b0b0b;
-    background-image: radial-gradient(circle at center, #1f1008 0%, #0b0b0b 100%);
-    color: #fff;
-    font-family: Arial, sans-serif;
+* {
     margin: 0;
     padding: 0;
-    min-height: 100vh;
-}
-
-/* Contenedor principal centrado */
-.pantalla-home {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
     box-sizing: border-box;
 }
 
-/* El panel idéntico al de la home */
-.panel-home {
-    background: rgba(18, 18, 18, 0.95);
-    border: 2px solid #ff5722;
-    border-radius: 16px;
-    padding: 40px;
+/* ── FONDO (igual que lobby, home y perfil) ── */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0a0510;
+    color: #ffffff;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../img/fondo-plasma.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+/* ── CONTENEDOR ── */
+.pantalla-ranking {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    padding: 20px 15px;
+}
+
+/* Con el header arriba, le restamos su alto para que no genere scroll */
+.barra-superior + .pantalla-ranking {
+    min-height: calc(100dvh - 110px);
+}
+
+/* ── PANEL (mismo vidrio violeta que el lobby) ── */
+.panel-ranking {
+    display: flex;
+    flex-direction: column;
+    background: rgba(15, 8, 25, 0.88);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 120, 0, 0.3);
+    border-radius: 20px;
+    padding: 25px 15px;
     width: 100%;
-    max-width: 800px;
-    box-shadow: 0 0 30px rgba(255, 87, 34, 0.3);
+    max-width: 500px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
 }
 
-.ranking-title {
-    text-align: center;
-    color: #ff9800;
-    margin-bottom: 30px;
-    font-size: 2rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-
-.ranking-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-    margin-top: 20px;
-}
-
-.ranking-table th, .ranking-table td {
-    padding: 15px;
-    border-bottom: 1px solid #333;
-    color: #fff;
-}
-
-.ranking-table th {
-    background-color: #1a1a1a;
-    color: #ff5722;
-    text-transform: uppercase;
-    font-size: 0.95rem;
-}
-
-.ranking-table tr:hover {
-    background-color: rgba(255, 87, 34, 0.1);
-}
-
-.btn-volver {
+/* ── BOTÓN VOLVER (mismo que perfil y sugerir) ── */
+.btn-volver-lobby {
     display: inline-block;
-    margin-top: 30px;
-    padding: 12px 25px;
-    background: linear-gradient(135deg, #ff9800, #ff5722);
-    color: white;
+    align-self: flex-start;
+    color: #d1c4e9;
     text-decoration: none;
-    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    margin-bottom: 15px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 120, 0, 0.35);
+    background: rgba(15, 8, 25, 0.7);
+    backdrop-filter: blur(6px);
+    transition: all 0.2s ease;
+}
+
+.btn-volver-lobby:hover {
+    color: #ffc000;
+    border-color: #ffc000;
+    background: rgba(255, 120, 0, 0.15);
+}
+
+/* ── TÍTULO (lila con el destacado en dorado, como "Lobby de NAHUEL") ── */
+.titulo-ranking {
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: normal;
+    color: #d1c4e9;
+    margin-bottom: 20px;
+}
+
+.titulo-ranking span {
+    color: #ffc000;
     font-weight: bold;
-    text-align: center;
-    transition: opacity 0.2s;
+    text-transform: uppercase;
 }
 
-.btn-volver:hover {
-    opacity: 0.9;
+/* ── TABLA: cada fila es una "caja" como el historial del lobby ── */
+.tabla-ranking {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    font-size: 0.9rem;
 }
 
-.sin-datos {
-    text-align: center;
-    padding: 25px;
-    color: #888;
+.tabla-ranking th {
+    color: #ffc000;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: left;
+    padding: 0 12px;
+}
+
+.tabla-ranking td {
+    padding: 10px 12px;
+    background: rgba(0, 0, 0, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.2s ease;
+}
+
+/* Bordes redondeados en los extremos de cada fila */
+.tabla-ranking td:first-child {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px 0 0 10px;
+}
+
+.tabla-ranking td:last-child {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0 10px 10px 0;
+}
+
+.fila-jugador:hover td {
+    background: rgba(255, 106, 0, 0.12);
+}
+
+.col-posicion {
+    width: 50px;
+    text-align: center !important;
+}
+
+.col-puntos {
+    text-align: right !important;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.col-puntos small {
+    color: #aaa;
+    font-weight: normal;
+}
+
+/* ── NÚMERO DE POSICIÓN ── */
+.posicion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-weight: 800;
+    color: #d1c4e9;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Podio: oro, plata y bronce */
+.fila-jugador:nth-child(1) .posicion {
+    color: #0a0510;
+    background: #ffc000;
+    box-shadow: 0 0 10px rgba(255, 192, 0, 0.6);
+}
+
+.fila-jugador:nth-child(2) .posicion {
+    color: #0a0510;
+    background: #cfd8dc;
+}
+
+.fila-jugador:nth-child(3) .posicion {
+    color: #0a0510;
+    background: #cd7f32;
 }
 
 /* ── LINKS A LOS PERFILES ── */
@@ -92,6 +177,7 @@ body {
     font-weight: bold;
     text-decoration: none;
     border-bottom: 1px dashed rgba(255, 192, 0, 0.5);
+    word-break: break-word;
     transition: color 0.2s, border-color 0.2s;
 }
 
@@ -100,30 +186,76 @@ body {
     border-bottom-color: #ffffff;
 }
 
-/* Tu propia fila en el ranking */
-.fila-propia {
-    background-color: rgba(255, 192, 0, 0.12);
+/* ── TU PROPIA FILA ── */
+.fila-propia td {
+    background: rgba(255, 192, 0, 0.12);
+    border-color: rgba(255, 192, 0, 0.5);
 }
 
 .etiqueta-vos {
-    margin-left: 8px;
+    margin-left: 6px;
     padding: 2px 8px;
     border-radius: 10px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: bold;
     text-transform: uppercase;
-    color: #0b0b0b;
+    color: #0a0510;
     background: #ffc000;
 }
 
-.ayuda-ranking {
-    margin-top: 15px;
+/* ── SIN DATOS ── */
+.sin-datos {
     text-align: center;
-    font-size: 0.85rem;
+    padding: 20px !important;
+    color: #80d4ff;
+    background: rgba(0, 150, 255, 0.2) !important;
+    border: 1px solid #0096ff !important;
+    border-radius: 10px !important;
+}
+
+.ayuda-ranking {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 0.8rem;
     color: #888;
 }
 
-/* ── CON HEADER ARRIBA ── */
-.barra-superior + .pantalla-home {
-    min-height: calc(100vh - 110px);
+/* ── PANTALLAS GRANDES ── */
+@media (min-width: 768px) {
+    .panel-ranking {
+        max-width: 750px;
+        padding: 40px 50px;
+    }
+
+    .titulo-ranking {
+        font-size: 2rem;
+        margin-bottom: 30px;
+    }
+
+    .tabla-ranking {
+        font-size: 1.1rem;
+        border-spacing: 0 10px;
+    }
+
+    .tabla-ranking th {
+        font-size: 0.9rem;
+        padding: 0 20px;
+    }
+
+    .tabla-ranking td {
+        padding: 15px 20px;
+    }
+
+    .col-posicion {
+        width: 70px;
+    }
+
+    .posicion {
+        width: 36px;
+        height: 36px;
+    }
+
+    .ayuda-ranking {
+        font-size: 0.9rem;
+    }
 }
