@@ -1,24 +1,26 @@
-<main class="pantalla-home">
-    <div class="panel-home ranking-panel">
-        <h2 class="ranking-title">⚡ Ranking Global Mensual ⚡</h2>
+<main class="pantalla-ranking">
+    <div class="panel-ranking">
+        <a href="{{base_url}}/lobby" class="btn-volver-lobby">← Volver al Lobby</a>
 
-        <table class="ranking-table">
+        <h2 class="titulo-ranking">⚡ Ranking <span>Global Mensual</span> ⚡</h2>
+
+        <table class="tabla-ranking">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th class="col-posicion">#</th>
                     <th>Jugador</th>
-                    <th>Puntaje Total</th>
+                    <th class="col-puntos">Puntaje</th>
                 </tr>
             </thead>
             <tbody>
                 {{#ranking}}
-                <tr {{#soy_yo}}class="fila-propia"{{/soy_yo}}>
-                    <td>{{posicion}}</td>
+                <tr class="fila-jugador{{#soy_yo}} fila-propia{{/soy_yo}}">
+                    <td class="col-posicion"><span class="posicion">{{posicion}}</span></td>
                     <td>
                         <a href="{{url_perfil}}" class="link-jugador" title="Ver el perfil de {{usuario}}">{{usuario}}</a>
                         {{#soy_yo}}<span class="etiqueta-vos">vos</span>{{/soy_yo}}
                     </td>
-                    <td>{{puntaje_total}} pts</td>
+                    <td class="col-puntos">{{puntaje_total}} <small>pts</small></td>
                 </tr>
                 {{/ranking}}
                 {{^ranking}}
@@ -30,7 +32,5 @@
         </table>
 
         <p class="ayuda-ranking">Tocá el nombre de un jugador para ver su perfil.</p>
-
-        <a href="{{base_url}}/lobby" class="btn-volver">← Volver al Lobby</a>
     </div>
 </main>
