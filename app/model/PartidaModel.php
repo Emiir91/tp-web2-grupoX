@@ -65,7 +65,7 @@ class PartidaModel
         $preguntas_usadas = $resultado_partida['preguntas_usadas'] ?? '';
 
         $sql = "SELECT * FROM pregunta
-                WHERE activa = 1 
+                WHERE activa = 1 AND estado = 'activa'
                 AND dificultad = ?";
 
         $parametros = [$nivel_actual];
@@ -216,6 +216,53 @@ class PartidaModel
         return $this->database->execute($sql, $parametros);
     }
 
+    public function registrarRespuestaPartida($id_partida, $id_pregunta, $id_respuesta, $es_correcta)
+    {
+        $sql = "INSERT INTO partida_pregunta (
+                    id_partida,
+                    id_pregunta,
+                    id_respuesta_elegida,
+                    es_correcta
+                ) VALUES (?, ?, ?, ?)";
+
+        $parametros = [$id_partida, $id_pregunta, $id_respuesta, $es_correcta];
+
+        return $this->database->execute($sql, $parametros);
+    }
+
+    public function obtenerPreguntasRespondidas($id_partida)
+    {
+        $sql = "SELECT
+                    pp.id_pregunta,
+                    p.texto_pregunta,
+                    re.texto_respuesta AS respuesta_elegida,
+                    rc.texto_respuesta AS respuesta_correcta,
+                    pp.es_correcta
+                FROM partida_pregunta pp
+                JOIN pregunta p ON pp.id_pregunta = p.id_pregunta
+                LEFT JOIN respuesta re ON pp.id_respuesta_elegida = re.id_respuesta
+                JOIN respuesta rc ON rc.id_pregunta = p.id_pregunta AND rc.es_correcta = 1
+                WHERE pp.id_partida = ?
+                ORDER BY pp.id ASC";
+
+        return $this->database->queryAll($sql, [$id_partida]);
+    }
+
+    public function registrarReporte($id_pregunta, $id_usuario, $motivo, $fecha)
+    {
+        $sql = "INSERT INTO reportes (
+                    id_pregunta,
+                    id_usuario,
+                    motivo,
+                    fecha,
+                    estado
+                ) VALUES (?, ?, ?, ?, 'pendiente')";
+
+        $parametros = [$id_pregunta, $id_usuario, $motivo, $fecha];
+
+        return $this->database->execute($sql, $parametros);
+    }
+
     public function finalizarPartida($id_partida, $estado)
     {
         $sql = "UPDATE partida
@@ -296,6 +343,36 @@ class PartidaModel
             LIMIT $limite";
 
         return $this->database->queryAll($sql);
+    }
+
+    public function crearSugerencia($datos)
+    {
+        try {
+            $sql = "INSERT INTO pregunta (texto_pregunta, categoria, dificultad, activa, estado)
+                    VALUES (?, ?, ?, 0, 'sugerida')";
+            $this->database->execute($sql, [
+                $datos['texto_pregunta'],
+                $datos['categoria'],
+                $datos['dificultad']
+            ]);
+            $id_pregunta = $this->database->lastInsertId();
+
+            $respuestas = [
+                [$datos['respuesta_correcta'], 1],
+                [$datos['incorrecta_1'], 0],
+                [$datos['incorrecta_2'], 0],
+                [$datos['incorrecta_3'], 0]
+            ];
+
+            $sqlResp = "INSERT INTO respuesta (id_pregunta, texto_respuesta, es_correcta) VALUES (?, ?, ?)";
+            foreach ($respuestas as $r) {
+                $this->database->execute($sqlResp, [$id_pregunta, $r[0], $r[1]]);
+            }
+
+            return $id_pregunta;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
 }

@@ -25,11 +25,49 @@
             </div>
         </div>
 
+        <details class="revision-preguntas">
+            <summary class="btn-ver-preguntas">Ver Preguntas</summary>
+            <div class="lista-revision">
+                {{#preguntas_partida}}
+                <div class="item-revision">
+                    <div class="contenido-revision">
+                        <p class="texto-pregunta">{{texto_pregunta}}</p>
+                        <p class="respuesta-elegida {{#es_correcta}}correcta{{/es_correcta}}{{^es_correcta}}incorrecta{{/es_correcta}}">
+                            Tu respuesta: {{respuesta_elegida}}
+                        </p>
+                        {{^es_correcta}}
+                        <p class="respuesta-correcta">Correcta: {{respuesta_correcta}}</p>
+                        {{/es_correcta}}
+                    </div>
+                    <button type="button" class="btn-reportar" data-id-pregunta="{{id_pregunta}}" data-texto="{{texto_pregunta}}" title="Reportar pregunta">🚩</button>
+                </div>
+                {{/preguntas_partida}}
+
+                {{^preguntas_partida}}
+                <p class="sin-preguntas">No se registraron preguntas en esta partida.</p>
+                {{/preguntas_partida}}
+            </div>
+        </details>
+
         <div class="acciones">
-            <a href="{{base_url}}/lobby" class="btn-jugar">⚡ VOLVER AL LOBBY ⚡</a>
+            <a href="{{base_url}}/juego/iniciar" class="btn-jugar">⚡ NUEVA PARTIDA ⚡</a>
+            <a href="{{base_url}}/lobby" class="btn-secundario">Volver al Lobby</a>
         </div>
     </div>
 </main>
+
+<div id="modal-reporte" class="modal-overlay modal-oculto">
+    <div class="modal-caja">
+        <h3>Reportar pregunta</h3>
+        <p id="reporte-texto-pregunta" class="reporte-pregunta"></p>
+        <textarea id="reporte-motivo" rows="4" placeholder="Describí el problema con esta pregunta..."></textarea>
+        <div class="acciones-modal">
+            <button id="btn-cancelar-reporte" class="btn-secundario" type="button">Cancelar</button>
+            <button id="btn-enviar-reporte" class="btn-jugar" type="button">Enviar reporte</button>
+        </div>
+        <p id="reporte-confirmacion" class="confirmacion-oculta">✓ Reporte enviado. Gracias por avisarnos.</p>
+    </div>
+</div>
 
 <script>
     history.pushState(null, null, location.href);
@@ -38,3 +76,5 @@
         window.location.replace('{{base_url}}/lobby');
     });
 </script>
+<script>const BASE_URL = '{{base_url}}';</script>
+<script src="{{base_url}}/public/js/resultados.js"></script>

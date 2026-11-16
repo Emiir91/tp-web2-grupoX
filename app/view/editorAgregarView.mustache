@@ -1,0 +1,55 @@
+<main class="pantalla-editor">
+    <div class="panel-editor panel-amplio">
+        <h2 class="titulo-editor">Agregar pregunta</h2>
+        <p class="aviso-edicion">La pregunta se crea inactiva y queda pendiente de aprobación del administrador.</p>
+
+        {{#alerta_error}}<div class="alerta alerta-error">{{alerta_error}}</div>{{/alerta_error}}
+
+        <form action="{{base_url}}/editor/guardarPregunta" method="POST" class="form-editor">
+            <label class="label-editor">
+                Pregunta
+                <textarea name="texto_pregunta" rows="2" required maxlength="500"></textarea>
+            </label>
+
+            <div class="fila-editor">
+                <label class="label-editor">
+                    Categoría
+                    <input type="text" name="categoria" required maxlength="100">
+                </label>
+                <label class="label-editor">
+                    Dificultad
+                    <select name="dificultad">
+                        <option value="facil">Fácil</option>
+                        <option value="intermedio">Intermedio</option>
+                        <option value="dificil">Difícil</option>
+                    </select>
+                </label>
+            </div>
+
+            <label class="label-editor">
+                Respuesta correcta
+                <input type="text" name="respuesta_correcta" required maxlength="300">
+            </label>
+
+            <label class="label-editor">
+                Respuesta incorrecta 1
+                <input type="text" name="incorrecta_1" required maxlength="300">
+            </label>
+
+            <label class="label-editor">
+                Respuesta incorrecta 2
+                <input type="text" name="incorrecta_2" required maxlength="300">
+            </label>
+
+            <label class="label-editor">
+                Respuesta incorrecta 3
+                <input type="text" name="incorrecta_3" required maxlength="300">
+            </label>
+
+            <div class="acciones-editor acciones-secundarias">
+                <button type="submit" class="btn-jugar">Enviar a aprobación</button>
+                <a href="{{base_url}}/editor/index" class="btn-secundario">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</main>

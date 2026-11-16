@@ -1,0 +1,123 @@
+@import url('editor.css');
+
+.pantalla-admin {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100dvh;
+    padding: 30px 20px;
+}
+
+.panel-admin {
+    background: rgba(15, 8, 25, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 120, 0, 0.3);
+    border-radius: 20px;
+    padding: 30px 25px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+    text-align: center;
+}
+
+.panel-amplio {
+    max-width: 720px;
+}
+
+.item-admin {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 120, 0, 0.25);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    text-align: left;
+}
+
+.datos-admin {
+    flex: 1;
+    min-width: 200px;
+}
+
+.texto-admin {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+
+.meta-admin {
+    color: #9d8ec4;
+    font-size: 0.78rem;
+    margin-bottom: 4px;
+}
+
+.acciones-admin {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.respuestas-admin {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.respuesta-chip {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #d1c4e9;
+}
+
+.respuesta-chip.correcta {
+    background: rgba(76, 175, 80, 0.2);
+    border-color: rgba(76, 175, 80, 0.5);
+    color: #81c784;
+    font-weight: 700;
+}
+
+.texto-original {
+    color: #ff9e6d;
+    font-style: italic;
+}
+
+.btn-aprobar {
+    background: rgba(76, 175, 80, 0.2);
+    border-color: rgba(76, 175, 80, 0.5);
+    color: #81c784;
+}
+
+.btn-aprobar:hover {
+    background: rgba(76, 175, 80, 0.4);
+}
+
+.btn-rechazar {
+    background: rgba(204, 28, 0, 0.2);
+    border-color: rgba(204, 28, 0, 0.6);
+    color: #ff8a80;
+}
+
+.btn-rechazar:hover {
+    background: rgba(204, 28, 0, 0.4);
+}
+
+@media (min-width: 768px) {
+    .panel-admin {
+        padding: 40px 45px;
+    }
+
+    .item-admin {
+        flex-wrap: nowrap;
+    }
+}

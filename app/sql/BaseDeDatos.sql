@@ -73,6 +73,46 @@ ALTER TABLE partida ADD COLUMN vidas INT DEFAULT 3;
 
 INSERT INTO roles (nombre_rol) VALUES ('Jugador'), ('Editor'), ('Administrador');
 
+ALTER TABLE pregunta ADD COLUMN estado VARCHAR(30) DEFAULT 'activa';
+
+-- Historial de preguntas respondidas en cada partida
+CREATE TABLE partida_pregunta (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_partida INT NOT NULL,
+    id_pregunta INT NOT NULL,
+    id_respuesta_elegida INT NULL, -- NULL si se agotó el tiempo
+    es_correcta TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (id_partida) REFERENCES partida(id_partida) ON DELETE CASCADE,
+    FOREIGN KEY (id_pregunta) REFERENCES pregunta(id_pregunta)
+);
+
+-- Reportes enviados por jugadores desde Resultados
+CREATE TABLE reportes (
+    id_reporte INT AUTO_INCREMENT PRIMARY KEY,
+    id_pregunta INT NOT NULL,
+    id_usuario INT NOT NULL,
+    motivo VARCHAR(255) NOT NULL,
+    fecha DATETIME NOT NULL,
+    estado VARCHAR(20) DEFAULT 'pendiente', -- 'pendiente' o 'resuelto'
+    FOREIGN KEY (id_pregunta) REFERENCES pregunta(id_pregunta),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+);
+
+-- Borradores de edición del Editor
+CREATE TABLE preguntas_ediciones_pendientes (
+    id_edicion INT AUTO_INCREMENT PRIMARY KEY,
+    id_pregunta INT NOT NULL,
+    texto_pregunta VARCHAR(500) NOT NULL,
+    categoria VARCHAR(100) NOT NULL,
+    dificultad ENUM('facil', 'intermedio', 'dificil') DEFAULT 'facil',
+    respuesta_correcta VARCHAR(300) NOT NULL,
+    incorrecta_1 VARCHAR(300) NOT NULL,
+    incorrecta_2 VARCHAR(300) NOT NULL,
+    incorrecta_3 VARCHAR(300) NOT NULL,
+    fecha DATETIME NOT NULL,
+    FOREIGN KEY (id_pregunta) REFERENCES pregunta(id_pregunta) ON DELETE CASCADE
+);
+
 -- Usuario: test / Contraseña: 123456
 INSERT INTO usuarios (nombre_completo, anio_nacimiento, sexo, pais, ciudad, mail, contrasenia, nombre_usuario, foto_perfil, id_rol, cuenta_validada, token_validacion)
 VALUES ('Usuario de Prueba', 2000, 'Prefiero no cargarlo', 'Argentina', 'Buenos Aires', 'test@test.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'test', 'public/uploads/default.png', 1, 1, NULL);

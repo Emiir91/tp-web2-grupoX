@@ -1,0 +1,56 @@
+<main class="pantalla-lobby">
+    <div class="panel-lobby panel-sugerir">
+        <a href="{{base_url}}/lobby" class="btn-volver-lobby">← Volver al Lobby</a>
+        <h2 class="saludo-lobby">Sugerir una pregunta</h2>
+        <p class="texto-sugerir">Tu pregunta será revisada por el equipo editor antes de publicarse.</p>
+
+        {{#alerta_error}}<div class="alerta alerta-error-sugerir">{{alerta_error}}</div>{{/alerta_error}}
+
+        <form action="{{base_url}}/lobby/guardarSugerencia" method="POST" class="form-sugerir">
+            <label class="label-sugerir">
+                Pregunta
+                <textarea name="texto_pregunta" rows="2" required maxlength="500"></textarea>
+            </label>
+
+            <div class="fila-sugerir">
+                <label class="label-sugerir">
+                    Categoría
+                    <input type="text" name="categoria" required maxlength="100">
+                </label>
+                <label class="label-sugerir">
+                    Dificultad
+                    <select name="dificultad">
+                        <option value="facil">Fácil</option>
+                        <option value="intermedio">Intermedio</option>
+                        <option value="dificil">Difícil</option>
+                    </select>
+                </label>
+            </div>
+
+            <label class="label-sugerir">
+                Respuesta correcta
+                <input type="text" name="respuesta_correcta" required maxlength="300">
+            </label>
+
+            <label class="label-sugerir">
+                Respuesta incorrecta 1
+                <input type="text" name="incorrecta_1" required maxlength="300">
+            </label>
+
+            <label class="label-sugerir">
+                Respuesta incorrecta 2
+                <input type="text" name="incorrecta_2" required maxlength="300">
+            </label>
+
+            <label class="label-sugerir">
+                Respuesta incorrecta 3
+                <input type="text" name="incorrecta_3" required maxlength="300">
+            </label>
+
+            <div class="acciones-sugerir">
+                <button type="submit" class="btn-jugar">Enviar sugerencia</button>
+                <a href="{{base_url}}/lobby" class="btn-secundario">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</main>

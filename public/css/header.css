@@ -25,6 +25,24 @@
 .barra-opciones {
     display: flex;
     align-items: center;
+    gap: 10px;
+}
+
+.btn-nav-panel {
+    background: transparent;
+    color: #ffc000;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+    border: 1px solid rgba(255, 192, 0, 0.4);
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.btn-nav-panel:hover {
+    background: rgba(255, 192, 0, 0.15);
+    border-color: #ffc000;
 }
 
 /* --- USUARIO INVITADO (Botón Iniciar Sesión) --- */

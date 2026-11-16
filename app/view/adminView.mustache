@@ -1,0 +1,96 @@
+<main class="pantalla-admin">
+    <div class="panel-admin panel-amplio">
+        <a href="{{base_url}}/home" class="btn-volver">← Volver al Home</a>
+        <h2 class="titulo-editor">Panel de Administración</h2>
+        <p class="subtitulo-editor">Aprobá o rechazá las novedades enviadas por el editor.</p>
+
+        {{#alerta_exito}}<div class="alerta alerta-exito">{{alerta_exito}}</div>{{/alerta_exito}}
+
+        <section class="seccion-editor">
+            <h3 class="titulo-seccion">Altas pendientes</h3>
+
+            {{#altas}}
+            <div class="item-admin">
+                <div class="datos-admin">
+                    <p class="texto-admin">{{texto_pregunta}}</p>
+                    <p class="meta-admin">{{categoria}} · {{dificultad}}</p>
+                    <div class="respuestas-admin">
+                        {{#respuestas}}
+                        <span class="respuesta-chip {{#es_correcta}}correcta{{/es_correcta}}">{{texto_respuesta}}</span>
+                        {{/respuestas}}
+                    </div>
+                </div>
+                <div class="acciones-admin">
+                    <form action="{{base_url}}/admin/aprobarAlta" method="POST" class="form-inline">
+                        <input type="hidden" name="id" value="{{id_pregunta}}">
+                        <button type="submit" class="btn-mini btn-aprobar">✓ Aprobar</button>
+                    </form>
+                    <form action="{{base_url}}/admin/rechazarAlta" method="POST" class="form-inline">
+                        <input type="hidden" name="id" value="{{id_pregunta}}">
+                        <button type="submit" class="btn-mini btn-rechazar">✖ Rechazar</button>
+                    </form>
+                </div>
+            </div>
+            {{/altas}}
+
+            {{^altas}}<p class="vacio">No hay altas pendientes.</p>{{/altas}}
+        </section>
+
+        <section class="seccion-editor">
+            <h3 class="titulo-seccion">Bajas pendientes</h3>
+
+            {{#bajas}}
+            <div class="item-admin">
+                <div class="datos-admin">
+                    <p class="texto-admin">{{texto_pregunta}}</p>
+                    <p class="meta-admin">{{categoria}} · {{dificultad}}</p>
+                </div>
+                <div class="acciones-admin">
+                    <form action="{{base_url}}/admin/aprobarBaja" method="POST" class="form-inline">
+                        <input type="hidden" name="id" value="{{id_pregunta}}">
+                        <button type="submit" class="btn-mini btn-aprobar">✓ Aprobar</button>
+                    </form>
+                    <form action="{{base_url}}/admin/rechazarBaja" method="POST" class="form-inline">
+                        <input type="hidden" name="id" value="{{id_pregunta}}">
+                        <button type="submit" class="btn-mini btn-rechazar">✖ Rechazar</button>
+                    </form>
+                </div>
+            </div>
+            {{/bajas}}
+
+            {{^bajas}}<p class="vacio">No hay bajas pendientes.</p>{{/bajas}}
+        </section>
+
+        <section class="seccion-editor">
+            <h3 class="titulo-seccion">Ediciones pendientes</h3>
+
+            {{#ediciones}}
+            <div class="item-admin">
+                <div class="datos-admin">
+                    <p class="texto-admin">{{texto_pregunta}}</p>
+                    <p class="meta-admin">{{categoria}} · {{dificultad}}</p>
+                    <p class="meta-admin texto-original">Original: {{texto_original}}</p>
+                    <div class="respuestas-admin">
+                        <span class="respuesta-chip correcta">{{respuesta_correcta}}</span>
+                        <span class="respuesta-chip">{{incorrecta_1}}</span>
+                        <span class="respuesta-chip">{{incorrecta_2}}</span>
+                        <span class="respuesta-chip">{{incorrecta_3}}</span>
+                    </div>
+                </div>
+                <div class="acciones-admin">
+                    <form action="{{base_url}}/admin/aprobarEdicion" method="POST" class="form-inline">
+                        <input type="hidden" name="id" value="{{id_edicion}}">
+                        <button type="submit" class="btn-mini btn-aprobar">✓ Aprobar</button>
+                    </form>
+                    <form action="{{base_url}}/admin/rechazarEdicion" method="POST" class="form-inline">
+                        <input type="hidden" name="id" value="{{id_edicion}}">
+                        <button type="submit" class="btn-mini btn-rechazar">✖ Rechazar</button>
+                    </form>
+                </div>
+            </div>
+            {{/ediciones}}
+
+            {{^ediciones}}<p class="vacio">No hay ediciones pendientes.</p>{{/ediciones}}
+        </section>
+    </div>
+</main>

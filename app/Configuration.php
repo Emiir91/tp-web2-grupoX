@@ -9,8 +9,13 @@ use app\controller\JuegoController;
 use app\controller\PerfilController;
 use app\controller\LobbyController;
 use app\controller\RankingController;
+use app\controller\ResultadosController;
+use app\controller\EditorController;
+use app\controller\AdminController;
 use app\model\UsuarioModel;
 use app\model\PartidaModel;
+use app\model\EditorModel;
+use app\model\AdminModel;
 
 use MustacheRender;
 use MyDatabase;
@@ -122,6 +127,42 @@ class Configuration
         return new RankingController(
             $this->getRender(),
             $this->getPartidaModel()
+        );
+    }
+
+    public function getResultadosController()
+    {
+        return new ResultadosController(
+            $this->getPartidaModel(),
+            $this->getRender()
+        );
+    }
+
+    public function getEditorController()
+    {
+        return new EditorController(
+            $this->getRender(),
+            $this->getEditorModel()
+        );
+    }
+
+    public function getAdminController()
+    {
+        return new AdminController(
+            $this->getRender(),
+            $this->getAdminModel()
+        );
+    }
+
+    private function getEditorModel(){
+        return new EditorModel(
+            $this->getDatabase()
+        );
+    }
+
+    private function getAdminModel(){
+        return new AdminModel(
+            $this->getDatabase()
         );
     }
 

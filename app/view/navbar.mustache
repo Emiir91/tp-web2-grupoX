@@ -7,6 +7,12 @@
 
     <div class="barra-opciones">
         {{#usuario_logueado}}
+        {{#es_editor}}
+        <a href="{{base_url}}/editor/index" class="btn-nav-panel">📝 Editor</a>
+        {{/es_editor}}
+        {{#es_admin}}
+        <a href="{{base_url}}/admin/index" class="btn-nav-panel">🛡️ Admin</a>
+        {{/es_admin}}
         <div class="menu-perfil-contenedor">
             <button id="btn-perfil" class="btn-icono-perfil">
                 👤 {{nombre_usuario}} ▼

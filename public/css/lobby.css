@@ -26,6 +26,28 @@ body {
     position: relative;
 }
 
+.btn-volver-lobby {
+    display: inline-block;
+    align-self: flex-start;
+    color: #d1c4e9;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    margin-bottom: 15px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 120, 0, 0.35);
+    background: rgba(15, 8, 25, 0.7);
+    backdrop-filter: blur(6px);
+    transition: all 0.2s ease;
+}
+
+.btn-volver-lobby:hover {
+    color: #ffc000;
+    border-color: #ffc000;
+    background: rgba(255, 120, 0, 0.15);
+}
+
 .panel-lobby {
     background: rgba(15, 8, 25, 0.88);
     backdrop-filter: blur(10px);
