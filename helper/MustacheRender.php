@@ -37,6 +37,8 @@ class MustacheRender
 
         $data['usuario_logueado'] = isset($_SESSION['usuario_logueado']) && $_SESSION['usuario_logueado'] === true;
         $data['nombre_usuario'] = $_SESSION['nombre_usuario'] ?? '';
+        $data['es_editor'] = in_array($_SESSION['id_rol'] ?? 0, [2, 3]);
+        $data['es_admin'] = (($_SESSION['id_rol'] ?? 0) == 3);
 
         $data['requiere_mapa'] = $data['requiere_mapa'] ?? false;
         $data['requiere_perfil'] = $data['requiere_perfil'] ?? false;

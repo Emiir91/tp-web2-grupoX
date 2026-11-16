@@ -1,0 +1,55 @@
+<main class="pantalla-editor">
+    <div class="panel-editor panel-amplio">
+        <h2 class="titulo-editor">Editar pregunta</h2>
+        <p class="aviso-edicion">Los cambios se envían al administrador para su aprobación. La pregunta original no se modifica hasta entonces.</p>
+
+        <form action="{{base_url}}/editor/guardarEdicion" method="POST" class="form-editor">
+            <input type="hidden" name="id_pregunta" value="{{id_pregunta}}">
+
+            <label class="label-editor">
+                Pregunta
+                <textarea name="texto_pregunta" rows="2" required maxlength="500">{{texto_pregunta}}</textarea>
+            </label>
+
+            <div class="fila-editor">
+                <label class="label-editor">
+                    Categoría
+                    <input type="text" name="categoria" value="{{categoria}}" required maxlength="100">
+                </label>
+                <label class="label-editor">
+                    Dificultad
+                    <select name="dificultad">
+                        <option value="facil" {{#es_facil}}selected{{/es_facil}}>Fácil</option>
+                        <option value="intermedio" {{#es_intermedio}}selected{{/es_intermedio}}>Intermedio</option>
+                        <option value="dificil" {{#es_dificil}}selected{{/es_dificil}}>Difícil</option>
+                    </select>
+                </label>
+            </div>
+
+            <label class="label-editor">
+                Respuesta correcta
+                <input type="text" name="respuesta_correcta" value="{{respuesta_correcta}}" required maxlength="300">
+            </label>
+
+            <label class="label-editor">
+                Respuesta incorrecta 1
+                <input type="text" name="incorrecta_1" value="{{incorrecta_1}}" required maxlength="300">
+            </label>
+
+            <label class="label-editor">
+                Respuesta incorrecta 2
+                <input type="text" name="incorrecta_2" value="{{incorrecta_2}}" required maxlength="300">
+            </label>
+
+            <label class="label-editor">
+                Respuesta incorrecta 3
+                <input type="text" name="incorrecta_3" value="{{incorrecta_3}}" required maxlength="300">
+            </label>
+
+            <div class="acciones-editor acciones-secundarias">
+                <button type="submit" class="btn-jugar">Enviar a aprobación</button>
+                <a href="{{base_url}}/editor/preguntas" class="btn-secundario">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</main>

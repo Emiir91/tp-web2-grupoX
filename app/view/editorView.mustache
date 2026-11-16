@@ -1,0 +1,75 @@
+<main class="pantalla-editor">
+    <div class="panel-editor panel-amplio">
+        <a href="{{base_url}}/home" class="btn-volver">← Volver al Home</a>
+        <h2 class="titulo-editor">Panel de Editor</h2>
+        <p class="subtitulo-editor">Hola <span>{{nombre_usuario}}</span>, administrá las preguntas del catálogo.</p>
+
+        {{#alerta_exito}}<div class="alerta alerta-exito">{{alerta_exito}}</div>{{/alerta_exito}}
+
+        <div class="acciones-editor">
+            <a href="{{base_url}}/editor/preguntas" class="btn-jugar">📋 Ver preguntas</a>
+            <a href="{{base_url}}/editor/agregar" class="btn-secundario">➕ Agregar pregunta</a>
+        </div>
+
+        <section class="seccion-editor">
+            <h3 class="titulo-seccion">Preguntas reportadas</h3>
+
+            {{#reportes}}
+            <div class="item-reporte">
+                <div class="datos-reporte">
+                    <p class="texto-reporte">{{texto_pregunta}}</p>
+                    <p class="meta-reporte">Reportado por <strong>{{nombre_usuario}}</strong> · {{fecha}}</p>
+                    <p class="motivo-reporte">Motivo: {{motivo}}</p>
+                </div>
+                <div class="acciones-reporte">
+                    <a href="{{base_url}}/editor/editarDesdeReporte?id={{id_reporte}}" class="btn-mini btn-editar">✏️ Editar</a>
+                    <form action="{{base_url}}/editor/eliminarDesdeReporte" method="POST" class="form-inline">
+                        <input type="hidden" name="id_reporte" value="{{id_reporte}}">
+                        <button type="submit" class="btn-mini btn-eliminar">🗑️ Eliminar</button>
+                    </form>
+                    <form action="{{base_url}}/editor/desestimarReporte" method="POST" class="form-inline">
+                        <input type="hidden" name="id_reporte" value="{{id_reporte}}">
+                        <button type="submit" class="btn-mini btn-desestimar">✖ Desestimar</button>
+                    </form>
+                </div>
+            </div>
+            {{/reportes}}
+
+            {{^reportes}}
+            <p class="vacio">No hay preguntas reportadas pendientes.</p>
+            {{/reportes}}
+        </section>
+
+        <section class="seccion-editor">
+            <h3 class="titulo-seccion">Preguntas sugeridas por usuarios</h3>
+
+            {{#sugeridas}}
+            <div class="item-reporte">
+                <div class="datos-reporte">
+                    <p class="texto-reporte">{{texto_pregunta}}</p>
+                    <p class="meta-reporte">{{categoria}} · {{dificultad}}</p>
+                    <div class="respuestas-sugerencia">
+                        {{#respuestas}}
+                        <span class="respuesta-chip {{#es_correcta}}correcta{{/es_correcta}}">{{texto_respuesta}}</span>
+                        {{/respuestas}}
+                    </div>
+                </div>
+                <div class="acciones-reporte">
+                    <form action="{{base_url}}/editor/aprobarSugerencia" method="POST" class="form-inline">
+                        <input type="hidden" name="id_pregunta" value="{{id_pregunta}}">
+                        <button type="submit" class="btn-mini btn-aprobar">✓ Aprobar</button>
+                    </form>
+                    <form action="{{base_url}}/editor/rechazarSugerencia" method="POST" class="form-inline">
+                        <input type="hidden" name="id_pregunta" value="{{id_pregunta}}">
+                        <button type="submit" class="btn-mini btn-eliminar">✖ Rechazar</button>
+                    </form>
+                </div>
+            </div>
+            {{/sugeridas}}
+
+            {{^sugeridas}}
+            <p class="vacio">No hay preguntas sugeridas pendientes.</p>
+            {{/sugeridas}}
+        </section>
+    </div>
+</main>

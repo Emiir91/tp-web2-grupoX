@@ -1,0 +1,31 @@
+<main class="pantalla-editor">
+    <div class="panel-editor panel-amplio">
+        <h2 class="titulo-editor">Preguntas del catálogo</h2>
+
+        {{#alerta_exito}}<div class="alerta alerta-exito">{{alerta_exito}}</div>{{/alerta_exito}}
+
+        <div class="acciones-editor acciones-secundarias">
+            <a href="{{base_url}}/editor/index" class="btn-secundario">← Volver</a>
+            <a href="{{base_url}}/editor/agregar" class="btn-jugar">➕ Agregar pregunta</a>
+        </div>
+
+        {{#preguntas}}
+        <div class="item-pregunta">
+            <div class="datos-pregunta">
+                <p class="texto-pregunta-item">{{texto_pregunta}}</p>
+                <p class="meta-pregunta-item">{{categoria}} · {{dificultad}}</p>
+                <span class="badge-estado badge-{{estado}}">{{estado}}</span>
+            </div>
+            <div class="acciones-pregunta">
+                <a href="{{base_url}}/editor/editar?id={{id_pregunta}}" class="btn-mini btn-editar">✏️ Editar</a>
+                {{^pendiente_baja}}
+                <form action="{{base_url}}/editor/eliminar" method="POST" class="form-inline">
+                    <input type="hidden" name="id_pregunta" value="{{id_pregunta}}">
+                    <button type="submit" class="btn-mini btn-eliminar">🗑️ Eliminar</button>
+                </form>
+                {{/pendiente_baja}}
+            </div>
+        </div>
+        {{/preguntas}}
+    </div>
+</main>

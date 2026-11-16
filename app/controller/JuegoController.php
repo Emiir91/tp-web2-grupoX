@@ -61,9 +61,19 @@ class JuegoController
             $tiempo_restante = 10 - $tiempo_transcurrido;
 
             if ($tiempo_restante <= 0) {
+                $id_pregunta_actual = $_SESSION['id_pregunta_actual'];
                 $this->limpiarSesionPregunta();
-                $this->partidaModel->finalizarPartida($id_partida, 'tiempo_agotado');
-                header("Location: " . BASE_URL . "/juego/resultados");
+                $this->partidaModel->registrarRespuestaPartida($id_partida, $id_pregunta_actual, null, 0);
+                $this->partidaModel->restarVida($id_partida);
+                $vidas_restantes = $this->partidaModel->obtenerVidasActuales($id_partida);
+
+                if ($vidas_restantes <= 0) {
+                    $this->partidaModel->finalizarPartida($id_partida, 'sin_vidas');
+                    header("Location: " . BASE_URL . "/juego/resultados");
+                    exit();
+                }
+
+                header("Location: " . BASE_URL . "/juego/mostrar");
                 exit();
             }
 
@@ -122,6 +132,7 @@ class JuegoController
         }
 
         $id_partida = $_SESSION['id_partida'];
+        $id_pregunta_actual = $_SESSION['id_pregunta_actual'] ?? null;
 
         $this->limpiarSesionPregunta();
 
@@ -133,6 +144,9 @@ class JuegoController
         $tiempo_restante = $this->partidaModel->validarTiempo($id_partida);
 
         if ($tiempo_restante <= 0) {
+            if ($id_pregunta_actual) {
+                $this->partidaModel->registrarRespuestaPartida($id_partida, $id_pregunta_actual, null, 0);
+            }
             $this->partidaModel->restarVida($id_partida);
             $vidas_restantes = $this->partidaModel->obtenerVidasActuales($id_partida);
 
@@ -147,6 +161,10 @@ class JuegoController
         }
 
         $es_correcta = $this->partidaModel->validarRespuesta($id_respuesta);
+
+        if ($id_pregunta_actual) {
+            $this->partidaModel->registrarRespuestaPartida($id_partida, $id_pregunta_actual, $id_respuesta, $es_correcta ? 1 : 0);
+        }
 
         if ($es_correcta) {
             $datos_partida = $this->partidaModel->obtenerDatosPartida($id_partida);
@@ -189,8 +207,13 @@ class JuegoController
         }
 
         $id_partida = $_SESSION['id_partida'];
+        $id_pregunta_actual = $_SESSION['id_pregunta_actual'] ?? null;
 
         $this->limpiarSesionPregunta();
+
+        if ($id_pregunta_actual) {
+            $this->partidaModel->registrarRespuestaPartida($id_partida, $id_pregunta_actual, null, 0);
+        }
 
         $this->partidaModel->restarVida($id_partida);
         $vidas_restantes = $this->partidaModel->obtenerVidasActuales($id_partida);
@@ -238,20 +261,12 @@ class JuegoController
             exit();
         }
 
-        $mensaje = $this->generarMensajeSegunPuntaje($datos_partida['puntaje']);
-
-        $datosParaVista = [
-            'puntaje' => $datos_partida['puntaje'],
-            'racha' => $datos_partida['racha'],
-            'estado' => $datos_partida['estado'],
-            'mensaje' => $mensaje,
-            'ocultar_layout' => true
-        ];
-
+        $_SESSION['id_partida_resultados'] = $id_partida;
         unset($_SESSION['id_partida']);
         $this->limpiarSesionPregunta();
 
-        $this->renderer->renderiza('resultados', $datosParaVista);
+        header("Location: " . BASE_URL . "/resultados/index");
+        exit();
     }
 
     private function generarMensajeSegunPuntaje($puntaje)

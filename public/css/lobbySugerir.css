@@ -1,0 +1,86 @@
+@import url('lobby.css');
+
+.panel-sugerir {
+    max-width: 560px;
+    text-align: left;
+}
+
+.texto-sugerir {
+    color: #d1c4e9;
+    font-size: 0.9rem;
+    margin: -5px 0 20px;
+}
+
+.alerta-error-sugerir {
+    background: rgba(204, 28, 0, 0.15);
+    border: 1px solid rgba(204, 28, 0, 0.5);
+    color: #ff8a80;
+}
+
+.form-sugerir {
+    display: flex;
+    flex-direction: column;
+}
+
+.label-sugerir {
+    display: block;
+    color: #d1c4e9;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.label-sugerir input,
+.label-sugerir textarea,
+.label-sugerir select {
+    display: block;
+    width: 100%;
+    margin-top: 6px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 120, 0, 0.3);
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+}
+
+.label-sugerir input:focus,
+.label-sugerir textarea:focus,
+.label-sugerir select:focus {
+    outline: none;
+    border-color: #ffc000;
+}
+
+.label-sugerir select option {
+    background: #1a0f2e;
+    color: #ffffff;
+}
+
+.fila-sugerir {
+    display: flex;
+    gap: 12px;
+}
+
+.fila-sugerir .label-sugerir {
+    flex: 1;
+}
+
+.acciones-sugerir {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 5px;
+}
+
+@media (min-width: 768px) {
+    .acciones-sugerir {
+        flex-direction: row;
+    }
+
+    .acciones-sugerir .btn-jugar,
+    .acciones-sugerir .btn-secundario {
+        flex: 1;
+    }
+}

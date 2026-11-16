@@ -28,7 +28,6 @@ class HomeController
         if ($estaLogueado) {
             $id_usuario = $_SESSION['id_usuario'];
             $nombre_usuario = $_SESSION['nombre_usuario'] ?? '';
-            
             $datosParaVista['nombre_usuario'] = $nombre_usuario;
 
             if ($this->partidaModel !== null) {
