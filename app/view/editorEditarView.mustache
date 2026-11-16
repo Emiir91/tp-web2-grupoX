@@ -14,7 +14,11 @@
             <div class="fila-editor">
                 <label class="label-editor">
                     Categoría
-                    <input type="text" name="categoria" value="{{categoria}}" required maxlength="100">
+                    <select name="categoria" required>
+                        {{#categorias}}
+                        <option value="{{nombre}}" {{#seleccionada}}selected{{/seleccionada}}>{{nombre}}</option>
+                        {{/categorias}}
+                    </select>
                 </label>
                 <label class="label-editor">
                     Dificultad

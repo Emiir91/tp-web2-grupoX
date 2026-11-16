@@ -4,6 +4,12 @@ namespace app\controller;
 
 class LobbyController
 {
+    private const CATEGORIAS = [
+        'Geografía', 'Ciencias', 'Matemáticas', 'Cultura General', 'Animales',
+        'Literatura', 'Historia', 'Física', 'Deportes', 'Arte',
+        'Música', 'Cine', 'Tecnología', 'Videojuegos'
+    ];
+
     private $renderer;
     private $partidaModel;
 
@@ -78,6 +84,11 @@ class LobbyController
 
         if (!in_array($dificultad, ['facil', 'intermedio', 'dificil'])) {
             $dificultad = 'facil';
+        }
+
+        if (!in_array($categoria, self::CATEGORIAS, true)) {
+            header("Location: " . BASE_URL . "/lobby/sugerir?mensaje=error");
+            exit();
         }
 
         $id_pregunta = $this->partidaModel->crearSugerencia([

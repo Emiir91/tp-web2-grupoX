@@ -4,6 +4,12 @@ namespace app\controller;
 
 class EditorController
 {
+    private const CATEGORIAS = [
+        'Geografía', 'Ciencias', 'Matemáticas', 'Cultura General', 'Animales',
+        'Literatura', 'Historia', 'Física', 'Deportes', 'Arte',
+        'Música', 'Cine', 'Tecnología', 'Videojuegos'
+    ];
+
     private $renderer;
     private $editorModel;
 
@@ -89,10 +95,18 @@ class EditorController
             }
         }
 
+        $categorias = array_map(function ($cat) use ($pregunta) {
+            return [
+                'nombre' => $cat,
+                'seleccionada' => ($pregunta['categoria'] === $cat)
+            ];
+        }, self::CATEGORIAS);
+
         $datosParaVista = [
             'id_pregunta' => $id_pregunta,
             'texto_pregunta' => $pregunta['texto_pregunta'],
             'categoria' => $pregunta['categoria'],
+            'categorias' => $categorias,
             'dificultad' => $pregunta['dificultad'],
             'respuesta_correcta' => $correcta ?? '',
             'incorrecta_1' => $incorrectas[0] ?? '',
@@ -287,6 +301,10 @@ class EditorController
 
         if (!in_array($dificultad, ['facil', 'intermedio', 'dificil'])) {
             $dificultad = 'facil';
+        }
+
+        if (!in_array($categoria, self::CATEGORIAS, true)) {
+            return null;
         }
 
         return [
