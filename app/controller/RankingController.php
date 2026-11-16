@@ -26,11 +26,15 @@ class RankingController
         // Traemos el ranking
         $ranking = $this->partidaModel->obtenerRankingMensualGlobal(10);
 
-        // Le asignamos un número de posición a cada elemento (1, 2, 3...)
+        // Le asignamos un número de posición a cada elemento (1, 2, 3...),
+        // el link a su perfil público y marcamos cuál sos vos
         $contador = 1;
         foreach ($ranking as &$jugador) {
             $jugador['posicion'] = $contador++;
+            $jugador['url_perfil'] = BASE_URL . "/perfil/publico?usuario=" . rawurlencode($jugador['usuario']);
+            $jugador['soy_yo'] = ($jugador['usuario'] === ($_SESSION['nombre_usuario'] ?? null));
         }
+        unset($jugador);
 
         $datosParaVista['ranking'] = $ranking;
 
