@@ -54,6 +54,8 @@ class JuegoController
             exit();
         }
 
+        $vidas_actuales = $this->partidaModel->obtenerVidasActuales($id_partida);
+
         if (isset($_SESSION['id_pregunta_actual']) && isset($_SESSION['tiempo_inicio_pregunta'])) {
             $tiempo_transcurrido = time() - $_SESSION['tiempo_inicio_pregunta'];
             $tiempo_restante = 10 - $tiempo_transcurrido;
@@ -90,12 +92,15 @@ class JuegoController
 
         $respuestas = $this->partidaModel->obtenerRespuestasDePregunta($pregunta['id_pregunta']);
 
+        $vidas_array = array_fill(0, $vidas_actuales, '❤️');
+
         $datosParaVista = [
             'pregunta' => $pregunta['texto_pregunta'],
             'categoria' => $pregunta['categoria'],
             'respuestas' => $respuestas,
             'id_partida' => $id_partida,
             'tiempo_restante' => $tiempo_restante,
+            'vidas' => $vidas_array,
             'ocultar_layout' => true
         ];
 
@@ -128,20 +133,26 @@ class JuegoController
         $tiempo_restante = $this->partidaModel->validarTiempo($id_partida);
 
         if ($tiempo_restante <= 0) {
-            $this->partidaModel->finalizarPartida($id_partida, 'tiempo_agotado');
-            header("Location: " . BASE_URL . "/juego/resultados");
+            $this->partidaModel->restarVida($id_partida);
+            $vidas_restantes = $this->partidaModel->obtenerVidasActuales($id_partida);
+
+            if ($vidas_restantes <= 0) {
+                $this->partidaModel->finalizarPartida($id_partida, 'sin_vidas');
+                header("Location: " . BASE_URL . "/juego/resultados");
+                exit();
+            }
+
+            header("Location: " . BASE_URL . "/juego/mostrar");
             exit();
         }
 
         $es_correcta = $this->partidaModel->validarRespuesta($id_respuesta);
 
         if ($es_correcta) {
-            // Obtenemos los datos actuales de la partida para evaluar el nivel en el que se encuentra
             $datos_partida = $this->partidaModel->obtenerDatosPartida($id_partida);
             $nivel_actual = $datos_partida['nivel_actual'] ?? 'facil';
 
-            // Asignamos puntos dinámicos según la dificultad actual (funciona tanto para fija como progresiva)
-            $puntos_a_sumar = 10; // Fácil
+            $puntos_a_sumar = 10;
             if ($nivel_actual === 'intermedio') {
                 $puntos_a_sumar = 15;
             } elseif ($nivel_actual === 'dificil') {
@@ -153,6 +164,15 @@ class JuegoController
 
             $this->partidaModel->registrarRespuestaCorrecta($id_partida, $nuevo_puntaje, $nueva_racha);
         } else {
+            $this->partidaModel->restarVida($id_partida);
+            $vidas_restantes = $this->partidaModel->obtenerVidasActuales($id_partida);
+
+            if ($vidas_restantes <= 0) {
+                $this->partidaModel->finalizarPartida($id_partida, 'sin_vidas');
+                header("Location: " . BASE_URL . "/juego/resultados");
+                exit();
+            }
+
             $nuevo_puntaje = $this->partidaModel->obtenerPuntajeActual($id_partida);
             $this->partidaModel->registrarRespuestaCorrecta($id_partida, $nuevo_puntaje, 0);
         }
@@ -171,9 +191,17 @@ class JuegoController
         $id_partida = $_SESSION['id_partida'];
 
         $this->limpiarSesionPregunta();
-        $this->partidaModel->finalizarPartida($id_partida, 'tiempo_agotado');
 
-        header("Location: " . BASE_URL . "/juego/resultados");
+        $this->partidaModel->restarVida($id_partida);
+        $vidas_restantes = $this->partidaModel->obtenerVidasActuales($id_partida);
+
+        if ($vidas_restantes <= 0) {
+            $this->partidaModel->finalizarPartida($id_partida, 'sin_vidas');
+            header("Location: " . BASE_URL . "/juego/resultados");
+            exit();
+        }
+
+        header("Location: " . BASE_URL . "/juego/mostrar");
         exit();
     }
 

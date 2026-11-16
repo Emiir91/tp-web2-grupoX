@@ -19,7 +19,9 @@ class HomeController
 
         if (isset($_SESSION['usuario_logueado']) && $_SESSION['usuario_logueado'] === true) {
             $id_usuario = $_SESSION['id_usuario'];
+            $nombre_usuario = $_SESSION['nombre_usuario'] ?? '';
             
+            $datosParaVista['nombre_usuario'] = $nombre_usuario;
             $datosParaVista['partidas'] = $this->partidaModel->obtenerHistorialUsuario($id_usuario);
             $datosParaVista['puntaje_total'] = $this->partidaModel->obtenerPuntajeTotalUsuario($id_usuario);
         }

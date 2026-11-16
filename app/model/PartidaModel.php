@@ -18,14 +18,15 @@ class PartidaModel
             : 'facil';
 
         $sql = "INSERT INTO partida (
-                    id_usuario,
-                    puntaje,
-                    racha,
-                    estado,
-                    modo_juego,
-                    nivel_actual,
-                    fecha_inicio
-                ) VALUES (?, 0, 0, 'en_curso', ?, ?, NOW())";
+                id_usuario,
+                puntaje,
+                racha,
+                estado,
+                modo_juego,
+                nivel_actual,
+                vidas,
+                fecha_inicio
+            ) VALUES (?, 0, 0, 'en_curso', ?, ?, 3, NOW())";
 
         $parametros = [$id_usuario, $modo_juego, $nivel_inicial];
 
@@ -35,6 +36,19 @@ class PartidaModel
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    public function restarVida($id_partida)
+    {
+        $sql = "UPDATE partida SET vidas = vidas - 1 WHERE id_partida = ?";
+        return $this->database->execute($sql, [$id_partida]);
+    }
+
+    public function obtenerVidasActuales($id_partida)
+    {
+        $sql = "SELECT vidas FROM partida WHERE id_partida = ?";
+        $resultado = $this->database->queryOne($sql, [$id_partida]);
+        return $resultado ? $resultado['vidas'] : 0;
     }
 
     public function obtenerPreguntaAleatoria($id_partida)
@@ -230,7 +244,7 @@ class PartidaModel
 
     public function obtenerDatosPartida($id_partida)
     {
-        $sql = "SELECT puntaje, racha, estado, nivel_actual FROM partida WHERE id_partida = ?";
+        $sql = "SELECT puntaje, racha, estado, nivel_actual, vidas FROM partida WHERE id_partida = ?";
         $resultado = $this->database->queryOne($sql, [$id_partida]);
         return $resultado ?: false;
     }
