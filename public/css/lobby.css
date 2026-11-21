@@ -26,6 +26,11 @@ body {
     position: relative;
 }
 
+/* Con la barra superior arriba, la pantalla ocupa el resto del alto (evita el scroll de más) */
+.barra-superior + .pantalla-lobby {
+    min-height: calc(100dvh - 110px);
+}
+
 .btn-volver-lobby {
     display: inline-block;
     align-self: flex-start;
@@ -295,14 +300,14 @@ body {
 /* ------------------------------------------------ */
 @media (min-width: 992px) {
     .pantalla-lobby {
-        padding: 40px 20px;
+        padding: 20px 20px; /* Menos espacio vertical para que entre sin scroll */
     }
 
     .panel-lobby {
         max-width: 1400px;
         width: 90%;
         min-height: 70vh;
-        padding: 50px 80px;
+        padding: 30px 80px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -310,7 +315,7 @@ body {
 
     .saludo-lobby {
         font-size: 2.2rem;
-        margin-bottom: 40px;
+        margin-bottom: 25px;
     }
 
     .lobby-grid {

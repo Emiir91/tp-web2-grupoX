@@ -23,6 +23,11 @@ body {
     padding: 30px 20px;
 }
 
+/* Con la barra superior arriba, la pantalla ocupa el resto del alto (evita el scroll de más) */
+.barra-superior + .pantalla-editor {
+    min-height: calc(100dvh - 110px);
+}
+
 .panel-editor {
     background: rgba(15, 8, 25, 0.85);
     backdrop-filter: blur(10px);
