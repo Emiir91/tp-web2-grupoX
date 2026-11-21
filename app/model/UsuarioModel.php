@@ -69,6 +69,20 @@ class UsuarioModel
         return $resultado[0];
     }
 
+    // Devuelve true si ya hay un usuario registrado con ese mail
+    public function existeMail($mail)
+    {
+        $sql = "SELECT 1 FROM usuarios WHERE mail = ?";
+        return $this->database->queryOne($sql, [$mail]) !== null;
+    }
+
+    // Devuelve true si ya hay un usuario registrado con ese nombre de usuario
+    public function existeNombreUsuario($nombre_usuario)
+    {
+        $sql = "SELECT 1 FROM usuarios WHERE nombre_usuario = ?";
+        return $this->database->queryOne($sql, [$nombre_usuario]) !== null;
+    }
+
     // Busca un usuario con la cuenta ya validada por su nombre de usuario (consulta preparada)
     public function buscarPorNombreUsuario($nombre_usuario)
     {
