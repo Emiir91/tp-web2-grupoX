@@ -73,7 +73,7 @@ body {
 /* ── ESTADÍSTICAS (puntaje y partidas) ── */
 .estadisticas-perfil {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 12px;
     margin-bottom: 25px;
 }
@@ -128,6 +128,53 @@ body {
     font-size: 0.95rem; font-weight: 600;
 }
 
+/* ── HISTORIAL (perfil público) ── */
+.historial-perfil {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 260px; /* Alto fijo: si hay muchas partidas se scrollea dentro de la lista */
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.historial-perfil::-webkit-scrollbar {
+    width: 4px;
+}
+
+.historial-perfil::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.historial-perfil::-webkit-scrollbar-thumb {
+    background: #ff9800;
+    border-radius: 4px;
+}
+
+.item-historial-perfil {
+    flex-shrink: 0; /* Que los items no se achiquen dentro de la lista con scroll */
+}
+
+.item-historial-perfil {
+    display: flex;
+    justify-content: space-between;
+    padding: 9px 12px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.9rem;
+}
+
+.fecha-historial {
+    color: #aaaaaa;
+}
+
+.puntos-historial {
+    color: #ffc000;
+    font-weight: 700;
+}
+
 /* ── MAPA ── */
 .mapa-contenedor {
     width: 100%; height: 280px; border-radius: 10px;
@@ -180,7 +227,7 @@ body {
     .estadisticas-perfil {
         grid-area: estadisticas;
         margin-bottom: 0;
-        min-width: 320px;
+        min-width: 420px;
     }
 
     /* QR chico en la cabecera */

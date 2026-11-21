@@ -66,10 +66,14 @@ class PerfilController
             'sexo' => $usuario['sexo'],
             'pais' => $usuario['pais'],
             'ciudad' => $usuario['ciudad'],
-            'foto_perfil' => $usuario['foto_perfil'],
+            'foto_perfil' => $this->fotoPerfil($usuario['foto_perfil']),
+            'puntaje_mensual' => $this->partidaModel->obtenerPuntajeMensualUsuario($usuario['id_usuario']),
             'puntaje_total' => $this->partidaModel->obtenerPuntajeTotalUsuario($usuario['id_usuario']),
             'cantidad_partidas' => $this->partidaModel->obtenerCantidadPartidasUsuario($usuario['id_usuario']),
             'url_perfil_publico' => $url_perfil_publico,
+            // En el perfil público se muestra el historial de partidas del jugador (grilla 1.5).
+            // Se traen todas y la lista tiene scroll propio para no agrandar la pantalla.
+            'historial' => $es_propio ? [] : $this->partidaModel->obtenerHistorialUsuario($usuario['id_usuario'], 200),
             'url_qr' => "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($url_perfil_publico)
         ];
 
@@ -78,6 +82,19 @@ class PerfilController
             'requiere_mapa' => true,
             'requiere_perfil' => true
         ]);
+    }
+
+    // Si el usuario no tiene foto o el archivo no existe (por ejemplo, la ruta vieja default.png),
+    // se muestra el avatar por defecto con el estilo del juego.
+    private function fotoPerfil($ruta)
+    {
+        $rutaDefecto = 'public/img/avatar-default.svg';
+
+        if (empty($ruta) || !file_exists(__DIR__ . '/../../' . $ruta)) {
+            return $rutaDefecto;
+        }
+
+        return $ruta;
     }
 
     // Arma la dirección completa del perfil público con la dirección actual del sitio,

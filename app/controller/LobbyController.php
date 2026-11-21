@@ -31,7 +31,8 @@ class LobbyController
 
         $datosParaVista = [
             'partidas' => $this->partidaModel->obtenerHistorialUsuario($id_usuario),
-            'puntaje_total' => $this->partidaModel->obtenerPuntajeTotalUsuario($id_usuario)
+            'puntaje_total' => $this->partidaModel->obtenerPuntajeTotalUsuario($id_usuario),
+            'puntaje_mensual' => $this->partidaModel->obtenerPuntajeMensualUsuario($id_usuario)
         ];
 
         if (($_GET['mensaje'] ?? '') === 'sugerencia_enviada') {
