@@ -235,6 +235,7 @@ class PartidaModel
         $sql = "SELECT
                     pp.id_pregunta,
                     p.texto_pregunta,
+                    p.categoria,
                     re.texto_respuesta AS respuesta_elegida,
                     rc.texto_respuesta AS respuesta_correcta,
                     pp.es_correcta

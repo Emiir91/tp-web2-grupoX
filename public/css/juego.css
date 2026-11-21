@@ -60,12 +60,20 @@
     margin-bottom: 20px;
 }
 
-.categoria h3 {
-    font-size: 0.9rem;
-    color: #d1c4e9;
-    font-weight: 600;
+/* Etiqueta con el color de la categoría (--color-categoria se define en el panel desde la vista) */
+.chip-categoria {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    background: var(--color-categoria, #ff6a00);
+    color: #120a1c;
+    font-size: 0.85rem;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--color-categoria, #ff6a00) 45%, transparent);
 }
 
 .pregunta {
@@ -74,7 +82,11 @@
     padding: 20px;
     background: rgba(0, 0, 0, 0.4);
     border-radius: 12px;
-    border-left: 4px solid #ff6a00;
+    /* El recuadro de la pregunta se tiñe con el color de la categoría */
+    border-left: 4px solid var(--color-categoria, #ff6a00);
+    box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--color-categoria, #ff6a00) 35%, transparent),
+        0 0 18px color-mix(in srgb, var(--color-categoria, #ff6a00) 25%, transparent);
 }
 
 .pregunta h2 {

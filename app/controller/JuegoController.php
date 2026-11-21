@@ -104,9 +104,13 @@ class JuegoController
 
         $vidas_array = array_fill(0, $vidas_actuales, '❤️');
 
+        $estiloCategoria = \EstiloCategoria::obtener($pregunta['categoria']);
+
         $datosParaVista = [
             'pregunta' => $pregunta['texto_pregunta'],
             'categoria' => $pregunta['categoria'],
+            'color_categoria' => $estiloCategoria['color'],
+            'icono_categoria' => $estiloCategoria['icono'],
             'respuestas' => $respuestas,
             'id_partida' => $id_partida,
             'tiempo_restante' => $tiempo_restante,

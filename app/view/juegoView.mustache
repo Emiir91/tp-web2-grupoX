@@ -1,5 +1,5 @@
 <main class="pantalla-juego" data-tiempo="{{tiempo_restante}}">
-    <div class="panel-juego">
+    <div class="panel-juego" style="--color-categoria: {{color_categoria}};">
         <div class="header-juego">
             <h1>⚡ CORTOCIRCUITO ⚡</h1>
             <h2>Tiempo restante: <span id="temporizador">{{tiempo_restante}}</span>s</h2>
@@ -11,7 +11,7 @@
         </div>
 
         <div class="categoria">
-            <h3>{{categoria}}</h3>
+            <span class="chip-categoria"><span aria-hidden="true">{{icono_categoria}}</span> {{categoria}}</span>
         </div>
 
         <div class="pregunta">
