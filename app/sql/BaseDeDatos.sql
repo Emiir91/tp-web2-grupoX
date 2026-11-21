@@ -30,6 +30,7 @@ CREATE TABLE usuarios (
                           id_rol INT NOT NULL DEFAULT 1,
                           cuenta_validada TINYINT(1) DEFAULT 0,
                           token_validacion VARCHAR(100) NULL,
+                          fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                           FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
 );
 
@@ -39,7 +40,8 @@ CREATE TABLE pregunta (
                           texto_pregunta VARCHAR(500) NOT NULL,
                           categoria VARCHAR(100) NOT NULL,
                           dificultad ENUM('facil', 'intermedio', 'dificil') DEFAULT 'facil',
-                          activa TINYINT(1) DEFAULT 1
+                          activa TINYINT(1) DEFAULT 1,
+                          fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabla de respuestas

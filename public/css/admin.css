@@ -126,3 +126,33 @@
         flex-wrap: nowrap;
     }
 }
+
+/* ── Pestañas del panel de admin (Estadísticas / Moderación) ── */
+.pestanias-admin {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 10px 0 20px;
+}
+
+.pestania {
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #d1c4e9;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.pestania:hover {
+    color: #ffffff;
+    border-color: #ffc000;
+}
+
+.pestania.activa {
+    background: rgba(255, 192, 0, 0.15);
+    border-color: #ffc000;
+    color: #ffc000;
+}
