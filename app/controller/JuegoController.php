@@ -209,11 +209,16 @@ class JuegoController
         $id_partida = $_SESSION['id_partida'];
         $id_pregunta_actual = $_SESSION['id_pregunta_actual'] ?? null;
 
+        // Si no hay una pregunta pendiente es porque ya se respondió (por ejemplo,
+        // se eligió una respuesta en el último segundo). No se resta otra vida.
+        if (!$id_pregunta_actual) {
+            header("Location: " . BASE_URL . "/juego/mostrar");
+            exit();
+        }
+
         $this->limpiarSesionPregunta();
 
-        if ($id_pregunta_actual) {
-            $this->partidaModel->registrarRespuestaPartida($id_partida, $id_pregunta_actual, null, 0);
-        }
+        $this->partidaModel->registrarRespuestaPartida($id_partida, $id_pregunta_actual, null, 0);
 
         $this->partidaModel->restarVida($id_partida);
         $vidas_restantes = $this->partidaModel->obtenerVidasActuales($id_partida);

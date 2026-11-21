@@ -47,6 +47,10 @@ class EditorController
             $datosParaVista['alerta_exito'] = 'La sugerencia fue aprobada.';
         } elseif ($mensaje === 'sugerencia_rechazada') {
             $datosParaVista['alerta_exito'] = 'La sugerencia fue rechazada y eliminada.';
+        } elseif ($mensaje === 'alta_aplicada') {
+            $datosParaVista['alerta_exito'] = 'La pregunta fue creada y ya está activa en el juego.';
+        } elseif ($mensaje === 'baja_aplicada') {
+            $datosParaVista['alerta_exito'] = 'La pregunta fue eliminada.';
         }
 
         $this->renderer->renderiza('editor', $datosParaVista);
@@ -54,8 +58,56 @@ class EditorController
 
     public function preguntas()
     {
+        // Filtros que llegan por la URL (?categoria=...&dificultad=...&estado=...).
+        // Solo se aceptan valores válidos; cualquier otro se ignora.
+        $categoria = trim($_GET['categoria'] ?? '');
+        $dificultad = $_GET['dificultad'] ?? '';
+        $estado = $_GET['estado'] ?? '';
+
+        // Solo los estados de preguntas que ya fueron validadas alguna vez
+        $estadosValidos = [
+            'activa' => 'Activa',
+            'pendiente_baja' => 'Pendiente de baja',
+            'pendiente_reactivacion' => 'Pendiente de reactivación',
+            'eliminada' => 'Eliminada'
+        ];
+
+        if (!in_array($categoria, self::CATEGORIAS, true)) {
+            $categoria = '';
+        }
+        if (!in_array($dificultad, ['facil', 'intermedio', 'dificil'], true)) {
+            $dificultad = '';
+        }
+        if (!array_key_exists($estado, $estadosValidos)) {
+            $estado = '';
+        }
+
+        $preguntas = $this->editorModel->obtenerTodasLasPreguntas($categoria ?: null, $dificultad ?: null, $estado ?: null);
+
+        // Categorías ordenadas alfabéticamente para el desplegable del filtro
+        $nombresCategorias = self::CATEGORIAS;
+        sort($nombresCategorias);
+        $categorias = array_map(function ($cat) use ($categoria) {
+            return ['nombre' => $cat, 'seleccionada' => ($cat === $categoria)];
+        }, $nombresCategorias);
+
+        $dificultades = [];
+        foreach (['facil' => 'Fácil', 'intermedio' => 'Intermedio', 'dificil' => 'Difícil'] as $valor => $nombre) {
+            $dificultades[] = ['valor' => $valor, 'nombre' => $nombre, 'seleccionada' => ($valor === $dificultad)];
+        }
+
+        $estados = [];
+        foreach ($estadosValidos as $valor => $nombre) {
+            $estados[] = ['valor' => $valor, 'nombre' => $nombre, 'seleccionada' => ($valor === $estado)];
+        }
+
         $datosParaVista = [
-            'preguntas' => $this->editorModel->obtenerTodasLasPreguntas()
+            'preguntas' => $preguntas,
+            'total_preguntas' => count($preguntas),
+            'categorias' => $categorias,
+            'dificultades' => $dificultades,
+            'estados' => $estados,
+            'hay_filtro' => ($categoria !== '' || $dificultad !== '' || $estado !== '')
         ];
 
         $mensaje = $_GET['mensaje'] ?? '';
@@ -63,6 +115,14 @@ class EditorController
             $datosParaVista['alerta_exito'] = 'La edición fue enviada y queda pendiente de aprobación del administrador.';
         } elseif ($mensaje === 'baja_enviada') {
             $datosParaVista['alerta_exito'] = 'La baja fue enviada y queda pendiente de aprobación del administrador.';
+        } elseif ($mensaje === 'edicion_aplicada') {
+            $datosParaVista['alerta_exito'] = 'Los cambios se guardaron y ya están aplicados.';
+        } elseif ($mensaje === 'baja_aplicada') {
+            $datosParaVista['alerta_exito'] = 'La pregunta fue eliminada.';
+        } elseif ($mensaje === 'reactivacion_enviada') {
+            $datosParaVista['alerta_exito'] = 'La reactivación fue enviada y queda pendiente de aprobación del administrador.';
+        } elseif ($mensaje === 'reactivacion_aplicada') {
+            $datosParaVista['alerta_exito'] = 'La pregunta fue reactivada y vuelve a estar en el juego.';
         }
 
         $this->renderer->renderiza('editorPreguntas', $datosParaVista);
@@ -80,7 +140,8 @@ class EditorController
         $pregunta = $this->editorModel->obtenerPreguntaPorId($id_pregunta);
         $respuestas = $this->editorModel->obtenerRespuestasDePregunta($id_pregunta);
 
-        if (!$pregunta) {
+        // Solo se editan preguntas activas (no las eliminadas, pendientes de baja/reactivación ni las no aprobadas)
+        if (!$pregunta || $pregunta['estado'] !== 'activa') {
             header("Location: " . BASE_URL . "/editor/preguntas");
             exit();
         }
@@ -135,6 +196,19 @@ class EditorController
             exit();
         }
 
+        $pregunta = $this->editorModel->obtenerPreguntaPorId($id_pregunta);
+        if (!$pregunta || $pregunta['estado'] !== 'activa') {
+            header("Location: " . BASE_URL . "/editor/preguntas");
+            exit();
+        }
+
+        // El admin no necesita aprobación: sus cambios se aplican en el momento
+        if ($this->esAdmin()) {
+            $this->editorModel->aplicarEdicion($id_pregunta, $datos);
+            header("Location: " . BASE_URL . "/editor/preguntas?mensaje=edicion_aplicada");
+            exit();
+        }
+
         $this->editorModel->guardarEdicionPendiente($id_pregunta, $datos);
 
         header("Location: " . BASE_URL . "/editor/preguntas?mensaje=edicion_enviada");
@@ -150,11 +224,36 @@ class EditorController
 
         $id_pregunta = $_POST['id_pregunta'] ?? null;
 
+        if ($id_pregunta && $this->esAdmin()) {
+            // El admin da de baja directamente
+            $this->editorModel->eliminarDirecto($id_pregunta);
+            header("Location: " . BASE_URL . "/editor/preguntas?mensaje=baja_aplicada");
+            exit();
+        }
+
         if ($id_pregunta) {
             $this->editorModel->marcarPendienteBaja($id_pregunta);
         }
 
         header("Location: " . BASE_URL . "/editor/preguntas?mensaje=baja_enviada");
+        exit();
+    }
+
+    public function reactivar()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: " . BASE_URL . "/editor/preguntas");
+            exit();
+        }
+
+        $id_pregunta = $_POST['id_pregunta'] ?? null;
+
+        if ($id_pregunta) {
+            $this->editorModel->reactivar($id_pregunta, $this->esAdmin());
+        }
+
+        $mensaje = $this->esAdmin() ? 'reactivacion_aplicada' : 'reactivacion_enviada';
+        header("Location: " . BASE_URL . "/editor/preguntas?mensaje=" . $mensaje);
         exit();
     }
 
@@ -181,10 +280,12 @@ class EditorController
             exit();
         }
 
-        $id_pregunta = $this->editorModel->crearPreguntaPendiente($datos);
+        // Si la crea el admin queda activa directamente; si la crea un editor, pendiente de alta
+        $id_pregunta = $this->editorModel->crearPreguntaPendiente($datos, $this->esAdmin());
 
         if ($id_pregunta) {
-            header("Location: " . BASE_URL . "/editor/index?mensaje=alta_enviada");
+            $mensaje = $this->esAdmin() ? 'alta_aplicada' : 'alta_enviada';
+            header("Location: " . BASE_URL . "/editor/index?mensaje=" . $mensaje);
         } else {
             header("Location: " . BASE_URL . "/editor/agregar?mensaje=error");
         }
@@ -240,12 +341,17 @@ class EditorController
         if ($id_reporte) {
             $reporte = $this->editorModel->obtenerReportePorId($id_reporte);
             if ($reporte && $reporte['estado'] === 'pendiente') {
-                $this->editorModel->marcarPendienteBaja($reporte['id_pregunta']);
+                if ($this->esAdmin()) {
+                    $this->editorModel->eliminarDirecto($reporte['id_pregunta']);
+                } else {
+                    $this->editorModel->marcarPendienteBaja($reporte['id_pregunta']);
+                }
                 $this->editorModel->desestimarReporte($id_reporte);
             }
         }
 
-        header("Location: " . BASE_URL . "/editor/index?mensaje=baja_enviada");
+        $mensaje = $this->esAdmin() ? 'baja_aplicada' : 'baja_enviada';
+        header("Location: " . BASE_URL . "/editor/index?mensaje=" . $mensaje);
         exit();
     }
 
@@ -259,8 +365,7 @@ class EditorController
         $id_pregunta = $_POST['id_pregunta'] ?? null;
 
         if ($id_pregunta) {
-            $es_admin = (($_SESSION['id_rol'] ?? 0) == 3);
-            $this->editorModel->aprobarSugerencia($id_pregunta, $es_admin);
+            $this->editorModel->aprobarSugerencia($id_pregunta, $this->esAdmin());
         }
 
         header("Location: " . BASE_URL . "/editor/index?mensaje=sugerencia_aprobada");
@@ -282,6 +387,12 @@ class EditorController
 
         header("Location: " . BASE_URL . "/editor/index?mensaje=sugerencia_rechazada");
         exit();
+    }
+
+    // El admin también usa el panel de editor, pero sus acciones no necesitan aprobación
+    private function esAdmin()
+    {
+        return (($_SESSION['id_rol'] ?? 0) == 3);
     }
 
     private function extraerDatosPregunta()

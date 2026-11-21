@@ -31,6 +31,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Al elegir una respuesta: se frena el temporizador y se bloquean los botones.
+    // Así no se manda también el "tiempo agotado" ni se puede responder dos veces.
+    let yaRespondio = false;
+    document.querySelectorAll('.form-respuesta').forEach(formulario => {
+        formulario.addEventListener('submit', function (e) {
+            if (yaRespondio) {
+                e.preventDefault();
+                return;
+            }
+            yaRespondio = true;
+            clearInterval(intervalo);
+            document.querySelectorAll('.btn-respuesta').forEach(boton => boton.disabled = true);
+        });
+    });
+
     history.pushState(null, null, location.href);
 
     const modalAbandono = document.getElementById('modal-abandonar');
