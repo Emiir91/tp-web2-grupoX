@@ -13,11 +13,21 @@ class AdminModel
 
     public function obtenerPendientesAltas()
     {
-        $sql = "SELECT id_pregunta, texto_pregunta, categoria, dificultad
+        // Incluye las reactivaciones pedidas por un editor (preguntas eliminadas que quieren volver al juego)
+        $sql = "SELECT id_pregunta, texto_pregunta, categoria, dificultad,
+                       (estado = 'pendiente_reactivacion') AS es_reactivacion
                 FROM pregunta
-                WHERE estado = 'pendiente_alta'
+                WHERE estado IN ('pendiente_alta', 'pendiente_reactivacion')
                 ORDER BY id_pregunta ASC";
-        return $this->database->queryAll($sql);
+        $altas = $this->database->queryAll($sql);
+
+        // MySQL devuelve "0"/"1": se pasa a true/false para usarlo en la vista
+        foreach ($altas as &$a) {
+            $a['es_reactivacion'] = ($a['es_reactivacion'] == 1);
+        }
+        unset($a);
+
+        return $altas;
     }
 
     public function obtenerPendientesBajas()
@@ -54,6 +64,13 @@ class AdminModel
 
     public function rechazarAlta($id_pregunta)
     {
+        // Si era una reactivación, la pregunta vuelve a quedar eliminada (no se borra: ya fue jugada)
+        $this->database->execute(
+            "UPDATE pregunta SET estado = 'eliminada' WHERE id_pregunta = ? AND estado = 'pendiente_reactivacion'",
+            [$id_pregunta]
+        );
+
+        // Si era un alta nueva, se borra como antes
         $sql = "DELETE FROM pregunta WHERE id_pregunta = ? AND estado = 'pendiente_alta'";
         return $this->database->execute($sql, [$id_pregunta]);
     }

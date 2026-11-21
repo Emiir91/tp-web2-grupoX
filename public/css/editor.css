@@ -106,6 +106,7 @@ body {
 .btn-secundario {
     display: block;
     width: 100%;
+    text-align: center;
     text-decoration: none;
     color: #ffffff;
     padding: 15px;
@@ -312,6 +313,12 @@ body {
     background: rgba(255, 106, 0, 0.2);
     color: #ff9e6d;
     border: 1px solid rgba(255, 106, 0, 0.5);
+}
+
+.badge-pendiente_reactivacion {
+    background: rgba(0, 150, 255, 0.2);
+    color: #80d4ff;
+    border: 1px solid rgba(0, 150, 255, 0.4);
 }
 
 .badge-eliminada {

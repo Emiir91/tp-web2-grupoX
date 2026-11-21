@@ -1,7 +1,8 @@
 <main class="pantalla-editor">
     <div class="panel-editor panel-amplio">
         <h2 class="titulo-editor">Agregar pregunta</h2>
-        <p class="aviso-edicion">La pregunta se crea inactiva y queda pendiente de aprobación del administrador.</p>
+        {{#es_admin}}<p class="aviso-edicion">Como administrador, la pregunta se crea activa y entra al juego en el momento.</p>{{/es_admin}}
+        {{^es_admin}}<p class="aviso-edicion">La pregunta se crea inactiva y queda pendiente de aprobación del administrador.</p>{{/es_admin}}
 
         {{#alerta_error}}<div class="alerta alerta-error">{{alerta_error}}</div>{{/alerta_error}}
 
@@ -63,7 +64,7 @@
             </label>
 
             <div class="acciones-editor acciones-secundarias">
-                <button type="submit" class="btn-jugar">Enviar a aprobación</button>
+                <button type="submit" class="btn-jugar">{{#es_admin}}Agregar pregunta{{/es_admin}}{{^es_admin}}Enviar a aprobación{{/es_admin}}</button>
                 <a href="{{base_url}}/editor/index" class="btn-secundario">Cancelar</a>
             </div>
         </form>

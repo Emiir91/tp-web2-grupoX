@@ -1,1 +1,54 @@
 @import url('editor.css');
+
+/* Filtros compactos: una sola fila de desplegables */
+.barra-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.barra-filtros select {
+    flex: 1 1 140px;
+    padding: 7px 10px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 120, 0, 0.3);
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.barra-filtros select:focus {
+    outline: none;
+    border-color: #ffc000;
+}
+
+.barra-filtros select option {
+    background: #1a0f2e;
+    color: #ffffff;
+}
+
+.limpiar-filtros {
+    color: #d1c4e9;
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 5px 9px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.2s ease;
+}
+
+.limpiar-filtros:hover {
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+.contador-preguntas {
+    color: #9d8ec4;
+    font-size: 0.8rem;
+    text-align: right;
+    margin: 8px 0;
+}

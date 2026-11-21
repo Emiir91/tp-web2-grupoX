@@ -11,15 +11,50 @@ class EditorModel
         $this->database = $database;
     }
 
-    public function obtenerTodasLasPreguntas()
+    // Trae las preguntas del catálogo: solo las que fueron validadas en algún momento
+    // (activas, pendientes de baja y eliminadas). Las sugeridas y las pendientes de alta
+    // no aparecen porque todavía nadie las aprobó; tienen su propia sección.
+    // Se pueden filtrar por categoría, dificultad y/o estado.
+    // Orden: activas arriba y eliminadas abajo; después por dificultad (fácil, intermedio, difícil)
+    // y por último por categoría (A-Z).
+    public function obtenerTodasLasPreguntas($categoria = null, $dificultad = null, $estado = null)
     {
         $sql = "SELECT id_pregunta, texto_pregunta, categoria, dificultad, activa, estado
-                FROM pregunta
-                ORDER BY id_pregunta ASC";
-        $preguntas = $this->database->queryAll($sql);
+                FROM pregunta";
+
+        $condiciones = ["estado IN ('activa', 'pendiente_baja', 'pendiente_reactivacion', 'eliminada')"];
+        $parametros = [];
+
+        if ($categoria) {
+            $condiciones[] = "categoria = ?";
+            $parametros[] = $categoria;
+        }
+
+        if ($dificultad) {
+            $condiciones[] = "dificultad = ?";
+            $parametros[] = $dificultad;
+        }
+
+        if ($estado) {
+            $condiciones[] = "estado = ?";
+            $parametros[] = $estado;
+        }
+
+        $sql .= " WHERE " . implode(" AND ", $condiciones);
+
+        $sql .= " ORDER BY FIELD(estado, 'activa', 'pendiente_baja', 'pendiente_reactivacion', 'eliminada'),
+                          FIELD(dificultad, 'facil', 'intermedio', 'dificil'),
+                          categoria ASC,
+                          id_pregunta ASC";
+
+        $preguntas = $this->database->queryAll($sql, $parametros);
 
         foreach ($preguntas as &$p) {
             $p['pendiente_baja'] = ($p['estado'] === 'pendiente_baja');
+            // Qué botones se muestran según el estado
+            $p['puede_editar'] = ($p['estado'] === 'activa');
+            $p['puede_eliminar'] = ($p['estado'] === 'activa');
+            $p['puede_reactivar'] = ($p['estado'] === 'eliminada');
         }
         unset($p);
 
@@ -40,7 +75,57 @@ class EditorModel
 
     public function marcarPendienteBaja($id_pregunta)
     {
-        $sql = "UPDATE pregunta SET estado = 'pendiente_baja' WHERE id_pregunta = ?";
+        // Solo se puede pedir la baja de una pregunta activa
+        $sql = "UPDATE pregunta SET estado = 'pendiente_baja' WHERE id_pregunta = ? AND estado = 'activa'";
+        return $this->database->execute($sql, [$id_pregunta]);
+    }
+
+    // Admin: aplica la edición directamente sobre la pregunta y reemplaza sus respuestas
+    public function aplicarEdicion($id_pregunta, $datos)
+    {
+        $this->database->execute(
+            "UPDATE pregunta SET texto_pregunta = ?, categoria = ?, dificultad = ? WHERE id_pregunta = ?",
+            [$datos['texto_pregunta'], $datos['categoria'], $datos['dificultad'], $id_pregunta]
+        );
+
+        $this->database->execute("DELETE FROM respuesta WHERE id_pregunta = ?", [$id_pregunta]);
+
+        $respuestas = [
+            [$datos['respuesta_correcta'], 1],
+            [$datos['incorrecta_1'], 0],
+            [$datos['incorrecta_2'], 0],
+            [$datos['incorrecta_3'], 0]
+        ];
+
+        foreach ($respuestas as $r) {
+            $this->database->execute(
+                "INSERT INTO respuesta (id_pregunta, texto_respuesta, es_correcta) VALUES (?, ?, ?)",
+                [$id_pregunta, $r[0], $r[1]]
+            );
+        }
+
+        return true;
+    }
+
+    // Reactiva una pregunta eliminada.
+    // Admin: vuelve a activa en el momento. Editor: queda pendiente de reactivación para el admin.
+    public function reactivar($id_pregunta, $directa = false)
+    {
+        if ($directa) {
+            $sql = "UPDATE pregunta SET activa = 1, estado = 'activa'
+                    WHERE id_pregunta = ? AND estado = 'eliminada'";
+        } else {
+            $sql = "UPDATE pregunta SET estado = 'pendiente_reactivacion'
+                    WHERE id_pregunta = ? AND estado = 'eliminada'";
+        }
+        return $this->database->execute($sql, [$id_pregunta]);
+    }
+
+    // Admin: da de baja la pregunta directamente (sin pasar por pendiente de baja)
+    public function eliminarDirecto($id_pregunta)
+    {
+        $sql = "UPDATE pregunta SET activa = 0, estado = 'eliminada'
+                WHERE id_pregunta = ? AND estado IN ('activa', 'pendiente_baja')";
         return $this->database->execute($sql, [$id_pregunta]);
     }
 
@@ -63,11 +148,18 @@ class EditorModel
         ]);
     }
 
-    public function crearPreguntaPendiente($datos)
+    // Crea la pregunta con sus 4 respuestas.
+    // Si la crea un editor queda pendiente de alta; si la crea el admin queda activa directamente.
+    public function crearPreguntaPendiente($datos, $directa = false)
     {
         try {
-            $sql = "INSERT INTO pregunta (texto_pregunta, categoria, dificultad, activa, estado)
-                    VALUES (?, ?, ?, 0, 'pendiente_alta')";
+            if ($directa) {
+                $sql = "INSERT INTO pregunta (texto_pregunta, categoria, dificultad, activa, estado)
+                        VALUES (?, ?, ?, 1, 'activa')";
+            } else {
+                $sql = "INSERT INTO pregunta (texto_pregunta, categoria, dificultad, activa, estado)
+                        VALUES (?, ?, ?, 0, 'pendiente_alta')";
+            }
             $this->database->execute($sql, [
                 $datos['texto_pregunta'],
                 $datos['categoria'],

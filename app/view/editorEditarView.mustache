@@ -1,7 +1,8 @@
 <main class="pantalla-editor">
     <div class="panel-editor panel-amplio">
         <h2 class="titulo-editor">Editar pregunta</h2>
-        <p class="aviso-edicion">Los cambios se envían al administrador para su aprobación. La pregunta original no se modifica hasta entonces.</p>
+        {{#es_admin}}<p class="aviso-edicion">Como administrador, los cambios se aplican en el momento.</p>{{/es_admin}}
+        {{^es_admin}}<p class="aviso-edicion">Los cambios se envían al administrador para su aprobación. La pregunta original no se modifica hasta entonces.</p>{{/es_admin}}
 
         <form action="{{base_url}}/editor/guardarEdicion" method="POST" class="form-editor">
             <input type="hidden" name="id_pregunta" value="{{id_pregunta}}">
@@ -51,7 +52,7 @@
             </label>
 
             <div class="acciones-editor acciones-secundarias">
-                <button type="submit" class="btn-jugar">Enviar a aprobación</button>
+                <button type="submit" class="btn-jugar">{{#es_admin}}Editar pregunta{{/es_admin}}{{^es_admin}}Enviar a aprobación{{/es_admin}}</button>
                 <a href="{{base_url}}/editor/preguntas" class="btn-secundario">Cancelar</a>
             </div>
         </form>
