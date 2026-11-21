@@ -173,17 +173,17 @@ body {
 @media (min-width: 768px) {
     .panel-login {
         max-width: 550px; /* Panel más ancho en PC */
-        padding: 50px 40px; /* Más espacio interior */
+        padding: 35px 40px; /* Menos espacio arriba/abajo para que entre sin scroll */
     }
 
     .logo-login {
-        max-width: 350px; /* Logo más grande */
-        margin-bottom: 15px;
+        max-width: 270px; /* Logo más grande que en celular, pero sin ocupar tanto alto */
+        margin-bottom: 10px;
     }
 
     .texto-login {
         font-size: 1.1rem;
-        margin-bottom: 35px;
+        margin-bottom: 22px;
     }
 
     .grupo-input label {
@@ -191,18 +191,22 @@ body {
     }
 
     .input-texto {
-        padding: 16px;
+        padding: 13px 16px;
         font-size: 1.1rem;
     }
 
     .btn-jugar {
         font-size: 1.3rem;
-        padding: 18px;
+        padding: 14px;
     }
 
     .btn-secundario {
         font-size: 1.1rem;
-        padding: 16px;
+        padding: 13px;
+    }
+
+    .separador {
+        margin: 18px 0;
     }
 }
 

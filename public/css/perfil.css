@@ -104,11 +104,14 @@ body {
     border: 2px solid #ffc000;
 }
 
-/* ── FORMULARIO Y GRILLA (Celular: 1 columna) ── */
-.perfil-grid-principal {
+/* ── LAYOUT (Celular: 1 columna, un bloque debajo del otro) ── */
+.perfil-layout {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+}
+
+.columna-mapa {
+    margin-top: 20px;
 }
 
 .grupo-input {
@@ -132,39 +135,122 @@ body {
     z-index: 1;
 }
 
-/* ── ADAPTACIÓN A PC (Estilo Lobby: Panel ancho y 2 columnas simétricas) ── */
+/* ── ADAPTACIÓN A PC ──
+   Arriba:  encabezado | estadísticas | QR chico
+   Abajo:   datos      | mapa (ocupa lo que queda a la derecha) */
 @media (min-width: 992px) {
-    .panel-perfil {
-        max-width: 1100px;
-        padding: 50px 60px;
+    .pantalla-perfil {
+        padding: 20px;
     }
 
-    .perfil-grid-principal {
+    .panel-perfil {
+        max-width: 1100px;
+        padding: 30px 50px;
+    }
+
+    .perfil-layout {
         display: grid;
-        grid-template-columns: 1fr 1fr; /* Columna izquierda datos, columna derecha mapa */
-        gap: 40px;
-        align-items: stretch;
+        grid-template-columns: 1fr auto auto;
+        grid-template-areas:
+            "encabezado estadisticas qr"
+            "datos      mapa         mapa";
+        column-gap: 30px;
+        row-gap: 25px;
+        align-items: center;
+    }
+
+    /* Encabezado: foto a la izquierda del nombre */
+    .encabezado-perfil {
+        grid-area: encabezado;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        text-align: left;
+        margin-bottom: 0;
+    }
+
+    .foto-perfil {
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+
+    .encabezado-perfil h2 { font-size: 1.8rem; }
+    .subtitulo-perfil { font-size: 0.95rem; }
+
+    .estadisticas-perfil {
+        grid-area: estadisticas;
+        margin-bottom: 0;
+        min-width: 320px;
+    }
+
+    /* QR chico en la cabecera */
+    .columna-qr {
+        grid-area: qr;
+    }
+
+    .columna-qr .full-width-qr {
+        margin: 0;
+    }
+
+    .columna-qr label,
+    .columna-qr .texto-qr {
+        display: none;
+    }
+
+    .columna-qr .qr-contenedor {
+        padding: 0 !important;
+    }
+
+    .columna-qr img {
+        width: 95px;
+        height: 95px;
+        display: block;
+    }
+
+    /* Datos y mapa: misma altura */
+    .columna-datos {
+        grid-area: datos;
+        align-self: stretch;
+    }
+
+    .columna-datos .grupo-input {
+        margin-bottom: 8px;
+    }
+
+    .columna-datos .grupo-input:last-child {
+        margin-bottom: 0;
+    }
+
+    .grupo-input label {
+        margin-bottom: 4px;
+    }
+
+    .dato-valor {
+        padding: 9px 12px;
     }
 
     .columna-mapa {
+        grid-area: mapa;
+        align-self: stretch;
+        margin-top: 0;
+    }
+
+    .columna-mapa,
+    .columna-mapa .full-width-mapa {
         display: flex;
         flex-direction: column;
     }
 
-    .map-wrapper {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
+    .columna-mapa .full-width-mapa {
+        flex-grow: 1;
+        margin-bottom: 0;
     }
 
     .mapa-contenedor {
         flex-grow: 1;
-        height: auto; /* Se estira para ocupar exactamente el alto de la columna de datos */
-        min-height: 400px;
+        height: auto;
+        min-height: 250px;
     }
-
-    .encabezado-perfil h2 { font-size: 2rem; }
-    .subtitulo-perfil { font-size: 1rem; margin-bottom: 30px; }
 }
 
 
