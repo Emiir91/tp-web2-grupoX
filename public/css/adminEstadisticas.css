@@ -1,0 +1,252 @@
+@import url('admin.css');
+
+.panel-estadisticas {
+    max-width: 1000px;
+}
+
+/* ── Filtro de período + botón imprimir ── */
+.barra-estadisticas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.filtro-periodo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.btn-periodo {
+    padding: 7px 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 120, 0, 0.35);
+    background: rgba(0, 0, 0, 0.45);
+    color: #d1c4e9;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-periodo:hover {
+    border-color: #ffc000;
+    color: #ffffff;
+}
+
+.btn-periodo.activo {
+    background: linear-gradient(135deg, #ff6a00, #cc1c00);
+    border-color: #ffc000;
+    color: #ffffff;
+}
+
+.encabezado-reporte {
+    color: #9d8ec4;
+    font-size: 0.8rem;
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.encabezado-reporte strong {
+    color: #ffc000;
+}
+
+/* ── Indicadores ── */
+.indicadores {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.indicador {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 8px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 106, 0, 0.4);
+}
+
+.valor-indicador {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #ffc000;
+    text-shadow: 0 0 10px rgba(255, 192, 0, 0.4);
+}
+
+.etiqueta-indicador {
+    font-size: 0.72rem;
+    color: #d1c4e9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+/* ── Tablas con barra ── */
+.bloque-estadistica {
+    margin-top: 10px;
+    text-align: left;
+}
+
+.tabla-estadistica {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.tabla-estadistica th {
+    color: #ffc000;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(255, 120, 0, 0.3);
+}
+
+.tabla-estadistica td {
+    color: #ffffff;
+    padding: 7px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tabla-estadistica .numero {
+    text-align: right;
+    white-space: nowrap;
+    font-weight: 700;
+}
+
+/* Los títulos de las columnas numéricas (3ra y 4ta) se alinean a la derecha, igual que sus valores */
+.tabla-estadistica th:nth-child(3),
+.tabla-estadistica th:nth-child(4) {
+    text-align: right;
+}
+
+.tabla-estadistica .col-barra {
+    width: 40%;
+}
+
+.barra {
+    height: 10px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.barra span {
+    display: block;
+    height: 100%;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #ff6a00, #ffc000);
+}
+
+.sin-datos {
+    color: #9d8ec4 !important;
+    text-align: center;
+    font-style: italic;
+}
+
+.nota-estadisticas {
+    margin-top: 20px;
+    font-size: 0.75rem;
+    color: #9d8ec4;
+    text-align: left;
+}
+
+/* ── PC ── */
+@media (min-width: 768px) {
+    .indicadores {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid-estadisticas {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 30px;
+    }
+
+    /* País ocupa todo el ancho (puede tener muchas filas) */
+    .grid-estadisticas .bloque-estadistica:first-child {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ── IMPRESIÓN: solo datos, fondo blanco y texto negro ── */
+@media print {
+    @page {
+        margin: 15mm;
+    }
+
+    body {
+        background: #ffffff !important;
+        color: #000000;
+    }
+
+    .barra-superior,
+    .btn-volver,
+    .pestanias-admin,
+    .barra-estadisticas,
+    #estado-carga,
+    .col-barra,
+    footer {
+        display: none !important;
+    }
+
+    .pantalla-admin {
+        min-height: 0 !important;
+        padding: 0 !important;
+        display: block;
+    }
+
+    .panel-admin {
+        max-width: none;
+        background: none !important;
+        backdrop-filter: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+
+    .titulo-editor,
+    .titulo-seccion,
+    .encabezado-reporte,
+    .encabezado-reporte strong,
+    .valor-indicador,
+    .etiqueta-indicador,
+    .tabla-estadistica th,
+    .tabla-estadistica td,
+    .nota-estadisticas {
+        color: #000000 !important;
+        text-shadow: none !important;
+    }
+
+    .titulo-seccion {
+        border-top: 1px solid #000000;
+        text-align: left;
+    }
+
+    .indicadores {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .indicador {
+        background: none !important;
+        border: 1px solid #000000;
+    }
+
+    .tabla-estadistica th,
+    .tabla-estadistica td {
+        border-bottom: 1px solid #999999;
+    }
+
+    .bloque-estadistica,
+    .indicadores {
+        break-inside: avoid;
+    }
+}

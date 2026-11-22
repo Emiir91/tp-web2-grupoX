@@ -2,6 +2,12 @@
     <div class="panel-admin panel-amplio">
         <a href="{{base_url}}/home" class="btn-volver">← Volver al Home</a>
         <h2 class="titulo-editor">Panel de Administración</h2>
+
+        <nav class="pestanias-admin">
+            <a href="{{base_url}}/admin/estadisticas" class="pestania">📊 Estadísticas</a>
+            <a href="{{base_url}}/admin/index" class="pestania activa">🛡️ Moderación</a>
+        </nav>
+
         <p class="subtitulo-editor">Aprobá o rechazá las novedades enviadas por el editor.</p>
 
         {{#alerta_exito}}<div class="alerta alerta-exito">{{alerta_exito}}</div>{{/alerta_exito}}

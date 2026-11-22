@@ -30,6 +30,14 @@ class ResultadosController
         }
 
         $preguntas = $this->partidaModel->obtenerPreguntasRespondidas($id_partida);
+
+        // Color e ícono de la categoría de cada pregunta (los mismos que en el juego)
+        foreach ($preguntas as &$p) {
+            $estilo = \EstiloCategoria::obtener($p['categoria']);
+            $p['color_categoria'] = $estilo['color'];
+            $p['icono_categoria'] = $estilo['icono'];
+        }
+        unset($p);
         $mensaje = $this->generarMensajeSegunPuntaje($datos_partida['puntaje']);
 
         $datosParaVista = [

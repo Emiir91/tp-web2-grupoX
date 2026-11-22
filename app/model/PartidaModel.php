@@ -235,6 +235,7 @@ class PartidaModel
         $sql = "SELECT
                     pp.id_pregunta,
                     p.texto_pregunta,
+                    p.categoria,
                     re.texto_respuesta AS respuesta_elegida,
                     rc.texto_respuesta AS respuesta_correcta,
                     pp.es_correcta
@@ -296,13 +297,16 @@ class PartidaModel
         return $resultado ?: false;
     }
 
-    public function obtenerHistorialUsuario($id_usuario)
+    // $limite: cantidad máxima de partidas a traer (el lobby usa 10; el perfil público trae todas, hasta 200)
+    public function obtenerHistorialUsuario($id_usuario, $limite = 10)
     {
+        $limite = (int) $limite;
+
         $sql = "SELECT puntaje as puntos, fecha_fin as fecha, estado
                 FROM partida
                 WHERE id_usuario = ? AND estado != 'en_curso'
                 ORDER BY fecha_fin DESC
-                LIMIT 10";
+                LIMIT $limite";
 
         $partidas = $this->database->queryAll($sql, [$id_usuario]);
 
@@ -326,6 +330,17 @@ class PartidaModel
         $sql = "SELECT SUM(puntaje) as total FROM partida WHERE id_usuario = ? AND estado != 'en_curso'";
         $resultado = $this->database->queryOne($sql, [$id_usuario]);
         return $resultado ? ($resultado['total'] ?? 0) : 0;
+    }
+
+    // Puntaje del mes actual: mismo criterio que el ranking mensual
+    public function obtenerPuntajeMensualUsuario($id_usuario)
+    {
+        $sql = "SELECT SUM(puntaje) AS total FROM partida
+                WHERE id_usuario = ? AND estado != 'en_curso'
+                  AND MONTH(fecha_fin) = MONTH(CURRENT_DATE())
+                  AND YEAR(fecha_fin) = YEAR(CURRENT_DATE())";
+        $resultado = $this->database->queryOne($sql, [$id_usuario]);
+        return $resultado ? (int) ($resultado['total'] ?? 0) : 0;
     }
 
     public function obtenerCantidadPartidasUsuario($id_usuario)

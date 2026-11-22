@@ -8,9 +8,11 @@
         <div class="lobby-grid">
 
             <div class="info-jugador">
+                <!-- Puntaje del ranking (mes actual) destacado y el histórico como dato secundario -->
                 <div class="caja-puntaje">
-                    <p class="etiqueta-puntaje">Puntaje Acumulado</p>
-                    <h3 class="valor-puntaje">{{puntaje_total}}</h3>
+                    <p class="etiqueta-puntaje">Puntaje del mes (ranking)</p>
+                    <h3 class="valor-puntaje">{{puntaje_mensual}}</h3>
+                    <p class="puntaje-historico">Histórico: <span>{{puntaje_total}} pts</span></p>
                 </div>
 
                 <div class="acciones-lobby">

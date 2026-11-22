@@ -35,6 +35,14 @@ class RegistroController
             $contrasenia = $_POST['contrasenia'] ?? '';
             $repetirContrasenia = $_POST['repetir_contrasenia'] ?? '';
 
+            // Se sacan los espacios de más al principio y al final de los campos de texto
+            $nombreCompleto = trim($nombreCompleto);
+            $anioNacimiento = trim($anioNacimiento);
+            $pais = trim($pais);
+            $ciudad = trim($ciudad);
+            $mail = trim($mail);
+            $nombreUsuario = trim($nombreUsuario);
+
             // Datos que se vuelven a cargar en el formulario si hay algún error
             $datosFormulario = [
                 'nombre_completo' => $nombreCompleto,
@@ -48,6 +56,41 @@ class RegistroController
                 'nombre_usuario' => $nombreUsuario,
                 'requiere_mapa' => true
             ];
+
+            // ---- Validaciones del lado del servidor (el JavaScript se puede saltear) ----
+
+            // Campos obligatorios: ninguno puede llegar vacío
+            $camposObligatorios = [
+                'Nombre completo' => $nombreCompleto,
+                'Año de nacimiento' => $anioNacimiento,
+                'Sexo' => $sexo,
+                'País' => $pais,
+                'Ciudad' => $ciudad,
+                'Correo electrónico' => $mail,
+                'Nombre de usuario' => $nombreUsuario,
+                'Contraseña' => $contrasenia,
+                'Repetir contraseña' => $repetirContrasenia
+            ];
+
+            $camposVacios = [];
+            foreach ($camposObligatorios as $nombreCampo => $valor) {
+                if ($valor === '') {
+                    $camposVacios[] = $nombreCampo;
+                }
+            }
+
+            if (!empty($camposVacios)) {
+                $datosFormulario['error_backend'] = "Completá los campos obligatorios: " . implode(', ', $camposVacios) . ".";
+                echo $this->renderer->renderiza('registro', $datosFormulario);
+                return;
+            }
+
+            // Formato del correo
+            if (!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+                $datosFormulario['error_backend'] = "El correo electrónico no tiene un formato válido.";
+                echo $this->renderer->renderiza('registro', $datosFormulario);
+                return;
+            }
 
             if ($contrasenia !== $repetirContrasenia) {
                 $datosParaVista = [
@@ -83,7 +126,7 @@ class RegistroController
 
             $hashContrasenia = password_hash($contrasenia, PASSWORD_BCRYPT);
             $tokenValidacion = bin2hex(random_bytes(16));
-            $rutaFotoBaseDeDatos = 'public/uploads/default.png';
+            $rutaFotoBaseDeDatos = 'public/img/avatar-default.svg';
 
             if (isset($_FILES['foto_perfil']) && $_FILES['foto_perfil']['error'] === UPLOAD_ERR_OK) {
                 // Solo se permiten imágenes: se controla la extensión y también el contenido real del archivo

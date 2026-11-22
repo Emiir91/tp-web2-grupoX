@@ -1,0 +1,103 @@
+<main class="pantalla-admin">
+    <div class="panel-admin panel-amplio panel-estadisticas">
+        <a href="{{base_url}}/home" class="btn-volver">← Volver al Home</a>
+        <h2 class="titulo-editor">Panel de Administración</h2>
+
+        <nav class="pestanias-admin">
+            <a href="{{base_url}}/admin/estadisticas" class="pestania activa">📊 Estadísticas</a>
+            <a href="{{base_url}}/admin/index" class="pestania">🛡️ Moderación</a>
+        </nav>
+
+        <!-- Filtro de período (se aplica por AJAX, sin recargar la página) e impresión -->
+        <div class="barra-estadisticas">
+            <div class="filtro-periodo" role="group" aria-label="Período">
+                <button type="button" class="btn-periodo" data-periodo="dia">Día</button>
+                <button type="button" class="btn-periodo" data-periodo="semana">Semana</button>
+                <button type="button" class="btn-periodo" data-periodo="mes">Mes</button>
+                <button type="button" class="btn-periodo" data-periodo="anio">Año</button>
+                <button type="button" class="btn-periodo activo" data-periodo="todo">Todo</button>
+            </div>
+            <button type="button" id="btn-imprimir" class="btn-mini btn-editar">🖨️ Imprimir</button>
+        </div>
+
+        <p class="encabezado-reporte">
+            Reporte de estadísticas · <strong id="texto-periodo">Todo</strong> · <span id="fecha-reporte"></span>
+        </p>
+
+        <p id="estado-carga" class="vacio">Cargando estadísticas...</p>
+
+        <!-- Indicadores generales -->
+        <div class="indicadores">
+            <div class="indicador">
+                <span class="valor-indicador" id="ind-jugadores">–</span>
+                <span class="etiqueta-indicador">Jugadores (total)</span>
+            </div>
+            <div class="indicador">
+                <span class="valor-indicador" id="ind-jugadores_activos">–</span>
+                <span class="etiqueta-indicador">Jugadores activos</span>
+            </div>
+            <div class="indicador">
+                <span class="valor-indicador" id="ind-partidas">–</span>
+                <span class="etiqueta-indicador">Partidas jugadas</span>
+            </div>
+            <div class="indicador">
+                <span class="valor-indicador" id="ind-preguntas_en_juego">–</span>
+                <span class="etiqueta-indicador">Preguntas en juego (hoy)</span>
+            </div>
+            <div class="indicador">
+                <span class="valor-indicador" id="ind-preguntas_creadas">–</span>
+                <span class="etiqueta-indicador">Preguntas creadas</span>
+            </div>
+            <div class="indicador">
+                <span class="valor-indicador" id="ind-usuarios_nuevos">–</span>
+                <span class="etiqueta-indicador">Usuarios nuevos</span>
+            </div>
+        </div>
+
+        <!-- % de respuestas correctas por usuario -->
+        <section class="bloque-estadistica">
+            <h3 class="titulo-seccion">Respuestas correctas por usuario</h3>
+            <table class="tabla-estadistica" id="tabla-aciertos">
+                <thead>
+                    <tr><th>Usuario</th><th class="col-barra"></th><th>Correctas</th><th>%</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        <!-- Demografía de los usuarios registrados en el período -->
+        <div class="grid-estadisticas">
+            <section class="bloque-estadistica">
+                <h3 class="titulo-seccion">Usuarios por país</h3>
+                <table class="tabla-estadistica" id="tabla-pais">
+                    <thead><tr><th>País</th><th class="col-barra"></th><th>Cant.</th><th>%</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <section class="bloque-estadistica">
+                <h3 class="titulo-seccion">Usuarios por sexo</h3>
+                <table class="tabla-estadistica" id="tabla-sexo">
+                    <thead><tr><th>Sexo</th><th class="col-barra"></th><th>Cant.</th><th>%</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <section class="bloque-estadistica">
+                <h3 class="titulo-seccion">Usuarios por grupo de edad</h3>
+                <table class="tabla-estadistica" id="tabla-edad">
+                    <thead><tr><th>Grupo</th><th class="col-barra"></th><th>Cant.</th><th>%</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+        </div>
+
+        <p class="nota-estadisticas">
+            "Jugadores activos", partidas y respuestas se filtran por la fecha de la partida.
+            Usuarios nuevos y los gráficos de país, sexo y edad, por la fecha de registro.
+            "Preguntas en juego" muestra la cantidad actual.
+        </p>
+    </div>
+</main>
+
+<script>const BASE_URL = '{{base_url}}';</script>

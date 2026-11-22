@@ -202,6 +202,26 @@
     flex: 1;
 }
 
+/* Categoría de cada pregunta con su color (el mismo que en el juego) */
+.item-revision {
+    border-left: 4px solid var(--color-categoria, #ff6a00) !important;
+}
+
+.chip-categoria {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    margin-bottom: 8px;
+    border-radius: 14px;
+    background: var(--color-categoria, #ff6a00);
+    color: #120a1c;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .texto-pregunta {
     font-weight: bold;
     margin-bottom: 8px;

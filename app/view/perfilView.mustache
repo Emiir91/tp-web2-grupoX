@@ -10,31 +10,41 @@
         {{/perfil_no_encontrado}}
 
         {{#perfil}}
+        {{#usuario_logueado}}
         <a href="{{base_url}}/lobby" class="btn-volver-lobby">← Volver al Lobby</a>
-        <!-- Encabezado superior con la foto centrada -->
-        <div class="encabezado-perfil">
-            <img src="{{base_url}}/{{foto_perfil}}" alt="Foto de perfil" class="foto-perfil">
-            <h2>Perfil de <span>{{nombre_usuario}}</span></h2>
-            {{#es_propio}}<p class="subtitulo-perfil">Acá podés revisar tu información personal.</p>{{/es_propio}}
-            {{^es_propio}}<p class="subtitulo-perfil">Mirá cómo le viene yendo a este jugador.</p>{{/es_propio}}
-        </div>
+        {{/usuario_logueado}}
+        <!--
+            Todos los bloques del perfil son hermanos dentro de .perfil-layout:
+            - Celular: uno debajo del otro (encabezado, estadísticas, datos, mapa, QR).
+            - PC: grilla con arriba encabezado | estadísticas | QR chico, y abajo datos | mapa.
+        -->
+        <div class="perfil-layout">
 
-        <!-- Estadísticas del jugador -->
-        <div class="estadisticas-perfil">
-            <div class="caja-estadistica">
-                <span class="valor-estadistica">{{puntaje_total}}</span>
-                <span class="etiqueta-estadistica">Puntaje total</span>
+            <div class="encabezado-perfil">
+                <img src="{{base_url}}/{{foto_perfil}}" alt="Foto de perfil" class="foto-perfil">
+                <div class="textos-encabezado">
+                    <h2>Perfil de <span>{{nombre_usuario}}</span></h2>
+                    {{#es_propio}}<p class="subtitulo-perfil">Acá podés revisar tu información personal.</p>{{/es_propio}}
+                    {{^es_propio}}<p class="subtitulo-perfil">Mirá cómo le viene yendo a este jugador.</p>{{/es_propio}}
+                </div>
             </div>
-            <div class="caja-estadistica">
-                <span class="valor-estadistica">{{cantidad_partidas}}</span>
-                <span class="etiqueta-estadistica">Partidas jugadas</span>
+
+            <!-- Estadísticas del jugador -->
+            <div class="estadisticas-perfil">
+                <div class="caja-estadistica">
+                    <span class="valor-estadistica">{{puntaje_mensual}}</span>
+                    <span class="etiqueta-estadistica">Puntaje del mes</span>
+                </div>
+                <div class="caja-estadistica">
+                    <span class="valor-estadistica">{{puntaje_total}}</span>
+                    <span class="etiqueta-estadistica">Histórico</span>
+                </div>
+                <div class="caja-estadistica">
+                    <span class="valor-estadistica">{{cantidad_partidas}}</span>
+                    <span class="etiqueta-estadistica">Partidas</span>
+                </div>
             </div>
-        </div>
 
-        <!-- Grilla de 2 columnas para PC / 1 columna para celular -->
-        <div class="perfil-grid-principal">
-
-            <!-- Columna Izquierda: Todos los datos del usuario -->
             <div class="columna-datos">
                 <div class="grupo-input">
                     <label>Nombre Completo</label>
@@ -42,11 +52,11 @@
                 </div>
 
                 {{#es_propio}}
+                <!-- Datos privados: solo los ve el dueño del perfil -->
                 <div class="grupo-input">
                     <label>Correo Electrónico</label>
                     <div class="dato-valor">{{mail}}</div>
                 </div>
-                {{/es_propio}}
 
                 <div class="grupo-input">
                     <label>Año de Nacimiento</label>
@@ -67,16 +77,37 @@
                     <label>País / Ciudad</label>
                     <div class="dato-valor">{{pais}}, {{ciudad}}</div>
                 </div>
+                {{/es_propio}}
+
+                {{^es_propio}}
+                <!-- Perfil público: últimas partidas del jugador -->
+                <div class="grupo-input">
+                    <label>Historial de partidas</label>
+                    <div class="historial-perfil">
+                        {{#historial}}
+                        <div class="item-historial-perfil">
+                            <span class="fecha-historial">{{fecha}}</span>
+                            <span class="puntos-historial">{{puntos}} pts</span>
+                        </div>
+                        {{/historial}}
+                        {{^historial}}
+                        <div class="dato-valor">Todavía no jugó ninguna partida.</div>
+                        {{/historial}}
+                    </div>
+                </div>
+                {{/es_propio}}
             </div>
 
-            <!-- Columna Derecha: El Mapa y el Código QR -->
+            <!-- Mapa -->
             <div class="columna-mapa">
                 <div class="grupo-input full-width-mapa">
                     <label>{{#es_propio}}Tu Ubicación de Registro{{/es_propio}}{{^es_propio}}Ubicación{{/es_propio}}</label>
                     <div id="mapa-perfil" class="mapa-contenedor" data-pais="{{pais}}" data-ciudad="{{ciudad}}"></div>
                 </div>
+            </div>
 
-                <!-- Código QR: lleva al perfil público de este jugador -->
+            <!-- Código QR: lleva al perfil público de este jugador -->
+            <div class="columna-qr">
                 <div class="grupo-input full-width-qr mt-3 text-center">
                     <label>Código QR del Perfil</label>
                     <div class="qr-contenedor p-2 rounded d-flex justify-content-center align-items-center">

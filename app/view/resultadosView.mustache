@@ -29,8 +29,9 @@
             <summary class="btn-ver-preguntas">Ver Preguntas</summary>
             <div class="lista-revision">
                 {{#preguntas_partida}}
-                <div class="item-revision">
+                <div class="item-revision" style="--color-categoria: {{color_categoria}};">
                     <div class="contenido-revision">
+                        <span class="chip-categoria"><span aria-hidden="true">{{icono_categoria}}</span> {{categoria}}</span>
                         <p class="texto-pregunta">{{texto_pregunta}}</p>
                         <p class="respuesta-elegida {{#es_correcta}}correcta{{/es_correcta}}{{^es_correcta}}incorrecta{{/es_correcta}}">
                             Tu respuesta: {{respuesta_elegida}}

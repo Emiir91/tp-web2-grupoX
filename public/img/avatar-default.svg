@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="fuego" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffc000"/>
+      <stop offset="1" stop-color="#ff6a00"/>
+    </linearGradient>
+    <radialGradient id="fondo" cx="0.5" cy="0.4" r="0.7">
+      <stop offset="0" stop-color="#2a1640"/>
+      <stop offset="1" stop-color="#0a0510"/>
+    </radialGradient>
+    <clipPath id="circulo">
+      <circle cx="100" cy="100" r="100"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#circulo)">
+    <rect width="200" height="200" fill="url(#fondo)"/>
+    <!-- Silueta (cabeza y hombros) -->
+    <circle cx="100" cy="78" r="36" fill="url(#fuego)" opacity="0.95"/>
+    <path d="M28 200 C28 148 62 122 100 122 C138 122 172 148 172 200 Z" fill="url(#fuego)" opacity="0.95"/>
+    <!-- Rayo del logo -->
+    <path d="M108 52 L86 84 L100 84 L92 108 L116 72 L101 72 Z" fill="#0a0510"/>
+  </g>
+</svg>

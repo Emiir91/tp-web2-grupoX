@@ -50,6 +50,26 @@ class AdminController
         $this->renderer->renderiza('admin', $datosParaVista);
     }
 
+    // Pantalla de estadísticas. Los datos los pide el JavaScript por AJAX a datosEstadisticas().
+    public function estadisticas()
+    {
+        $this->renderer->renderiza('adminEstadisticas', [
+            'requiere_estadisticas' => true
+        ]);
+    }
+
+    // Devuelve las estadísticas en JSON para el período elegido (dia, semana, mes, anio o todo)
+    public function datosEstadisticas()
+    {
+        $periodo = $_GET['periodo'] ?? 'todo';
+        if (!in_array($periodo, ['dia', 'semana', 'mes', 'anio', 'todo'], true)) {
+            $periodo = 'todo';
+        }
+
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($this->adminModel->obtenerEstadisticas($periodo));
+    }
+
     public function aprobarAlta()
     {
         $this->procesarAccion('alta', 'aprobar');

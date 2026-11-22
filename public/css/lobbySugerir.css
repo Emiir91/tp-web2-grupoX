@@ -7,8 +7,8 @@
 
 .texto-sugerir {
     color: #d1c4e9;
-    font-size: 0.9rem;
-    margin: -5px 0 20px;
+    font-size: 0.85rem;
+    margin: -5px 0 15px;
 }
 
 .alerta-error-sugerir {
@@ -27,7 +27,7 @@
     color: #d1c4e9;
     font-size: 0.85rem;
     font-weight: 700;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .label-sugerir input,
@@ -35,8 +35,8 @@
 .label-sugerir select {
     display: block;
     width: 100%;
-    margin-top: 6px;
-    padding: 12px 14px;
+    margin-top: 5px;
+    padding: 9px 12px;
     border-radius: 12px;
     border: 1px solid rgba(255, 120, 0, 0.3);
     background: rgba(0, 0, 0, 0.5);
@@ -82,5 +82,33 @@
     .acciones-sugerir .btn-jugar,
     .acciones-sugerir .btn-secundario {
         flex: 1;
+    }
+}
+
+/* PC: menos espacio vertical para que el formulario entre sin scroll */
+@media (min-width: 992px) {
+    .panel-sugerir {
+        min-height: 0;
+        padding: 25px 45px; /* Menos relleno lateral: así los botones no parten el texto en 2 líneas */
+    }
+
+    .panel-sugerir .label-sugerir {
+        margin-bottom: 8px;
+    }
+
+    .panel-sugerir .saludo-lobby {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+    }
+
+    .panel-sugerir .btn-volver-lobby {
+        margin-bottom: 10px;
+    }
+
+    /* En PC el lobby agranda los botones; acá se dejan a tamaño normal para que el texto entre en una línea */
+    .acciones-sugerir .btn-jugar,
+    .acciones-sugerir .btn-secundario {
+        padding: 12px;
+        font-size: 1rem;
     }
 }
