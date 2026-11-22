@@ -398,6 +398,92 @@ body {
     color: #81c784;
 }
 
+/* ── Tipo de reporte ── */
+.tipo-reporte {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    background: rgba(255, 192, 0, 0.15);
+    border: 1px solid rgba(255, 192, 0, 0.4);
+    color: #ffc000;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* ── Sugerencia con categoría nueva ── */
+.categoria-nueva-sugerida {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px dashed rgba(0, 150, 255, 0.5);
+    background: rgba(0, 150, 255, 0.08);
+    font-size: 0.85rem;
+    color: #d1c4e9;
+}
+
+.titulo-categoria-nueva {
+    margin-bottom: 8px;
+    color: #80d4ff;
+}
+
+.titulo-categoria-nueva strong {
+    color: #ffffff;
+}
+
+.opcion-categoria {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 6px 0;
+    cursor: pointer;
+}
+
+.fila-categoria-nueva {
+    display: flex;
+    gap: 12px;
+    margin: 0 0 6px 22px;
+}
+
+.fila-categoria-nueva label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.select-categoria-existente {
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 120, 0, 0.3);
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    font-family: inherit;
+    width: auto;
+    margin-left: 22px;
+}
+
+.select-categoria-existente option {
+    background: #1a0f2e;
+}
+
+input[type="color"] {
+    width: 40px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+/* Agregar pregunta: color e ícono más angostos que el nombre */
+.label-editor.label-chico {
+    flex: 0 0 90px;
+}
+
+.label-editor input[type="color"] {
+    width: 100%;
+    height: 44px;
+}
+
 .alerta-error {
     background: rgba(204, 28, 0, 0.15);
     border: 1px solid rgba(204, 28, 0, 0.5);

@@ -4,19 +4,18 @@ namespace app\controller;
 
 class LobbyController
 {
-    private const CATEGORIAS = [
-        'Geografía', 'Ciencias', 'Matemáticas', 'Cultura General', 'Animales',
-        'Literatura', 'Historia', 'Física', 'Deportes', 'Arte',
-        'Música', 'Cine', 'Tecnología', 'Videojuegos'
-    ];
+    // Valor especial del desplegable de categoría: "➕ Otra (sugerir nueva)"
+    private const CATEGORIA_NUEVA = '__nueva__';
 
     private $renderer;
     private $partidaModel;
+    private $categoriaModel;
 
-    public function __construct($renderer, $partidaModel)
+    public function __construct($renderer, $partidaModel, $categoriaModel)
     {
         $this->renderer = $renderer;
         $this->partidaModel = $partidaModel;
+        $this->categoriaModel = $categoriaModel;
     }
 
     public function index()
@@ -49,9 +48,16 @@ class LobbyController
             exit();
         }
 
-        $datosParaVista = [];
-        if (($_GET['mensaje'] ?? '') === 'error') {
+        $datosParaVista = [
+            'categorias' => $this->categoriaModel->obtenerActivas(),
+            'requiere_categoria_nueva' => true
+        ];
+
+        $mensaje = $_GET['mensaje'] ?? '';
+        if ($mensaje === 'error') {
             $datosParaVista['alerta_error'] = 'Completá todos los campos correctamente.';
+        } elseif ($mensaje === 'categoria_invalida') {
+            $datosParaVista['alerta_error'] = 'El nombre de la categoría nueva tiene que tener entre 3 y 40 caracteres (letras, números y espacios).';
         }
 
         $this->renderer->renderiza('lobbySugerir', $datosParaVista);
@@ -87,7 +93,18 @@ class LobbyController
             $dificultad = 'facil';
         }
 
-        if (!in_array($categoria, self::CATEGORIAS, true)) {
+        if ($categoria === self::CATEGORIA_NUEVA) {
+            // El jugador propone una categoría nueva junto con su pregunta
+            $nombreNueva = \app\model\CategoriaModel::normalizarNombre($_POST['categoria_nueva'] ?? '');
+
+            if (!\app\model\CategoriaModel::nombreValido($nombreNueva)) {
+                header("Location: " . BASE_URL . "/lobby/sugerir?mensaje=categoria_invalida");
+                exit();
+            }
+
+            // Si ya existe (aunque esté escrita distinto, ej. "historia") se usa la existente; si no, queda sugerida
+            $categoria = $this->categoriaModel->sugerir($nombreNueva);
+        } elseif (!in_array($categoria, $this->categoriaModel->obtenerNombresActivos(), true)) {
             header("Location: " . BASE_URL . "/lobby/sugerir?mensaje=error");
             exit();
         }

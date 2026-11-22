@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS respuesta;
 DROP TABLE IF EXISTS pregunta;
 DROP TABLE IF EXISTS usuarios;
 DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS categorias;
 
 SET foreign_key_checks = 1;
 
@@ -88,6 +89,35 @@ CREATE TABLE partida_pregunta (
     FOREIGN KEY (id_pregunta) REFERENCES pregunta(id_pregunta)
 );
 
+-- Tabla de categorías: nombre único, color para el juego, y estado
+-- (activa | sugerida | pendiente_alta). Una categoría nueva siempre llega junto con una pregunta.
+CREATE TABLE IF NOT EXISTS categorias (
+    id_categoria INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    color VARCHAR(7) NOT NULL DEFAULT '#ff6a00',
+    estado VARCHAR(20) NOT NULL DEFAULT 'activa',
+    fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT IGNORE INTO categorias (nombre, color) VALUES
+    ('Geografía', '#1bb5a4'),
+    ('Ciencias', '#2fa8e0'),
+    ('Matemáticas', '#4a6cf0'),
+    ('Física', '#ff5252'),
+    ('Cultura General', '#e6c229'),
+    ('Animales', '#8bc34a'),
+    ('Literatura', '#b07ad9'),
+    ('Historia', '#c8813a'),
+    ('Deportes', '#22c55e'),
+    ('Arte', '#f06aa8'),
+    ('Música', '#d946ef'),
+    ('Cine', '#cfd8dc'),
+    ('Tecnología', '#00e5ff'),
+    ('Videojuegos', '#8c6cf0');
+
+-- Por si hay preguntas con alguna categoría que no esté en la lista de arriba
+INSERT IGNORE INTO categorias (nombre) SELECT DISTINCT categoria FROM pregunta;
+
 -- Reportes enviados por jugadores desde Resultados
 CREATE TABLE reportes (
     id_reporte INT AUTO_INCREMENT PRIMARY KEY,
@@ -96,6 +126,7 @@ CREATE TABLE reportes (
     motivo VARCHAR(255) NOT NULL,
     fecha DATETIME NOT NULL,
     estado VARCHAR(20) DEFAULT 'pendiente', -- 'pendiente' o 'resuelto'
+    tipo VARCHAR(30) NOT NULL DEFAULT 'otro', -- respuesta_incorrecta | categoria_incorrecta | mal_redactada | otro
     FOREIGN KEY (id_pregunta) REFERENCES pregunta(id_pregunta),
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
 );

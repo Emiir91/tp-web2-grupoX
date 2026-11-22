@@ -6,11 +6,13 @@ class JuegoController
 {
     private $partidaModel;
     private $renderer;
+    private $categoriaModel;
 
-    public function __construct($partidaModel, $renderer)
+    public function __construct($partidaModel, $renderer, $categoriaModel)
     {
         $this->partidaModel = $partidaModel;
         $this->renderer = $renderer;
+        $this->categoriaModel = $categoriaModel;
 
         header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
         header("Cache-Control: post-check=0, pre-check=0", false);
@@ -104,13 +106,13 @@ class JuegoController
 
         $vidas_array = array_fill(0, $vidas_actuales, '❤️');
 
-        $estiloCategoria = \EstiloCategoria::obtener($pregunta['categoria']);
+        // Color de la categoría (guardado en la tabla categorias)
+        $colorCategoria = $this->categoriaModel->obtenerColor($pregunta['categoria']);
 
         $datosParaVista = [
             'pregunta' => $pregunta['texto_pregunta'],
             'categoria' => $pregunta['categoria'],
-            'color_categoria' => $estiloCategoria['color'],
-            'icono_categoria' => $estiloCategoria['icono'],
+            'color_categoria' => $colorCategoria,
             'respuestas' => $respuestas,
             'id_partida' => $id_partida,
             'tiempo_restante' => $tiempo_restante,

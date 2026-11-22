@@ -4,16 +4,14 @@ namespace app\controller;
 
 class EditorController
 {
-    private const CATEGORIAS = [
-        'Geografía', 'Ciencias', 'Matemáticas', 'Cultura General', 'Animales',
-        'Literatura', 'Historia', 'Física', 'Deportes', 'Arte',
-        'Música', 'Cine', 'Tecnología', 'Videojuegos'
-    ];
+    // Valor especial del desplegable de categoría: "+ Nueva categoría"
+    private const CATEGORIA_NUEVA = '__nueva__';
 
     private $renderer;
     private $editorModel;
+    private $categoriaModel;
 
-    public function __construct($renderer, $editorModel)
+    public function __construct($renderer, $editorModel, $categoriaModel)
     {
         if (empty($_SESSION['usuario_logueado'])) {
             header("Location: " . BASE_URL . "/login");
@@ -27,13 +25,16 @@ class EditorController
 
         $this->renderer = $renderer;
         $this->editorModel = $editorModel;
+        $this->categoriaModel = $categoriaModel;
     }
 
     public function index()
     {
         $datosParaVista = [
             'reportes' => $this->editorModel->obtenerReportesPendientes(),
-            'sugeridas' => $this->editorModel->obtenerSugeridas()
+            'sugeridas' => $this->editorModel->obtenerSugeridas(),
+            // Para reasignar una sugerencia con categoría nueva a una categoría existente
+            'categorias_activas' => $this->categoriaModel->obtenerActivas()
         ];
 
         $mensaje = $_GET['mensaje'] ?? '';
@@ -47,6 +48,8 @@ class EditorController
             $datosParaVista['alerta_exito'] = 'La sugerencia fue aprobada.';
         } elseif ($mensaje === 'sugerencia_rechazada') {
             $datosParaVista['alerta_exito'] = 'La sugerencia fue rechazada y eliminada.';
+        } elseif ($mensaje === 'categoria_invalida') {
+            $datosParaVista['alerta_error'] = 'Revisá la categoría: elegí una existente válida o un color válido para la nueva.';
         } elseif ($mensaje === 'alta_aplicada') {
             $datosParaVista['alerta_exito'] = 'La pregunta fue creada y ya está activa en el juego.';
         } elseif ($mensaje === 'baja_aplicada') {
@@ -72,7 +75,9 @@ class EditorController
             'eliminada' => 'Eliminada'
         ];
 
-        if (!in_array($categoria, self::CATEGORIAS, true)) {
+        $nombresCategorias = $this->categoriaModel->obtenerNombresActivos();
+
+        if (!in_array($categoria, $nombresCategorias, true)) {
             $categoria = '';
         }
         if (!in_array($dificultad, ['facil', 'intermedio', 'dificil'], true)) {
@@ -84,9 +89,7 @@ class EditorController
 
         $preguntas = $this->editorModel->obtenerTodasLasPreguntas($categoria ?: null, $dificultad ?: null, $estado ?: null);
 
-        // Categorías ordenadas alfabéticamente para el desplegable del filtro
-        $nombresCategorias = self::CATEGORIAS;
-        sort($nombresCategorias);
+        // Categorías activas (ya vienen ordenadas alfabéticamente) para el desplegable del filtro
         $categorias = array_map(function ($cat) use ($categoria) {
             return ['nombre' => $cat, 'seleccionada' => ($cat === $categoria)];
         }, $nombresCategorias);
@@ -161,7 +164,7 @@ class EditorController
                 'nombre' => $cat,
                 'seleccionada' => ($pregunta['categoria'] === $cat)
             ];
-        }, self::CATEGORIAS);
+        }, $this->categoriaModel->obtenerNombresActivos());
 
         $datosParaVista = [
             'id_pregunta' => $id_pregunta,
@@ -259,9 +262,16 @@ class EditorController
 
     public function agregar()
     {
-        $datosParaVista = [];
-        if (($_GET['mensaje'] ?? '') === 'error') {
+        $datosParaVista = [
+            'categorias' => $this->categoriaModel->obtenerActivas(),
+            'requiere_categoria_nueva' => true
+        ];
+
+        $mensaje = $_GET['mensaje'] ?? '';
+        if ($mensaje === 'error') {
             $datosParaVista['alerta_error'] = 'Completá todos los campos correctamente.';
+        } elseif ($mensaje === 'categoria_invalida') {
+            $datosParaVista['alerta_error'] = 'La categoría nueva necesita un nombre de 3 a 40 caracteres (letras, números y espacios) y un color válido.';
         }
         $this->renderer->renderiza('editorAgregar', $datosParaVista);
     }
@@ -273,11 +283,24 @@ class EditorController
             exit();
         }
 
-        $datos = $this->extraerDatosPregunta();
+        $datos = $this->extraerDatosPregunta(true);
 
         if (!$datos) {
             header("Location: " . BASE_URL . "/editor/agregar?mensaje=error");
             exit();
+        }
+
+        // Categoría nueva creada junto con la pregunta (admin: activa; editor: pendiente para el admin)
+        if ($datos['categoria'] === self::CATEGORIA_NUEVA) {
+            $nombre = \app\model\CategoriaModel::normalizarNombre($_POST['categoria_nueva'] ?? '');
+            $color = $_POST['color_categoria'] ?? '';
+
+            if (!\app\model\CategoriaModel::nombreValido($nombre) || !\app\model\CategoriaModel::colorValido($color)) {
+                header("Location: " . BASE_URL . "/editor/agregar?mensaje=categoria_invalida");
+                exit();
+            }
+
+            $datos['categoria'] = $this->categoriaModel->crearOAprobar($nombre, $color, $this->esAdmin());
         }
 
         // Si la crea el admin queda activa directamente; si la crea un editor, pendiente de alta
@@ -363,8 +386,34 @@ class EditorController
         }
 
         $id_pregunta = $_POST['id_pregunta'] ?? null;
+        $pregunta = $id_pregunta ? $this->editorModel->obtenerPreguntaPorId($id_pregunta) : null;
 
-        if ($id_pregunta) {
+        if ($pregunta && $pregunta['estado'] === 'sugerida') {
+            $categoria = $this->categoriaModel->buscarPorNombre($pregunta['categoria']);
+
+            // La sugerencia trae una categoría nueva: el editor la crea (eligiendo el color) o pasa la pregunta a una existente
+            if ($categoria && $categoria['estado'] !== 'activa') {
+                $accion = $_POST['accion_categoria'] ?? 'crear';
+
+                if ($accion === 'existente') {
+                    $existente = $_POST['categoria_existente'] ?? '';
+                    if (!in_array($existente, $this->categoriaModel->obtenerNombresActivos(), true)) {
+                        header("Location: " . BASE_URL . "/editor/index?mensaje=categoria_invalida");
+                        exit();
+                    }
+                    $this->editorModel->cambiarCategoria($id_pregunta, $existente);
+                    // La categoría sugerida ya no la usa nadie: se descarta
+                    $this->categoriaModel->eliminarSiNoSeUsa($categoria['nombre']);
+                } else {
+                    $color = $_POST['color_categoria'] ?? '';
+                    if (!\app\model\CategoriaModel::colorValido($color)) {
+                        header("Location: " . BASE_URL . "/editor/index?mensaje=categoria_invalida");
+                        exit();
+                    }
+                    $this->categoriaModel->crearOAprobar($categoria['nombre'], $color, $this->esAdmin());
+                }
+            }
+
             $this->editorModel->aprobarSugerencia($id_pregunta, $this->esAdmin());
         }
 
@@ -382,7 +431,13 @@ class EditorController
         $id_pregunta = $_POST['id_pregunta'] ?? null;
 
         if ($id_pregunta) {
+            $pregunta = $this->editorModel->obtenerPreguntaPorId($id_pregunta);
             $this->editorModel->rechazarSugerencia($id_pregunta);
+
+            // Si traía una categoría nueva que no usa ninguna otra pregunta, se descarta
+            if ($pregunta) {
+                $this->categoriaModel->eliminarSiNoSeUsa($pregunta['categoria']);
+            }
         }
 
         header("Location: " . BASE_URL . "/editor/index?mensaje=sugerencia_rechazada");
@@ -395,7 +450,8 @@ class EditorController
         return (($_SESSION['id_rol'] ?? 0) == 3);
     }
 
-    private function extraerDatosPregunta()
+    // $permitirNueva: true solo en "Agregar pregunta", donde se puede crear una categoría nueva
+    private function extraerDatosPregunta($permitirNueva = false)
     {
         $texto_pregunta = trim($_POST['texto_pregunta'] ?? '');
         $categoria = trim($_POST['categoria'] ?? '');
@@ -414,7 +470,8 @@ class EditorController
             $dificultad = 'facil';
         }
 
-        if (!in_array($categoria, self::CATEGORIAS, true)) {
+        $esNueva = $permitirNueva && $categoria === self::CATEGORIA_NUEVA;
+        if (!$esNueva && !in_array($categoria, $this->categoriaModel->obtenerNombresActivos(), true)) {
             return null;
         }
 

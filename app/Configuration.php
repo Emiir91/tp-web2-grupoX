@@ -16,6 +16,7 @@ use app\model\UsuarioModel;
 use app\model\PartidaModel;
 use app\model\EditorModel;
 use app\model\AdminModel;
+use app\model\CategoriaModel;
 
 use MustacheRender;
 use MyDatabase;
@@ -64,7 +65,8 @@ class Configuration
     {
         return new LobbyController(
             $this->getRender(),
-            $this->getPartidaModel()
+            $this->getPartidaModel(),
+            $this->getCategoriaModel()
         );
     }
 
@@ -72,7 +74,8 @@ class Configuration
     {
         return new JuegoController(
             $this->getPartidaModel(),
-            $this->getRender()
+            $this->getRender(),
+            $this->getCategoriaModel()
         );
     }
 
@@ -135,7 +138,8 @@ class Configuration
     {
         return new ResultadosController(
             $this->getPartidaModel(),
-            $this->getRender()
+            $this->getRender(),
+            $this->getCategoriaModel()
         );
     }
 
@@ -143,7 +147,8 @@ class Configuration
     {
         return new EditorController(
             $this->getRender(),
-            $this->getEditorModel()
+            $this->getEditorModel(),
+            $this->getCategoriaModel()
         );
     }
 
@@ -157,6 +162,12 @@ class Configuration
 
     private function getEditorModel(){
         return new EditorModel(
+            $this->getDatabase()
+        );
+    }
+
+    private function getCategoriaModel(){
+        return new CategoriaModel(
             $this->getDatabase()
         );
     }

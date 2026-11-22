@@ -187,14 +187,29 @@ class EditorModel
 
     public function obtenerReportesPendientes()
     {
-        $sql = "SELECT r.id_reporte, r.id_pregunta, r.motivo, r.fecha,
-                       p.texto_pregunta, u.nombre_usuario
+        $sql = "SELECT r.id_reporte, r.id_pregunta, r.motivo, r.fecha, r.tipo,
+                       p.texto_pregunta, p.categoria, u.nombre_usuario
                 FROM reportes r
                 JOIN pregunta p ON p.id_pregunta = r.id_pregunta
                 JOIN usuarios u ON u.id_usuario = r.id_usuario
                 WHERE r.estado = 'pendiente'
                 ORDER BY r.fecha DESC";
-        return $this->database->queryAll($sql);
+        $reportes = $this->database->queryAll($sql);
+
+        // Texto del motivo rápido elegido por el jugador
+        $nombresTipo = [
+            'respuesta_incorrecta' => '❌ Respuesta correcta mal',
+            'categoria_incorrecta' => '🏷️ Categoría equivocada',
+            'mal_redactada' => '✏️ Mal escrita',
+            'otro' => '💬 Otro'
+        ];
+        foreach ($reportes as &$r) {
+            $r['nombre_tipo'] = $nombresTipo[$r['tipo']] ?? $nombresTipo['otro'];
+            $r['tiene_motivo'] = trim($r['motivo']) !== '';
+        }
+        unset($r);
+
+        return $reportes;
     }
 
     public function obtenerReportePorId($id_reporte)
@@ -211,18 +226,29 @@ class EditorModel
 
     public function obtenerSugeridas()
     {
-        $sql = "SELECT p.id_pregunta, p.texto_pregunta, p.categoria, p.dificultad, p.estado
+        // Se trae también el estado de la categoría: si no está activa, la sugerencia propone una categoría nueva
+        $sql = "SELECT p.id_pregunta, p.texto_pregunta, p.categoria, p.dificultad, p.estado,
+                       c.estado AS estado_categoria
                 FROM pregunta p
+                LEFT JOIN categorias c ON c.nombre = p.categoria
                 WHERE p.estado = 'sugerida'
                 ORDER BY p.id_pregunta ASC";
         $sugeridas = $this->database->queryAll($sql);
 
         foreach ($sugeridas as &$s) {
             $s['respuestas'] = $this->obtenerRespuestasDePregunta($s['id_pregunta']);
+            $s['es_categoria_nueva'] = ($s['estado_categoria'] !== 'activa');
         }
         unset($s);
 
         return $sugeridas;
+    }
+
+    // Pasa la pregunta a otra categoría (al aprobar una sugerencia en una categoría existente)
+    public function cambiarCategoria($id_pregunta, $categoria)
+    {
+        $sql = "UPDATE pregunta SET categoria = ? WHERE id_pregunta = ?";
+        return $this->database->execute($sql, [$categoria, $id_pregunta]);
     }
 
     public function aprobarSugerencia($id_pregunta, $es_admin)
@@ -237,6 +263,12 @@ class EditorModel
 
     public function rechazarSugerencia($id_pregunta)
     {
+        // Primero las respuestas (la base no siempre las borra en cascada) y después la pregunta
+        $this->database->execute(
+            "DELETE FROM respuesta WHERE id_pregunta IN
+                (SELECT id_pregunta FROM pregunta WHERE id_pregunta = ? AND estado = 'sugerida')",
+            [$id_pregunta]
+        );
         $sql = "DELETE FROM pregunta WHERE id_pregunta = ? AND estado = 'sugerida'";
         return $this->database->execute($sql, [$id_pregunta]);
     }
