@@ -378,3 +378,26 @@
         flex-direction: row;
     }
 }
+
+/* Motivo rápido del reporte */
+.select-reporte {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 120, 0, 0.4);
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.9rem;
+}
+
+.select-reporte option {
+    background: #1a0f2e;
+}
+
+.reporte-error {
+    color: #ff8a80;
+    font-size: 0.85rem;
+    margin-top: 6px;
+}

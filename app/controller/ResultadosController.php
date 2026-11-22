@@ -6,11 +6,16 @@ class ResultadosController
 {
     private $partidaModel;
     private $renderer;
+    private $categoriaModel;
 
-    public function __construct($partidaModel, $renderer)
+    // Motivos rápidos que puede elegir el jugador al reportar una pregunta
+    private const TIPOS_REPORTE = ['respuesta_incorrecta', 'categoria_incorrecta', 'mal_redactada', 'otro'];
+
+    public function __construct($partidaModel, $renderer, $categoriaModel)
     {
         $this->partidaModel = $partidaModel;
         $this->renderer = $renderer;
+        $this->categoriaModel = $categoriaModel;
     }
 
     public function index()
@@ -31,11 +36,10 @@ class ResultadosController
 
         $preguntas = $this->partidaModel->obtenerPreguntasRespondidas($id_partida);
 
-        // Color e ícono de la categoría de cada pregunta (los mismos que en el juego)
+        // Color de la categoría de cada pregunta (el mismo que en el juego)
+        $colores = $this->categoriaModel->obtenerMapaColores();
         foreach ($preguntas as &$p) {
-            $estilo = \EstiloCategoria::obtener($p['categoria']);
-            $p['color_categoria'] = $estilo['color'];
-            $p['icono_categoria'] = $estilo['icono'];
+            $p['color_categoria'] = $colores[$p['categoria']] ?? \app\model\CategoriaModel::COLOR_POR_DEFECTO;
         }
         unset($p);
         $mensaje = $this->generarMensajeSegunPuntaje($datos_partida['puntaje']);
@@ -65,15 +69,21 @@ class ResultadosController
 
         $data = json_decode(file_get_contents('php://input'), true);
         $id_pregunta = $data['id_pregunta'] ?? null;
+        $tipo = $data['tipo'] ?? 'otro';
         $motivo = trim($data['motivo'] ?? '');
 
-        if (!$id_pregunta || $motivo === '') {
+        if (!in_array($tipo, self::TIPOS_REPORTE, true)) {
+            $tipo = 'otro';
+        }
+
+        // El detalle es obligatorio solo si el motivo es "Otro"
+        if (!$id_pregunta || ($tipo === 'otro' && $motivo === '')) {
             echo json_encode(['success' => false, 'mensaje' => 'Datos incompletos']);
             return;
         }
 
         $fecha = date('Y-m-d H:i:s');
-        $this->partidaModel->registrarReporte($id_pregunta, $_SESSION['id_usuario'], $motivo, $fecha);
+        $this->partidaModel->registrarReporte($id_pregunta, $_SESSION['id_usuario'], $motivo, $fecha, $tipo);
 
         echo json_encode(['success' => true]);
     }

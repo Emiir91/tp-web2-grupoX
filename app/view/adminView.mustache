@@ -19,6 +19,13 @@
             <div class="item-admin">
                 <div class="datos-admin">
                     {{#es_reactivacion}}<span class="badge-estado badge-pendiente_reactivacion">♻️ Reactivación</span>{{/es_reactivacion}}
+                    {{#es_categoria_nueva}}
+                    <p class="categoria-nueva-admin">
+                        🆕 Categoría nueva:
+                        <span class="chip-categoria-admin" style="background: {{color_categoria}};">{{categoria}}</span>
+                        <small>(se aprueba junto con la pregunta)</small>
+                    </p>
+                    {{/es_categoria_nueva}}
                     <p class="texto-admin">{{texto_pregunta}}</p>
                     <p class="meta-admin">{{categoria}} · {{dificultad}}</p>
                     <div class="respuestas-admin">

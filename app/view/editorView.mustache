@@ -5,6 +5,7 @@
         <p class="subtitulo-editor">Hola <span>{{nombre_usuario}}</span>, administrá las preguntas del catálogo.</p>
 
         {{#alerta_exito}}<div class="alerta alerta-exito">{{alerta_exito}}</div>{{/alerta_exito}}
+        {{#alerta_error}}<div class="alerta alerta-error">{{alerta_error}}</div>{{/alerta_error}}
 
         <div class="acciones-editor">
             <a href="{{base_url}}/editor/preguntas" class="btn-jugar">📋 Ver preguntas</a>
@@ -19,7 +20,8 @@
                 <div class="datos-reporte">
                     <p class="texto-reporte">{{texto_pregunta}}</p>
                     <p class="meta-reporte">Reportado por <strong>{{nombre_usuario}}</strong> · {{fecha}}</p>
-                    <p class="motivo-reporte">Motivo: {{motivo}}</p>
+                    <p class="motivo-reporte"><span class="tipo-reporte">{{nombre_tipo}}</span> <small>({{categoria}})</small></p>
+                    {{#tiene_motivo}}<p class="motivo-reporte">"{{motivo}}"</p>{{/tiene_motivo}}
                 </div>
                 <div class="acciones-reporte">
                     <a href="{{base_url}}/editor/editarDesdeReporte?id={{id_reporte}}" class="btn-mini btn-editar">✏️ Editar</a>
@@ -53,9 +55,37 @@
                         <span class="respuesta-chip {{#es_correcta}}correcta{{/es_correcta}}">{{texto_respuesta}}</span>
                         {{/respuestas}}
                     </div>
+
+                    {{#es_categoria_nueva}}
+                    <!-- La sugerencia propone una categoría nueva: crearla (eligiendo el color) o usar una existente.
+                         Los campos pertenecen al formulario "Aprobar" gracias al atributo form. -->
+                    <div class="categoria-nueva-sugerida">
+                        <p class="titulo-categoria-nueva">🆕 Propone una categoría nueva: <strong>{{categoria}}</strong></p>
+
+                        <label class="opcion-categoria">
+                            <input type="radio" name="accion_categoria" value="crear" checked form="form-aprobar-{{id_pregunta}}">
+                            Crear "{{categoria}}"
+                        </label>
+                        <div class="fila-categoria-nueva">
+                            <label>Color
+                                <input type="color" name="color_categoria" value="#ff6a00" form="form-aprobar-{{id_pregunta}}">
+                            </label>
+                        </div>
+
+                        <label class="opcion-categoria">
+                            <input type="radio" name="accion_categoria" value="existente" form="form-aprobar-{{id_pregunta}}">
+                            Usar una existente:
+                        </label>
+                        <select name="categoria_existente" class="select-categoria-existente" form="form-aprobar-{{id_pregunta}}">
+                            {{#categorias_activas}}
+                            <option value="{{nombre}}">{{nombre}}</option>
+                            {{/categorias_activas}}
+                        </select>
+                    </div>
+                    {{/es_categoria_nueva}}
                 </div>
                 <div class="acciones-reporte">
-                    <form action="{{base_url}}/editor/aprobarSugerencia" method="POST" class="form-inline">
+                    <form id="form-aprobar-{{id_pregunta}}" action="{{base_url}}/editor/aprobarSugerencia" method="POST" class="form-inline">
                         <input type="hidden" name="id_pregunta" value="{{id_pregunta}}">
                         <button type="submit" class="btn-mini btn-aprobar">✓ Aprobar</button>
                     </form>

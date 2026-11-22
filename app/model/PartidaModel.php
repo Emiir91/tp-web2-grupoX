@@ -249,17 +249,18 @@ class PartidaModel
         return $this->database->queryAll($sql, [$id_partida]);
     }
 
-    public function registrarReporte($id_pregunta, $id_usuario, $motivo, $fecha)
+    public function registrarReporte($id_pregunta, $id_usuario, $motivo, $fecha, $tipo = 'otro')
     {
         $sql = "INSERT INTO reportes (
                     id_pregunta,
                     id_usuario,
                     motivo,
                     fecha,
-                    estado
-                ) VALUES (?, ?, ?, ?, 'pendiente')";
+                    estado,
+                    tipo
+                ) VALUES (?, ?, ?, ?, 'pendiente', ?)";
 
-        $parametros = [$id_pregunta, $id_usuario, $motivo, $fecha];
+        $parametros = [$id_pregunta, $id_usuario, $motivo, $fecha, $tipo];
 
         return $this->database->execute($sql, $parametros);
     }

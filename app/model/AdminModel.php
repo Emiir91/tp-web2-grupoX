@@ -14,16 +14,20 @@ class AdminModel
     public function obtenerPendientesAltas()
     {
         // Incluye las reactivaciones pedidas por un editor (preguntas eliminadas que quieren volver al juego)
-        $sql = "SELECT id_pregunta, texto_pregunta, categoria, dificultad,
-                       (estado = 'pendiente_reactivacion') AS es_reactivacion
-                FROM pregunta
-                WHERE estado IN ('pendiente_alta', 'pendiente_reactivacion')
-                ORDER BY id_pregunta ASC";
+        // También trae los datos de la categoría: si no está activa, la pregunta llega con una categoría nueva
+        $sql = "SELECT p.id_pregunta, p.texto_pregunta, p.categoria, p.dificultad,
+                       (p.estado = 'pendiente_reactivacion') AS es_reactivacion,
+                       c.estado AS estado_categoria, c.color AS color_categoria
+                FROM pregunta p
+                LEFT JOIN categorias c ON c.nombre = p.categoria
+                WHERE p.estado IN ('pendiente_alta', 'pendiente_reactivacion')
+                ORDER BY p.id_pregunta ASC";
         $altas = $this->database->queryAll($sql);
 
         // MySQL devuelve "0"/"1": se pasa a true/false para usarlo en la vista
         foreach ($altas as &$a) {
             $a['es_reactivacion'] = ($a['es_reactivacion'] == 1);
+            $a['es_categoria_nueva'] = ($a['estado_categoria'] !== null && $a['estado_categoria'] !== 'activa');
         }
         unset($a);
 
@@ -58,6 +62,14 @@ class AdminModel
 
     public function aprobarAlta($id_pregunta)
     {
+        // Si la pregunta trae una categoría nueva, se aprueba junto con ella
+        $this->database->execute(
+            "UPDATE categorias SET estado = 'activa'
+             WHERE estado != 'activa'
+               AND nombre = (SELECT categoria FROM pregunta WHERE id_pregunta = ?)",
+            [$id_pregunta]
+        );
+
         $sql = "UPDATE pregunta SET activa = 1, estado = 'activa' WHERE id_pregunta = ?";
         return $this->database->execute($sql, [$id_pregunta]);
     }
@@ -71,8 +83,27 @@ class AdminModel
         );
 
         // Si era un alta nueva, se borra como antes
+        $pregunta = $this->database->queryOne("SELECT categoria FROM pregunta WHERE id_pregunta = ?", [$id_pregunta]);
+        // Primero las respuestas (la base no siempre las borra en cascada) y después la pregunta
+        $this->database->execute(
+            "DELETE FROM respuesta WHERE id_pregunta IN
+                (SELECT id_pregunta FROM pregunta WHERE id_pregunta = ? AND estado = 'pendiente_alta')",
+            [$id_pregunta]
+        );
         $sql = "DELETE FROM pregunta WHERE id_pregunta = ? AND estado = 'pendiente_alta'";
-        return $this->database->execute($sql, [$id_pregunta]);
+        $resultado = $this->database->execute($sql, [$id_pregunta]);
+
+        // Si traía una categoría nueva que ya no usa ninguna pregunta, también se descarta
+        if ($pregunta) {
+            $this->database->execute(
+                "DELETE FROM categorias
+                 WHERE nombre = ? AND estado != 'activa'
+                   AND NOT EXISTS (SELECT 1 FROM pregunta WHERE pregunta.categoria = categorias.nombre)",
+                [$pregunta['categoria']]
+            );
+        }
+
+        return $resultado;
     }
 
     public function aprobarBaja($id_pregunta)

@@ -31,7 +31,7 @@
                 {{#preguntas_partida}}
                 <div class="item-revision" style="--color-categoria: {{color_categoria}};">
                     <div class="contenido-revision">
-                        <span class="chip-categoria"><span aria-hidden="true">{{icono_categoria}}</span> {{categoria}}</span>
+                        <span class="chip-categoria">{{categoria}}</span>
                         <p class="texto-pregunta">{{texto_pregunta}}</p>
                         <p class="respuesta-elegida {{#es_correcta}}correcta{{/es_correcta}}{{^es_correcta}}incorrecta{{/es_correcta}}">
                             Tu respuesta: {{respuesta_elegida}}
@@ -61,7 +61,14 @@
     <div class="modal-caja">
         <h3>Reportar pregunta</h3>
         <p id="reporte-texto-pregunta" class="reporte-pregunta"></p>
-        <textarea id="reporte-motivo" rows="4" placeholder="Describí el problema con esta pregunta..."></textarea>
+        <select id="reporte-tipo" class="select-reporte">
+            <option value="respuesta_incorrecta">❌ La respuesta correcta está mal</option>
+            <option value="categoria_incorrecta">🏷️ Está en la categoría equivocada</option>
+            <option value="mal_redactada">✏️ Está mal escrita o no se entiende</option>
+            <option value="otro">💬 Otro</option>
+        </select>
+        <textarea id="reporte-motivo" rows="3" placeholder="Contanos más (opcional)..."></textarea>
+        <p id="reporte-error" class="reporte-error confirmacion-oculta">Contanos cuál es el problema.</p>
         <div class="acciones-modal">
             <button id="btn-cancelar-reporte" class="btn-secundario" type="button">Cancelar</button>
             <button id="btn-enviar-reporte" class="btn-jugar" type="button">Enviar reporte</button>
