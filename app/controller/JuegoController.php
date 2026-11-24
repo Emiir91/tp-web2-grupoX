@@ -27,6 +27,16 @@ class JuegoController
         }
 
         $id_usuario = $_SESSION['id_usuario'];
+
+        // Grilla 4.5: si ya tiene una partida en curso (otra pestaña, F5, cerró el navegador...),
+        // se retoma esa en lugar de crear otra, con la misma pregunta y el tiempo que le quedaba.
+        $enCurso = $this->partidaModel->obtenerPartidaEnCurso($id_usuario);
+        if ($enCurso) {
+            $this->retomarPartida($enCurso);
+            header("Location: " . BASE_URL . "/juego/mostrar");
+            exit();
+        }
+
         $modo_juego = $_POST['modo_juego'] ?? 'progresivo';
 
         $id_partida = $this->partidaModel->iniciarPartida($id_usuario, $modo_juego);
@@ -139,6 +149,21 @@ class JuegoController
 
         $id_partida = $_SESSION['id_partida'];
         $id_pregunta_actual = $_SESSION['id_pregunta_actual'] ?? null;
+
+        // Grilla 4.6: si no hay una pregunta pendiente (ya se respondió) o esa pregunta ya figura
+        // como respondida en la partida, es un reenvío: no se procesa ni suma nada.
+        if (!$id_pregunta_actual || $this->partidaModel->preguntaYaRespondida($id_partida, $id_pregunta_actual)) {
+            $this->limpiarSesionPregunta();
+            header("Location: " . BASE_URL . "/juego/mostrar");
+            exit();
+        }
+
+        // Grilla 4.4: la respuesta tiene que ser una de las opciones de la pregunta que se mostró.
+        // Si no lo es (id cambiado a mano), se ignora y la pregunta sigue pendiente.
+        if (!$this->partidaModel->respuestaPerteneceAPregunta($id_respuesta, $id_pregunta_actual)) {
+            header("Location: " . BASE_URL . "/juego/mostrar");
+            exit();
+        }
 
         $this->limpiarSesionPregunta();
 
@@ -287,6 +312,27 @@ class JuegoController
         if ($puntaje >= 50) return "¡Muy bien! Tienes buenos conocimientos.";
         if ($puntaje >= 20) return "¡Buen intento! Sigue practicando.";
         return "¡No te rindas! La próxima vez lo harás mejor.";
+    }
+
+    // Deja la sesión apuntando a la partida en curso. Si la pregunta que se le estaba mostrando
+    // todavía no se respondió, se recupera con su tiempo original (no se reinicia).
+    private function retomarPartida($enCurso)
+    {
+        $mismaPartida = (($_SESSION['id_partida'] ?? null) == $enCurso['id_partida']);
+        $_SESSION['id_partida'] = $enCurso['id_partida'];
+
+        // Misma pestaña/sesión: la sesión ya tiene la pregunta y su tiempo, no se toca
+        if ($mismaPartida && isset($_SESSION['id_pregunta_actual'])) {
+            return;
+        }
+
+        $this->limpiarSesionPregunta();
+
+        if ($enCurso['ultima_pregunta_id'] && !$enCurso['ya_respondida'] && $enCurso['segundos_transcurridos'] !== null) {
+            $_SESSION['id_pregunta_actual'] = $enCurso['ultima_pregunta_id'];
+            // Se arma la hora de inicio a partir de los segundos que ya pasaron, así el tiempo sigue corriendo
+            $_SESSION['tiempo_inicio_pregunta'] = time() - (int) $enCurso['segundos_transcurridos'];
+        }
     }
 
     private function limpiarSesionPregunta()
