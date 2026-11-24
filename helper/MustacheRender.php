@@ -7,9 +7,12 @@ class MustacheRender
 {
     private $mustache;
     private $viewPath;
+    private $notificaciones;
 
-    public function __construct()
+    // $notificaciones: modelo que cuenta las tareas pendientes de editor y admin (globito de la barra)
+    public function __construct($notificaciones = null)
     {
+        $this->notificaciones = $notificaciones;
         $this->viewPath = dirname(__DIR__) . "/app/view";
         $this->mustache = new Mustache_Engine([
             "loader" => new Mustache_Loader_FilesystemLoader($this->viewPath, ["extension" => ".mustache"])
@@ -20,6 +23,14 @@ class MustacheRender
     {
         $archivo = dirname(__DIR__) . "/public/css/" . $nombre . ".css";
         return file_exists($archivo) ? filemtime($archivo) : 1;
+    }
+
+    // Deja en $data si hay pendientes y el texto del globito (más de 9 se muestra como "9+")
+    private function agregarPendientes(&$data, $panel, $cantidad)
+    {
+        $data['hay_pendientes_' . $panel] = $cantidad > 0;
+        $data['pendientes_' . $panel] = $cantidad > 9 ? '9+' : (string) $cantidad;
+        $data['pendientes_' . $panel . '_titulo'] = $cantidad === 1 ? '1 tarea pendiente' : $cantidad . ' tareas pendientes';
     }
 
     public function renderiza($view, $data = [])
@@ -39,6 +50,16 @@ class MustacheRender
         $data['nombre_usuario'] = $_SESSION['nombre_usuario'] ?? '';
         $data['es_editor'] = in_array($_SESSION['id_rol'] ?? 0, [2, 3]);
         $data['es_admin'] = (($_SESSION['id_rol'] ?? 0) == 3);
+
+        // Globito con la cantidad de tareas pendientes en los botones Editor y Admin de la barra
+        if ($this->notificaciones !== null && $data['usuario_logueado']) {
+            if ($data['es_editor']) {
+                $this->agregarPendientes($data, 'editor', $this->notificaciones->contarPendientesEditor());
+            }
+            if ($data['es_admin']) {
+                $this->agregarPendientes($data, 'admin', $this->notificaciones->contarPendientesAdmin());
+            }
+        }
 
         $data['requiere_mapa'] = $data['requiere_mapa'] ?? false;
         $data['requiere_perfil'] = $data['requiere_perfil'] ?? false;

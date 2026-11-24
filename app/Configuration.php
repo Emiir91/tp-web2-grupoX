@@ -17,6 +17,7 @@ use app\model\PartidaModel;
 use app\model\EditorModel;
 use app\model\AdminModel;
 use app\model\CategoriaModel;
+use app\model\NotificacionModel;
 
 use MustacheRender;
 use MyDatabase;
@@ -100,7 +101,15 @@ class Configuration
 
     private function getRender()
     {
-        return new MustacheRender();
+        // El render recibe el modelo de notificaciones para mostrar los pendientes en la barra superior
+        return new MustacheRender($this->getNotificacionModel());
+    }
+
+    private function getNotificacionModel()
+    {
+        return new NotificacionModel(
+            $this->getDatabase()
+        );
     }
 
     private function getUsuarioModel(){

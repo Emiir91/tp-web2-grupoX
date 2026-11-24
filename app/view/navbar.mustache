@@ -8,10 +8,10 @@
     <div class="barra-opciones">
         {{#usuario_logueado}}
         {{#es_editor}}
-        <a href="{{base_url}}/editor/index" class="btn-nav-panel">📝 Editor</a>
+        <a href="{{base_url}}/editor/index" class="btn-nav-panel">📝 Editor{{#hay_pendientes_editor}}<span class="badge-notificacion" title="{{pendientes_editor_titulo}}">{{pendientes_editor}}</span>{{/hay_pendientes_editor}}</a>
         {{/es_editor}}
         {{#es_admin}}
-        <a href="{{base_url}}/admin/index" class="btn-nav-panel">🛡️ Admin</a>
+        <a href="{{base_url}}/admin/index" class="btn-nav-panel">🛡️ Admin{{#hay_pendientes_admin}}<span class="badge-notificacion" title="{{pendientes_admin_titulo}}">{{pendientes_admin}}</span>{{/hay_pendientes_admin}}</a>
         {{/es_admin}}
         <div class="menu-perfil-contenedor">
             <button id="btn-perfil" class="btn-icono-perfil">
