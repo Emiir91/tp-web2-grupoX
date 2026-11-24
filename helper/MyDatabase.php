@@ -19,11 +19,20 @@ class MyDatabase
         return $fila === false ? null : $fila;
     }
 
-    public function queryAll(string $sql, array $parametros = [])
+    public function queryAll(string $sql, array $parametros = [], array $tipos = [])
     {
         Log::info($sql);
         $sentencia = $this->conexion->prepare($sql);
-        $sentencia->execute($parametros);
+
+        if (empty($tipos)) {
+            $sentencia->execute($parametros);
+        } else {
+            foreach ($parametros as $i => $valor) {
+                $sentencia->bindValue($i + 1, $valor, $tipos[$i] ?? PDO::PARAM_STR);
+            }
+            $sentencia->execute();
+        }
+
         return $sentencia->fetchAll(PDO::FETCH_ASSOC);
     }
 

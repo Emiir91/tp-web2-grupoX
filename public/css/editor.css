@@ -490,6 +490,52 @@ input[type="color"] {
     color: #ff8a80;
 }
 
+.paginacion {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.paginacion-info {
+    color: #9d8ec4;
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+}
+
+.paginacion-botones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+}
+
+.pagina-link,
+.pagina-num {
+    display: inline-block;
+    min-width: 36px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: #d1c4e9;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 120, 0, 0.25);
+    transition: all 0.2s ease;
+}
+
+.pagina-link:hover,
+.pagina-num:hover {
+    border-color: rgba(255, 192, 0, 0.6);
+    color: #ffc000;
+}
+
+.pagina-num.activa {
+    background: linear-gradient(180deg, #ff6a00 0%, #cc1c00 100%);
+    border-color: #ffc000;
+    color: #ffffff;
+    box-shadow: 0 3px 0 #7a0b00;
+}
+
 @media (min-width: 768px) {
     .panel-editor {
         padding: 40px 45px;

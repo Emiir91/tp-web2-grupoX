@@ -65,5 +65,24 @@
             </div>
         </div>
         {{/preguntas}}
+
+        {{#mostrar_paginacion}}
+        <nav class="paginacion">
+            <p class="paginacion-info">Página {{pagina_actual}} de {{total_paginas}}</p>
+            <div class="paginacion-botones">
+                {{#tiene_anterior}}
+                <a href="?pagina=1{{{query_filtros}}}" class="pagina-link" title="Primera página">&laquo;</a>
+                <a href="?pagina={{pagina_anterior}}{{{query_filtros}}}" class="pagina-link">← Anterior</a>
+                {{/tiene_anterior}}
+                {{#paginas}}
+                <a href="?pagina={{numero}}{{{query_filtros}}}" class="pagina-num {{#activa}}activa{{/activa}}">{{numero}}</a>
+                {{/paginas}}
+                {{#tiene_siguiente}}
+                <a href="?pagina={{pagina_siguiente}}{{{query_filtros}}}" class="pagina-link">Siguiente →</a>
+                <a href="?pagina={{total_paginas}}{{{query_filtros}}}" class="pagina-link" title="Última página">&raquo;</a>
+                {{/tiene_siguiente}}
+            </div>
+        </nav>
+        {{/mostrar_paginacion}}
     </div>
 </main>

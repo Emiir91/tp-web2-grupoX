@@ -17,13 +17,14 @@ class EditorModel
     // Se pueden filtrar por categoría, dificultad y/o estado.
     // Orden: activas arriba y eliminadas abajo; después por dificultad (fácil, intermedio, difícil)
     // y por último por categoría (A-Z).
-    public function obtenerTodasLasPreguntas($categoria = null, $dificultad = null, $estado = null)
+    private function armarWhereCatalogo($filtros)
     {
-        $sql = "SELECT id_pregunta, texto_pregunta, categoria, dificultad, activa, estado
-                FROM pregunta";
-
         $condiciones = ["estado IN ('activa', 'pendiente_baja', 'pendiente_reactivacion', 'eliminada')"];
         $parametros = [];
+
+        $categoria = $filtros['categoria'] ?? null;
+        $dificultad = $filtros['dificultad'] ?? null;
+        $estado = $filtros['estado'] ?? null;
 
         if ($categoria) {
             $condiciones[] = "categoria = ?";
@@ -40,14 +41,38 @@ class EditorModel
             $parametros[] = $estado;
         }
 
-        $sql .= " WHERE " . implode(" AND ", $condiciones);
+        return [implode(" AND ", $condiciones), $parametros];
+    }
 
-        $sql .= " ORDER BY FIELD(estado, 'activa', 'pendiente_baja', 'pendiente_reactivacion', 'eliminada'),
-                          FIELD(dificultad, 'facil', 'intermedio', 'dificil'),
-                          categoria ASC,
-                          id_pregunta ASC";
+    public function contarPreguntas($filtros = [])
+    {
+        [$where, $parametros] = $this->armarWhereCatalogo($filtros);
 
-        $preguntas = $this->database->queryAll($sql, $parametros);
+        $sql = "SELECT COUNT(*) AS total FROM pregunta WHERE " . $where;
+        $resultado = $this->database->queryOne($sql, $parametros);
+
+        return $resultado ? (int) $resultado['total'] : 0;
+    }
+
+    public function obtenerTodasLasPreguntas($filtros = [], $limit = null, $offset = 0)
+    {
+        [$where, $parametros] = $this->armarWhereCatalogo($filtros);
+
+        $sql = "SELECT id_pregunta, texto_pregunta, categoria, dificultad, activa, estado
+                FROM pregunta
+                WHERE " . $where . "
+                ORDER BY id_pregunta DESC";
+
+        $tipos = array_fill(0, count($parametros), \PDO::PARAM_STR);
+        if ($limit !== null) {
+            $sql .= " LIMIT ? OFFSET ?";
+            $parametros[] = (int) $limit;
+            $parametros[] = (int) $offset;
+            $tipos[] = \PDO::PARAM_INT;
+            $tipos[] = \PDO::PARAM_INT;
+        }
+
+        $preguntas = $this->database->queryAll($sql, $parametros, $tipos);
 
         foreach ($preguntas as &$p) {
             $p['pendiente_baja'] = ($p['estado'] === 'pendiente_baja');

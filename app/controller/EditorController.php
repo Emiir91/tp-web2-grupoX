@@ -87,7 +87,45 @@ class EditorController
             $estado = '';
         }
 
-        $preguntas = $this->editorModel->obtenerTodasLasPreguntas($categoria ?: null, $dificultad ?: null, $estado ?: null);
+        $filtros = [
+            'categoria' => $categoria ?: null,
+            'dificultad' => $dificultad ?: null,
+            'estado' => $estado ?: null
+        ];
+
+        // Query string con los filtros activos para conservarlos al paginar
+        $filtros_query = array_filter([
+            'categoria' => $categoria,
+            'dificultad' => $dificultad,
+            'estado' => $estado
+        ]);
+        $query_filtros = $filtros_query ? '&' . http_build_query($filtros_query) : '';
+
+        $por_pagina = 8;
+        $pagina = max(1, (int) ($_GET['pagina'] ?? 1));
+
+        $total_preguntas = $this->editorModel->contarPreguntas($filtros);
+        $total_paginas = max(1, (int) ceil($total_preguntas / $por_pagina));
+        $pagina_actual = min($pagina, $total_paginas);
+        $offset = ($pagina_actual - 1) * $por_pagina;
+
+        $preguntas = $this->editorModel->obtenerTodasLasPreguntas($filtros, $por_pagina, $offset);
+
+        $ventana = 7;
+        $inicio = max(1, $pagina_actual - 3);
+        $fin = min($total_paginas, $inicio + $ventana - 1);
+        if (($fin - $inicio + 1) < $ventana) {
+            $inicio = max(1, $fin - $ventana + 1);
+        }
+
+        $paginas = [];
+        for ($i = $inicio; $i <= $fin; $i++) {
+            $paginas[] = [
+                'numero' => $i,
+                'activa' => ($i === $pagina_actual),
+                'query_filtros' => $query_filtros
+            ];
+        }
 
         // Categorías activas (ya vienen ordenadas alfabéticamente) para el desplegable del filtro
         $categorias = array_map(function ($cat) use ($categoria) {
@@ -106,11 +144,20 @@ class EditorController
 
         $datosParaVista = [
             'preguntas' => $preguntas,
-            'total_preguntas' => count($preguntas),
+            'total_preguntas' => $total_preguntas,
             'categorias' => $categorias,
             'dificultades' => $dificultades,
             'estados' => $estados,
-            'hay_filtro' => ($categoria !== '' || $dificultad !== '' || $estado !== '')
+            'hay_filtro' => ($categoria !== '' || $dificultad !== '' || $estado !== ''),
+            'mostrar_paginacion' => ($total_paginas > 1),
+            'pagina_actual' => $pagina_actual,
+            'total_paginas' => $total_paginas,
+            'tiene_anterior' => ($pagina_actual > 1),
+            'pagina_anterior' => $pagina_actual - 1,
+            'tiene_siguiente' => ($pagina_actual < $total_paginas),
+            'pagina_siguiente' => $pagina_actual + 1,
+            'query_filtros' => $query_filtros,
+            'paginas' => $paginas
         ];
 
         $mensaje = $_GET['mensaje'] ?? '';
