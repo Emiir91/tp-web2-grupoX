@@ -192,6 +192,37 @@ class PartidaModel
         return 10 - $segundos_transcurridos;
     }
 
+    // Anti-trampa (grilla 4.4): además de ver si es correcta, la respuesta tiene que ser
+    // una de las 4 opciones de la pregunta que se le mostró al jugador.
+    public function respuestaPerteneceAPregunta($id_respuesta, $id_pregunta)
+    {
+        $sql = "SELECT 1 FROM respuesta WHERE id_respuesta = ? AND id_pregunta = ?";
+        return $this->database->queryOne($sql, [$id_respuesta, $id_pregunta]) !== null;
+    }
+
+    // Anti-trampa (grilla 4.6): una pregunta ya respondida en esta partida no se puede volver a responder
+    public function preguntaYaRespondida($id_partida, $id_pregunta)
+    {
+        $sql = "SELECT 1 FROM partida_pregunta WHERE id_partida = ? AND id_pregunta = ?";
+        return $this->database->queryOne($sql, [$id_partida, $id_pregunta]) !== null;
+    }
+
+    // Grilla 4.5: partida en curso del jugador (si la tiene), con la pregunta que se le estaba mostrando
+    // y cuántos segundos pasaron desde que se le mostró (calculado por MySQL para no depender de la hora de PHP).
+    public function obtenerPartidaEnCurso($id_usuario)
+    {
+        $sql = "SELECT p.id_partida,
+                       p.ultima_pregunta_id,
+                       TIMESTAMPDIFF(SECOND, p.tiempo_inicio_pregunta, NOW()) AS segundos_transcurridos,
+                       EXISTS (SELECT 1 FROM partida_pregunta pp
+                               WHERE pp.id_partida = p.id_partida AND pp.id_pregunta = p.ultima_pregunta_id) AS ya_respondida
+                FROM partida p
+                WHERE p.id_usuario = ? AND p.estado = 'en_curso'
+                ORDER BY p.id_partida DESC
+                LIMIT 1";
+        return $this->database->queryOne($sql, [$id_usuario]);
+    }
+
     public function validarRespuesta($id_respuesta)
     {
         $sql = "SELECT es_correcta FROM respuesta WHERE id_respuesta = ?";
