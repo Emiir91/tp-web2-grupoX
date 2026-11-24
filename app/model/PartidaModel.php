@@ -51,46 +51,87 @@ class PartidaModel
         return $resultado ? $resultado['vidas'] : 0;
     }
 
+
     public function obtenerPreguntaAleatoria($id_partida)
     {
-        $sql_partida = "SELECT modo_juego, nivel_actual, preguntas_usadas FROM partida WHERE id_partida = ?";
-        $resultado_partida = $this->database->queryOne($sql_partida, [$id_partida]);
+        $sql_partida = "SELECT modo_juego, nivel_actual, preguntas_usadas
+                    FROM partida WHERE id_partida = ?";
 
-        if (!$resultado_partida) {
+        $partida = $this->database->queryOne($sql_partida, [$id_partida]);
+
+        if (!$partida) {
             return false;
         }
 
-        $modo_juego = $resultado_partida['modo_juego'];
-        $nivel_actual = $resultado_partida['nivel_actual'];
-        $preguntas_usadas = $resultado_partida['preguntas_usadas'] ?? '';
+        $modo_juego = $partida['modo_juego'];
+        $nivel_actual = $partida['nivel_actual'];
+        $preguntas_usadas = trim($partida['preguntas_usadas'] ?? '');
 
+        $ids_usados = [];
+
+        if ($preguntas_usadas !== '') {
+            foreach (explode(',', $preguntas_usadas) as $id) {
+                $id = (int) trim($id);
+
+                if ($id > 0) {
+                    $ids_usados[$id] = $id;
+                }
+            }
+        }
+
+        $cantidad_usadas = count($ids_usados);
+
+        // Límite de preguntas según la modalidad.
+        $limite = ($modo_juego === 'progresivo') ? 18 : 12;
+
+        if ($cantidad_usadas >= $limite) {
+            return false;
+        }
+
+        // En progresivo, la dificultad cambia según
+        // la cantidad de preguntas presentadas.
+        if ($modo_juego === 'progresivo') {
+
+            if ($cantidad_usadas < 8) {
+                $nivel_requerido = 'facil';
+
+            } elseif ($cantidad_usadas < 14) {
+                $nivel_requerido = 'intermedio';
+
+            } else {
+                $nivel_requerido = 'dificil';
+            }
+
+            if ($nivel_actual !== $nivel_requerido) {
+                $this->actualizarNivelPartida(
+                    $id_partida,
+                    $nivel_requerido
+                );
+
+                $nivel_actual = $nivel_requerido;
+            }
+        }
+
+        // Seleccionar una pregunta del nivel correspondiente.
         $sql = "SELECT * FROM pregunta
-                WHERE activa = 1 AND estado = 'activa'
-                AND dificultad = ?";
+            WHERE activa = 1
+            AND estado = 'activa'
+            AND dificultad = ?";
 
-        $parametros = [$nivel_actual];
-
-        if (!empty($preguntas_usadas)) {
-            $sql .= " AND id_pregunta NOT IN ($preguntas_usadas)";
+        // Excluir preguntas ya utilizadas en la partida.
+        if ($ids_usados) {
+            $sql .= " AND id_pregunta NOT IN ("
+                . implode(',', $ids_usados) . ")";
         }
 
         $sql .= " ORDER BY RAND() LIMIT 1";
 
-        $pregunta = $this->database->queryOne($sql, $parametros);
-
-        if (!$pregunta) {
-            if ($modo_juego === 'progresivo') {
-                $nuevo_nivel = $this->siguienteNivel($nivel_actual);
-                if ($nuevo_nivel) {
-                    $this->actualizarNivelPartida($id_partida, $nuevo_nivel);
-                    return $this->obtenerPreguntaAleatoria($id_partida);
-                }
-            }
-            return false;
-        }
-
-        return $pregunta;
+        return $this->database->queryOne(
+            $sql,
+            [$nivel_actual]
+        ) ?: false;
     }
+
 
     private function siguienteNivel($nivelActual)
     {
@@ -329,33 +370,42 @@ class PartidaModel
         return $resultado ?: false;
     }
 
-    // $limite: cantidad máxima de partidas a traer (el lobby usa 10; el perfil público trae todas, hasta 200)
+
     public function obtenerHistorialUsuario($id_usuario, $limite = 10)
     {
         $limite = (int) $limite;
 
-        $sql = "SELECT puntaje as puntos, fecha_fin as fecha, estado
-                FROM partida
-                WHERE id_usuario = ? AND estado != 'en_curso'
-                ORDER BY fecha_fin DESC
-                LIMIT $limite";
+        $sql = "SELECT puntaje AS puntos, fecha_fin AS fecha, estado
+            FROM partida
+            WHERE id_usuario = ? AND estado != 'en_curso'
+            ORDER BY fecha_fin DESC
+            LIMIT $limite";
 
-        $partidas = $this->database->queryAll($sql, [$id_usuario]);
+        $partidas = $this->database->queryAll(
+            $sql,
+            [$id_usuario]
+        );
 
         if ($partidas) {
             foreach ($partidas as &$partida) {
-                $partida['fecha'] = $partida['fecha'] ? date('d/m/Y H:i', strtotime($partida['fecha'])) : 'Desconocida';
 
-                if ($partida['puntos'] >= 50) {
+                $partida['fecha'] = $partida['fecha']
+                    ? date('d/m/Y H:i', strtotime($partida['fecha']))
+                    : 'Desconocida';
+
+                if ($partida['estado'] === 'finalizada') {
                     $partida['resultado'] = 'victoria';
                 } else {
                     $partida['resultado'] = 'derrota';
                 }
             }
+
+            unset($partida);
         }
 
         return $partidas ?: [];
     }
+
 
     public function obtenerPuntajeTotalUsuario($id_usuario)
     {

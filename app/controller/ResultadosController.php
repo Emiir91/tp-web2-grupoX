@@ -18,6 +18,7 @@ class ResultadosController
         $this->categoriaModel = $categoriaModel;
     }
 
+
     public function index()
     {
         if (!isset($_SESSION['id_partida_resultados'])) {
@@ -36,18 +37,40 @@ class ResultadosController
 
         $preguntas = $this->partidaModel->obtenerPreguntasRespondidas($id_partida);
 
-        // Color de la categoría de cada pregunta (el mismo que en el juego)
+        // Mantener los colores de las categorías.
         $colores = $this->categoriaModel->obtenerMapaColores();
+
         foreach ($preguntas as &$p) {
-            $p['color_categoria'] = $colores[$p['categoria']] ?? \app\model\CategoriaModel::COLOR_POR_DEFECTO;
+            $p['color_categoria'] = $colores[$p['categoria']]
+                ?? \app\model\CategoriaModel::COLOR_POR_DEFECTO;
         }
         unset($p);
-        $mensaje = $this->generarMensajeSegunPuntaje($datos_partida['puntaje']);
+
+        // Determinar el resultado real de la partida.
+        $estado = $datos_partida['estado'];
+
+        if ($estado === 'finalizada') {
+            $estado_visible = 'Victoria';
+            $mensaje = '¡Completaste la ronda! ' .
+                $this->generarMensajeSegunPuntaje($datos_partida['puntaje']);
+
+        } elseif ($estado === 'sin_vidas') {
+            $estado_visible = 'Derrota';
+            $mensaje = 'Te quedaste sin vidas. ¡Podés volver a intentarlo!';
+
+        } elseif ($estado === 'abandonada') {
+            $estado_visible = 'Abandonada';
+            $mensaje = 'Abandonaste la partida.';
+
+        } else {
+            $estado_visible = 'Finalizada';
+            $mensaje = 'La partida terminó.';
+        }
 
         $datosParaVista = [
             'puntaje' => $datos_partida['puntaje'],
             'racha' => $datos_partida['racha'],
-            'estado' => $datos_partida['estado'],
+            'estado' => $estado_visible,
             'mensaje' => $mensaje,
             'preguntas_partida' => $preguntas,
             'ocultar_layout' => true
@@ -57,6 +80,7 @@ class ResultadosController
 
         $this->renderer->renderiza('resultados', $datosParaVista);
     }
+
 
     public function reportarPregunta()
     {
