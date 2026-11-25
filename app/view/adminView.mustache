@@ -19,6 +19,7 @@
             <div class="item-admin">
                 <div class="datos-admin">
                     {{#es_reactivacion}}<span class="badge-estado badge-pendiente_reactivacion">♻️ Reactivación</span>{{/es_reactivacion}}
+                    {{#categoria_dada_de_baja}}<p class="categoria-nueva-admin">⚠️ Su categoría «{{categoria}}» está dada de baja: reactivá la categoría para poder aprobarla.</p>{{/categoria_dada_de_baja}}
                     {{#es_categoria_nueva}}
                     <p class="categoria-nueva-admin">
                         🆕 Categoría nueva:
@@ -35,10 +36,15 @@
                     </div>
                 </div>
                 <div class="acciones-admin">
+                    {{^categoria_dada_de_baja}}
                     <form action="{{base_url}}/admin/aprobarAlta" method="POST" class="form-inline">
                         <input type="hidden" name="id" value="{{id_pregunta}}">
                         <button type="submit" class="btn-mini btn-aprobar">✓ Aprobar</button>
                     </form>
+                    {{/categoria_dada_de_baja}}
+                    {{#categoria_dada_de_baja}}
+                    <span class="btn-mini btn-deshabilitado" title="La categoría está dada de baja: reactivala primero">✓ Aprobar</span>
+                    {{/categoria_dada_de_baja}}
                     <form action="{{base_url}}/admin/rechazarAlta" method="POST" class="form-inline">
                         <input type="hidden" name="id" value="{{id_pregunta}}">
                         <button type="submit" class="btn-mini btn-rechazar">✖ Rechazar</button>
@@ -105,6 +111,31 @@
             {{/ediciones}}
 
             {{^ediciones}}<p class="vacio">No hay ediciones pendientes.</p>{{/ediciones}}
+        </section>
+
+        <section class="seccion-editor">
+            <h3 class="titulo-seccion">Categorías pendientes</h3>
+
+            {{#categorias_pendientes}}
+            <div class="item-admin">
+                <div class="datos-admin">
+                    <p class="texto-admin"><span class="muestra-color" style="background: {{color}};"></span>{{nombre}}</p>
+                    <p class="meta-admin">{{#es_baja}}Un editor pidió darla de baja{{/es_baja}}{{^es_baja}}Un editor pidió reactivarla{{/es_baja}}</p>
+                </div>
+                <div class="acciones-admin">
+                    <form action="{{base_url}}/admin/aprobarCategoria" method="POST" class="form-inline">
+                        <input type="hidden" name="id" value="{{id_categoria}}">
+                        <button type="submit" class="btn-mini btn-aprobar">✓ Aprobar</button>
+                    </form>
+                    <form action="{{base_url}}/admin/rechazarCategoria" method="POST" class="form-inline">
+                        <input type="hidden" name="id" value="{{id_categoria}}">
+                        <button type="submit" class="btn-mini btn-rechazar">✖ Rechazar</button>
+                    </form>
+                </div>
+            </div>
+            {{/categorias_pendientes}}
+
+            {{^categorias_pendientes}}<p class="vacio">No hay categorías pendientes.</p>{{/categorias_pendientes}}
         </section>
     </div>
 </main>

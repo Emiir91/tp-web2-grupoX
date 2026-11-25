@@ -40,7 +40,8 @@ class AdminController
         $datosParaVista = [
             'altas' => $altas,
             'bajas' => $bajas,
-            'ediciones' => $this->adminModel->obtenerEdicionesPendientes()
+            'ediciones' => $this->adminModel->obtenerEdicionesPendientes(),
+            'categorias_pendientes' => $this->adminModel->obtenerCategoriasPendientes()
         ];
 
         if (($_GET['mensaje'] ?? '') === 'procesado') {
@@ -100,6 +101,16 @@ class AdminController
         $this->procesarAccion('edicion', 'rechazar');
     }
 
+    public function aprobarCategoria()
+    {
+        $this->procesarAccion('categoria', 'aprobar');
+    }
+
+    public function rechazarCategoria()
+    {
+        $this->procesarAccion('categoria', 'rechazar');
+    }
+
     private function procesarAccion($tipo, $decision)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -118,6 +129,10 @@ class AdminController
                 $decision === 'aprobar'
                     ? $this->adminModel->aprobarBaja($id)
                     : $this->adminModel->rechazarBaja($id);
+            } elseif ($tipo === 'categoria') {
+                $decision === 'aprobar'
+                    ? $this->adminModel->aprobarCategoria($id)
+                    : $this->adminModel->rechazarCategoria($id);
             } else {
                 $decision === 'aprobar'
                     ? $this->adminModel->aprobarEdicion($id)

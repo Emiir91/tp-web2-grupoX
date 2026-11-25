@@ -410,6 +410,37 @@ body {
     font-weight: 700;
 }
 
+/* ── Ver categorías ── */
+.muestra-color {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    margin-right: 6px;
+    vertical-align: -2px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.badge-inactiva {
+    background: rgba(158, 158, 158, 0.2);
+    color: #bdbdbd;
+    border: 1px solid rgba(158, 158, 158, 0.4);
+}
+
+.texto-pendiente {
+    font-size: 0.75rem;
+    color: #9d8ec4;
+    font-style: italic;
+}
+
+/* Botón visible pero deshabilitado (con explicación al pasar el mouse) */
+.btn-deshabilitado {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #d1c4e9;
+}
+
 /* ── Sugerencia con categoría nueva ── */
 .categoria-nueva-sugerida {
     margin-top: 12px;
@@ -428,6 +459,11 @@ body {
 
 .titulo-categoria-nueva strong {
     color: #ffffff;
+}
+
+.aviso-categoria {
+    margin-bottom: 6px;
+    color: #ffcc66;
 }
 
 .opcion-categoria {
