@@ -29,7 +29,10 @@ class NotificacionModel
             "SELECT (SELECT COUNT(*) FROM pregunta
                      WHERE estado IN ('pendiente_alta', 'pendiente_baja', 'pendiente_reactivacion'))
                   + (SELECT COUNT(*) FROM preguntas_ediciones_pendientes)
-                  + (SELECT COUNT(*) FROM categorias WHERE estado IN ('pendiente_baja', 'pendiente_reactivacion')) AS cantidad"
+                  + (SELECT COUNT(*) FROM categorias c
+                     WHERE c.estado IN ('pendiente_baja', 'pendiente_reactivacion')
+                        OR (c.estado = 'pendiente_alta'
+                            AND NOT EXISTS (SELECT 1 FROM pregunta p WHERE p.categoria = c.nombre))) AS cantidad"
         );
         return $fila ? (int) $fila['cantidad'] : 0;
     }

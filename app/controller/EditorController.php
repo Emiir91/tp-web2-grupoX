@@ -508,6 +508,7 @@ class EditorController
         // Filtro por estado (?estado=...). Solo se aceptan valores válidos.
         $estadosValidos = [
             'activa' => 'Activa',
+            'pendiente_alta' => 'Alta pendiente',
             'pendiente_baja' => 'Baja pendiente',
             'pendiente_reactivacion' => 'Reactivación pendiente',
             'inactiva' => 'Dada de baja'
@@ -532,6 +533,8 @@ class EditorController
         ];
 
         $mensajes = [
+            'categoria_creada' => ['alerta_exito', 'La categoría se creó y ya está disponible.'],
+            'categoria_alta_enviada' => ['alerta_exito', 'La categoría fue enviada y queda pendiente de aprobación del administrador.'],
             'categoria_editada' => ['alerta_exito', 'La categoría se actualizó.'],
             'categoria_baja' => ['alerta_exito', 'La categoría se dio de baja. Ya no aparece en el juego ni en los formularios.'],
             'categoria_baja_enviada' => ['alerta_exito', 'La baja fue enviada y queda pendiente de aprobación del administrador.'],
@@ -557,16 +560,38 @@ class EditorController
         }
 
         $datosParaVista = $categoria;
-        $mensaje = $_GET['mensaje'] ?? '';
-        if ($mensaje === 'nombre_invalido') {
-            $datosParaVista['alerta_error'] = 'El nombre tiene que tener entre 3 y 40 caracteres (letras, números y espacios).';
-        } elseif ($mensaje === 'nombre_repetido') {
-            $datosParaVista['alerta_error'] = 'Ya existe otra categoría con ese nombre.';
-        } elseif ($mensaje === 'color_invalido') {
-            $datosParaVista['alerta_error'] = 'Elegí un color válido.';
-        }
+        $this->agregarErrorCategoria($datosParaVista);
 
         $this->renderer->renderiza('editorCategoriaEditar', $datosParaVista);
+    }
+
+    // Formulario para crear una categoría (mismo formulario que el de editar)
+    public function agregarCategoria()
+    {
+        $datosParaVista = [
+            'es_nueva' => true,
+            'id_categoria' => 0,
+            'color' => \app\model\CategoriaModel::COLOR_POR_DEFECTO,
+            'aviso_alta' => $this->esAdmin()
+                ? 'Como admin, la categoría queda activa al instante.'
+                : 'La categoría queda pendiente hasta que la apruebe un administrador.'
+        ];
+        $this->agregarErrorCategoria($datosParaVista);
+
+        $this->renderer->renderiza('editorCategoriaEditar', $datosParaVista);
+    }
+
+    private function agregarErrorCategoria(&$datosParaVista)
+    {
+        $errores = [
+            'nombre_invalido' => 'El nombre tiene que tener entre 3 y 40 caracteres (letras, números y espacios).',
+            'nombre_repetido' => 'Ya existe otra categoría con ese nombre.',
+            'color_invalido' => 'Elegí un color válido.'
+        ];
+        $mensaje = $_GET['mensaje'] ?? '';
+        if (isset($errores[$mensaje])) {
+            $datosParaVista['alerta_error'] = $errores[$mensaje];
+        }
     }
 
     public function guardarCategoria()
@@ -576,14 +601,21 @@ class EditorController
             exit();
         }
 
+        // id 0 = categoría nueva; si no, se edita una existente
         $id = (int) ($_POST['id_categoria'] ?? 0);
-        $categoria = $this->categoriaModel->obtenerPorId($id);
-        if (!$categoria || !in_array($categoria['estado'], ['activa', 'inactiva'], true)) {
-            header("Location: " . BASE_URL . "/editor/categorias");
-            exit();
+        $esNueva = ($id === 0);
+
+        if (!$esNueva) {
+            $categoria = $this->categoriaModel->obtenerPorId($id);
+            if (!$categoria || !in_array($categoria['estado'], ['activa', 'inactiva'], true)) {
+                header("Location: " . BASE_URL . "/editor/categorias");
+                exit();
+            }
         }
 
-        $volver = BASE_URL . "/editor/editarCategoria?id=" . $id . "&mensaje=";
+        $volver = $esNueva
+            ? BASE_URL . "/editor/agregarCategoria?mensaje="
+            : BASE_URL . "/editor/editarCategoria?id=" . $id . "&mensaje=";
         $nombre = \app\model\CategoriaModel::normalizarNombre($_POST['nombre'] ?? '');
         $color = $_POST['color'] ?? '';
 
@@ -600,6 +632,14 @@ class EditorController
         $otra = $this->categoriaModel->buscarPorNombre($nombre);
         if ($otra && (int) $otra['id_categoria'] !== $id) {
             header("Location: " . $volver . "nombre_repetido");
+            exit();
+        }
+
+        if ($esNueva) {
+            // Admin: queda activa. Editor: queda pendiente de alta para el admin.
+            $this->categoriaModel->crearOAprobar($nombre, $color, $this->esAdmin());
+            $mensaje = $this->esAdmin() ? 'categoria_creada' : 'categoria_alta_enviada';
+            header("Location: " . BASE_URL . "/editor/categorias?mensaje=" . $mensaje);
             exit();
         }
 

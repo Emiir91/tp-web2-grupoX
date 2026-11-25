@@ -1,13 +1,14 @@
 <main class="pantalla-editor">
     <div class="panel-editor panel-amplio">
         <h2 class="titulo-editor">Categorías</h2>
-        <p class="subtitulo-editor">Las categorías nuevas se crean al agregar una pregunta o al aprobar una sugerencia.</p>
+        <p class="subtitulo-editor">También se pueden crear al agregar una pregunta o al aprobar una sugerencia.</p>
 
         {{#alerta_exito}}<div class="alerta alerta-exito">{{alerta_exito}}</div>{{/alerta_exito}}
         {{#alerta_error}}<div class="alerta alerta-error">{{alerta_error}}</div>{{/alerta_error}}
 
         <div class="acciones-editor acciones-secundarias">
             <a href="{{base_url}}/editor/index" class="btn-secundario">← Volver</a>
+            <a href="{{base_url}}/editor/agregarCategoria" class="btn-jugar">➕ Agregar categoría</a>
         </div>
 
         <!-- Filtro por estado: se aplica solo al cambiar la opción -->
@@ -35,7 +36,9 @@
                 <span class="badge-estado badge-{{estado}}">{{nombre_estado}}</span>
             </div>
             <div class="acciones-pregunta">
+                {{^esta_pendiente}}
                 <a href="{{base_url}}/editor/editarCategoria?id={{id_categoria}}" class="btn-mini btn-editar">✏️ Editar</a>
+                {{/esta_pendiente}}
                 {{#es_activa}}
                 {{#puede_dar_baja}}
                 <form action="{{base_url}}/editor/bajaCategoria" method="POST" class="form-inline">
