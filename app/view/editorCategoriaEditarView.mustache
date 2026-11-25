@@ -1,0 +1,28 @@
+<main class="pantalla-editor">
+    <div class="panel-editor">
+        <h2 class="titulo-editor">Editar categoría</h2>
+        <p class="aviso-edicion">Si cambiás el nombre, se actualiza también en todas sus preguntas.</p>
+
+        {{#alerta_error}}<div class="alerta alerta-error">{{alerta_error}}</div>{{/alerta_error}}
+
+        <form action="{{base_url}}/editor/guardarCategoria" method="POST" class="form-editor">
+            <input type="hidden" name="id_categoria" value="{{id_categoria}}">
+
+            <div class="fila-editor">
+                <label class="label-editor">
+                    Nombre
+                    <input type="text" name="nombre" value="{{nombre}}" maxlength="40" required>
+                </label>
+                <label class="label-editor label-chico">
+                    Color
+                    <input type="color" name="color" value="{{color}}">
+                </label>
+            </div>
+
+            <div class="acciones-editor">
+                <button type="submit" class="btn-jugar">Guardar cambios</button>
+                <a href="{{base_url}}/editor/categorias" class="btn-secundario">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</main>

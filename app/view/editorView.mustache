@@ -9,6 +9,7 @@
 
         <div class="acciones-editor">
             <a href="{{base_url}}/editor/preguntas" class="btn-jugar">📋 Ver preguntas</a>
+            <a href="{{base_url}}/editor/categorias" class="btn-secundario">🏷️ Ver categorías</a>
             <a href="{{base_url}}/editor/agregar" class="btn-secundario">➕ Agregar pregunta</a>
         </div>
 
@@ -62,6 +63,7 @@
                     <div class="categoria-nueva-sugerida">
                         <p class="titulo-categoria-nueva">🆕 Propone una categoría nueva: <strong>{{categoria}}</strong></p>
 
+                        {{#puede_crear_categoria}}
                         <label class="opcion-categoria">
                             <input type="radio" name="accion_categoria" value="crear" checked form="form-aprobar-{{id_pregunta}}">
                             Crear "{{categoria}}"
@@ -76,6 +78,13 @@
                             <input type="radio" name="accion_categoria" value="existente" form="form-aprobar-{{id_pregunta}}">
                             Usar una existente:
                         </label>
+                        {{/puede_crear_categoria}}
+                        {{^puede_crear_categoria}}
+                        <!-- No se puede crear: ya está propuesta o dada de baja. Se elige sí o sí una existente. -->
+                        <p class="aviso-categoria">⚠️ {{aviso_categoria}}</p>
+                        <input type="hidden" name="accion_categoria" value="existente" form="form-aprobar-{{id_pregunta}}">
+                        <p class="opcion-categoria">Elegí una categoría existente:</p>
+                        {{/puede_crear_categoria}}
                         <select name="categoria_existente" class="select-categoria-existente" form="form-aprobar-{{id_pregunta}}">
                             {{#categorias_activas}}
                             <option value="{{nombre}}">{{nombre}}</option>

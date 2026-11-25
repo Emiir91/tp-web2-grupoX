@@ -3,6 +3,7 @@
         <h2 class="titulo-editor">Preguntas del catálogo</h2>
 
         {{#alerta_exito}}<div class="alerta alerta-exito">{{alerta_exito}}</div>{{/alerta_exito}}
+        {{#alerta_error}}<div class="alerta alerta-error">{{alerta_error}}</div>{{/alerta_error}}
 
         <div class="acciones-editor acciones-secundarias">
             <a href="{{base_url}}/editor/index" class="btn-secundario">← Volver</a>
@@ -62,6 +63,9 @@
                     <button type="submit" class="btn-mini btn-aprobar">♻️ Reactivar</button>
                 </form>
                 {{/puede_reactivar}}
+                {{#reactivar_bloqueado}}
+                <span class="btn-mini btn-deshabilitado" title="La categoría «{{categoria}}» está dada de baja: reactivá la categoría primero">♻️ Reactivar</span>
+                {{/reactivar_bloqueado}}
             </div>
         </div>
         {{/preguntas}}

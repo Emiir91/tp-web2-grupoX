@@ -171,6 +171,8 @@ class EditorController
             $datosParaVista['alerta_exito'] = 'La pregunta fue eliminada.';
         } elseif ($mensaje === 'reactivacion_enviada') {
             $datosParaVista['alerta_exito'] = 'La reactivación fue enviada y queda pendiente de aprobación del administrador.';
+        } elseif ($mensaje === 'reactivacion_bloqueada') {
+            $datosParaVista['alerta_error'] = 'No se puede reactivar: la categoría de la pregunta está dada de baja. Primero reactivá la categoría.';
         } elseif ($mensaje === 'reactivacion_aplicada') {
             $datosParaVista['alerta_exito'] = 'La pregunta fue reactivada y vuelve a estar en el juego.';
         }
@@ -302,7 +304,13 @@ class EditorController
             $this->editorModel->reactivar($id_pregunta, $this->esAdmin());
         }
 
-        $mensaje = $this->esAdmin() ? 'reactivacion_aplicada' : 'reactivacion_enviada';
+        // Si sigue eliminada es porque su categoría está dada de baja
+        $pregunta = $id_pregunta ? $this->editorModel->obtenerPreguntaPorId($id_pregunta) : null;
+        if ($pregunta && $pregunta['estado'] === 'eliminada') {
+            $mensaje = 'reactivacion_bloqueada';
+        } else {
+            $mensaje = $this->esAdmin() ? 'reactivacion_aplicada' : 'reactivacion_enviada';
+        }
         header("Location: " . BASE_URL . "/editor/preguntas?mensaje=" . $mensaje);
         exit();
     }
@@ -452,8 +460,9 @@ class EditorController
                     // La categoría sugerida ya no la usa nadie: se descarta
                     $this->categoriaModel->eliminarSiNoSeUsa($categoria['nombre']);
                 } else {
+                    // Solo se crea si es realmente nueva: si ya está propuesta o dada de baja, hay que usar una existente
                     $color = $_POST['color_categoria'] ?? '';
-                    if (!\app\model\CategoriaModel::colorValido($color)) {
+                    if ($categoria['estado'] !== 'sugerida' || !\app\model\CategoriaModel::colorValido($color)) {
                         header("Location: " . BASE_URL . "/editor/index?mensaje=categoria_invalida");
                         exit();
                     }
@@ -488,6 +497,155 @@ class EditorController
         }
 
         header("Location: " . BASE_URL . "/editor/index?mensaje=sugerencia_rechazada");
+        exit();
+    }
+
+    // ===================== ABM de categorías =====================
+
+    // Lista de categorías con su color, estado y cantidad de preguntas
+    public function categorias()
+    {
+        // Filtro por estado (?estado=...). Solo se aceptan valores válidos.
+        $estadosValidos = [
+            'activa' => 'Activa',
+            'pendiente_baja' => 'Baja pendiente',
+            'pendiente_reactivacion' => 'Reactivación pendiente',
+            'inactiva' => 'Dada de baja'
+        ];
+        $estado = $_GET['estado'] ?? '';
+        if (!array_key_exists($estado, $estadosValidos)) {
+            $estado = '';
+        }
+
+        $estados = [];
+        foreach ($estadosValidos as $valor => $nombre) {
+            $estados[] = ['valor' => $valor, 'nombre' => $nombre, 'seleccionada' => ($valor === $estado)];
+        }
+
+        $categorias = $this->categoriaModel->obtenerTodasConConteo($estado ?: null);
+
+        $datosParaVista = [
+            'categorias' => $categorias,
+            'total_categorias' => count($categorias),
+            'estados' => $estados,
+            'hay_filtro' => ($estado !== '')
+        ];
+
+        $mensajes = [
+            'categoria_editada' => ['alerta_exito', 'La categoría se actualizó.'],
+            'categoria_baja' => ['alerta_exito', 'La categoría se dio de baja. Ya no aparece en el juego ni en los formularios.'],
+            'categoria_baja_enviada' => ['alerta_exito', 'La baja fue enviada y queda pendiente de aprobación del administrador.'],
+            'categoria_reactivada' => ['alerta_exito', 'La categoría se reactivó.'],
+            'categoria_reactivacion_enviada' => ['alerta_exito', 'La reactivación fue enviada y queda pendiente de aprobación del administrador.'],
+            'baja_bloqueada' => ['alerta_error', 'No se puede dar de baja: la categoría tiene preguntas activas o pendientes. Primero movelas a otra categoría o eliminalas (las eliminadas no cuentan).']
+        ];
+        $mensaje = $_GET['mensaje'] ?? '';
+        if (isset($mensajes[$mensaje])) {
+            $datosParaVista[$mensajes[$mensaje][0]] = $mensajes[$mensaje][1];
+        }
+
+        $this->renderer->renderiza('editorCategorias', $datosParaVista);
+    }
+
+    public function editarCategoria()
+    {
+        $categoria = $this->categoriaModel->obtenerPorId($_GET['id'] ?? 0);
+
+        if (!$categoria || !in_array($categoria['estado'], ['activa', 'inactiva'], true)) {
+            header("Location: " . BASE_URL . "/editor/categorias");
+            exit();
+        }
+
+        $datosParaVista = $categoria;
+        $mensaje = $_GET['mensaje'] ?? '';
+        if ($mensaje === 'nombre_invalido') {
+            $datosParaVista['alerta_error'] = 'El nombre tiene que tener entre 3 y 40 caracteres (letras, números y espacios).';
+        } elseif ($mensaje === 'nombre_repetido') {
+            $datosParaVista['alerta_error'] = 'Ya existe otra categoría con ese nombre.';
+        } elseif ($mensaje === 'color_invalido') {
+            $datosParaVista['alerta_error'] = 'Elegí un color válido.';
+        }
+
+        $this->renderer->renderiza('editorCategoriaEditar', $datosParaVista);
+    }
+
+    public function guardarCategoria()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: " . BASE_URL . "/editor/categorias");
+            exit();
+        }
+
+        $id = (int) ($_POST['id_categoria'] ?? 0);
+        $categoria = $this->categoriaModel->obtenerPorId($id);
+        if (!$categoria || !in_array($categoria['estado'], ['activa', 'inactiva'], true)) {
+            header("Location: " . BASE_URL . "/editor/categorias");
+            exit();
+        }
+
+        $volver = BASE_URL . "/editor/editarCategoria?id=" . $id . "&mensaje=";
+        $nombre = \app\model\CategoriaModel::normalizarNombre($_POST['nombre'] ?? '');
+        $color = $_POST['color'] ?? '';
+
+        if (!\app\model\CategoriaModel::nombreValido($nombre)) {
+            header("Location: " . $volver . "nombre_invalido");
+            exit();
+        }
+        if (!\app\model\CategoriaModel::colorValido($color)) {
+            header("Location: " . $volver . "color_invalido");
+            exit();
+        }
+
+        // No puede quedar igual que otra categoría (sin importar mayúsculas ni tildes)
+        $otra = $this->categoriaModel->buscarPorNombre($nombre);
+        if ($otra && (int) $otra['id_categoria'] !== $id) {
+            header("Location: " . $volver . "nombre_repetido");
+            exit();
+        }
+
+        $this->categoriaModel->actualizar($id, $nombre, $color);
+
+        header("Location: " . BASE_URL . "/editor/categorias?mensaje=categoria_editada");
+        exit();
+    }
+
+    public function bajaCategoria()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: " . BASE_URL . "/editor/categorias");
+            exit();
+        }
+
+        $id = (int) ($_POST['id_categoria'] ?? 0);
+        // Admin: la baja es directa. Editor: queda pendiente para el admin.
+        $this->categoriaModel->darDeBaja($id, $this->esAdmin());
+
+        // Si sigue activa es porque tenía preguntas (o no existía)
+        $despues = $this->categoriaModel->obtenerPorId($id);
+        if ($despues && $despues['estado'] === 'inactiva') {
+            $mensaje = 'categoria_baja';
+        } elseif ($despues && $despues['estado'] === 'pendiente_baja') {
+            $mensaje = 'categoria_baja_enviada';
+        } else {
+            $mensaje = 'baja_bloqueada';
+        }
+
+        header("Location: " . BASE_URL . "/editor/categorias?mensaje=" . $mensaje);
+        exit();
+    }
+
+    public function reactivarCategoria()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: " . BASE_URL . "/editor/categorias");
+            exit();
+        }
+
+        // Admin: se reactiva directo. Editor: queda pendiente para el admin.
+        $this->categoriaModel->reactivar((int) ($_POST['id_categoria'] ?? 0), $this->esAdmin());
+
+        $mensaje = $this->esAdmin() ? 'categoria_reactivada' : 'categoria_reactivacion_enviada';
+        header("Location: " . BASE_URL . "/editor/categorias?mensaje=" . $mensaje);
         exit();
     }
 

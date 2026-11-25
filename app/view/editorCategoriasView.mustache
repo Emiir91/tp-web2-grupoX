@@ -1,0 +1,67 @@
+<main class="pantalla-editor">
+    <div class="panel-editor panel-amplio">
+        <h2 class="titulo-editor">Categorías</h2>
+        <p class="subtitulo-editor">Las categorías nuevas se crean al agregar una pregunta o al aprobar una sugerencia.</p>
+
+        {{#alerta_exito}}<div class="alerta alerta-exito">{{alerta_exito}}</div>{{/alerta_exito}}
+        {{#alerta_error}}<div class="alerta alerta-error">{{alerta_error}}</div>{{/alerta_error}}
+
+        <div class="acciones-editor acciones-secundarias">
+            <a href="{{base_url}}/editor/index" class="btn-secundario">← Volver</a>
+        </div>
+
+        <!-- Filtro por estado: se aplica solo al cambiar la opción -->
+        <form action="{{base_url}}/editor/categorias" method="GET" class="barra-filtros">
+            <select name="estado" onchange="this.form.submit()" aria-label="Estado">
+                <option value="">Estado: todos</option>
+                {{#estados}}
+                <option value="{{valor}}" {{#seleccionada}}selected{{/seleccionada}}>{{nombre}}</option>
+                {{/estados}}
+            </select>
+            {{#hay_filtro}}<a href="{{base_url}}/editor/categorias" class="limpiar-filtros" title="Quitar filtro">✖</a>{{/hay_filtro}}
+            <noscript><button type="submit" class="btn-mini btn-editar">Filtrar</button></noscript>
+        </form>
+
+        <p class="contador-preguntas">{{total_categorias}} categoría(s)</p>
+
+        {{#categorias}}
+        <div class="item-pregunta item-categoria">
+            <div class="datos-pregunta">
+                <p class="texto-pregunta-item">
+                    <span class="muestra-color" style="background: {{color}};"></span>
+                    {{nombre}}
+                </p>
+                <p class="meta-pregunta-item">{{texto_activas}} · {{preguntas_total}} en total</p>
+                <span class="badge-estado badge-{{estado}}">{{nombre_estado}}</span>
+            </div>
+            <div class="acciones-pregunta">
+                <a href="{{base_url}}/editor/editarCategoria?id={{id_categoria}}" class="btn-mini btn-editar">✏️ Editar</a>
+                {{#es_activa}}
+                {{#puede_dar_baja}}
+                <form action="{{base_url}}/editor/bajaCategoria" method="POST" class="form-inline">
+                    <input type="hidden" name="id_categoria" value="{{id_categoria}}">
+                    <button type="submit" class="btn-mini btn-eliminar">🗑️ Dar de baja</button>
+                </form>
+                {{/puede_dar_baja}}
+                {{^puede_dar_baja}}
+                <span class="btn-mini btn-deshabilitado" title="Tiene preguntas activas o pendientes: primero movelas o eliminalas">🗑️ Dar de baja</span>
+                {{/puede_dar_baja}}
+                {{/es_activa}}
+                {{#es_inactiva}}
+                <form action="{{base_url}}/editor/reactivarCategoria" method="POST" class="form-inline">
+                    <input type="hidden" name="id_categoria" value="{{id_categoria}}">
+                    <button type="submit" class="btn-mini btn-aprobar">♻️ Reactivar</button>
+                </form>
+                {{/es_inactiva}}
+                {{#esta_pendiente}}
+                <span class="texto-pendiente">Esperando al admin</span>
+                {{/esta_pendiente}}
+            </div>
+        </div>
+        {{/categorias}}
+
+        {{^categorias}}
+        <p class="vacio">No hay categorías con ese filtro.</p>
+        {{/categorias}}
+    </div>
+</main>
