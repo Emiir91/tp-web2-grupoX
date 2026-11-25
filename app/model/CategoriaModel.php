@@ -152,8 +152,8 @@ class CategoriaModel
                     (SELECT COUNT(*) FROM pregunta p WHERE p.categoria = c.nombre) AS preguntas_total,
                     (SELECT COUNT(*) FROM pregunta p WHERE p.categoria = c.nombre AND p.estado != 'eliminada') AS preguntas_vigentes
              FROM categorias c
-             WHERE c.estado IN ('activa', 'pendiente_baja', 'pendiente_reactivacion', 'inactiva')" . $filtro . "
-             ORDER BY FIELD(c.estado, 'activa', 'pendiente_baja', 'pendiente_reactivacion', 'inactiva'), c.nombre ASC",
+             WHERE c.estado IN ('activa', 'pendiente_alta', 'pendiente_baja', 'pendiente_reactivacion', 'inactiva')" . $filtro . "
+             ORDER BY FIELD(c.estado, 'activa', 'pendiente_alta', 'pendiente_baja', 'pendiente_reactivacion', 'inactiva'), c.nombre ASC",
             $parametros
         );
 
@@ -164,10 +164,11 @@ class CategoriaModel
             $c['texto_activas'] = $c['preguntas_activas'] === 1 ? '1 pregunta activa' : $c['preguntas_activas'] . ' preguntas activas';
             $c['es_activa'] = ($c['estado'] === 'activa');
             $c['es_inactiva'] = ($c['estado'] === 'inactiva');
-            $c['esta_pendiente'] = in_array($c['estado'], ['pendiente_baja', 'pendiente_reactivacion'], true);
+            $c['esta_pendiente'] = in_array($c['estado'], ['pendiente_alta', 'pendiente_baja', 'pendiente_reactivacion'], true);
             $nombresEstado = [
                 'activa' => 'activa',
                 'inactiva' => 'dada de baja',
+                'pendiente_alta' => 'alta pendiente',
                 'pendiente_baja' => 'baja pendiente',
                 'pendiente_reactivacion' => 'reactivación pendiente'
             ];

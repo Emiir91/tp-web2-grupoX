@@ -175,13 +175,22 @@ class AdminModel
 
     public function obtenerCategoriasPendientes()
     {
+        // Las altas que vienen junto con una pregunta se aprueban con la pregunta;
+        // acá solo aparecen las creadas sueltas desde "Agregar categoría" (sin preguntas)
         $categorias = $this->database->queryAll(
-            "SELECT id_categoria, nombre, color, estado FROM categorias
-             WHERE estado IN ('pendiente_baja', 'pendiente_reactivacion')
-             ORDER BY nombre ASC"
+            "SELECT c.id_categoria, c.nombre, c.color, c.estado FROM categorias c
+             WHERE c.estado IN ('pendiente_baja', 'pendiente_reactivacion')
+                OR (c.estado = 'pendiente_alta'
+                    AND NOT EXISTS (SELECT 1 FROM pregunta p WHERE p.categoria = c.nombre))
+             ORDER BY c.nombre ASC"
         );
+        $textos = [
+            'pendiente_alta' => 'Un editor pidió crearla',
+            'pendiente_baja' => 'Un editor pidió darla de baja',
+            'pendiente_reactivacion' => 'Un editor pidió reactivarla'
+        ];
         foreach ($categorias as &$c) {
-            $c['es_baja'] = ($c['estado'] === 'pendiente_baja');
+            $c['texto_pedido'] = $textos[$c['estado']];
         }
         unset($c);
         return $categorias;
@@ -202,16 +211,23 @@ class AdminModel
             [$id_categoria]
         );
         return $this->database->execute(
-            "UPDATE categorias SET estado = 'activa' WHERE id_categoria = ? AND estado = 'pendiente_reactivacion'",
+            "UPDATE categorias SET estado = 'activa'
+             WHERE id_categoria = ? AND estado IN ('pendiente_reactivacion', 'pendiente_alta')",
             [$id_categoria]
         );
     }
 
-    // Rechazar: la baja vuelve a activa; la reactivación vuelve a inactiva
+    // Rechazar: la baja vuelve a activa; la reactivación vuelve a inactiva; el alta se borra (si no tiene preguntas)
     public function rechazarCategoria($id_categoria)
     {
         $this->database->execute(
             "UPDATE categorias SET estado = 'activa' WHERE id_categoria = ? AND estado = 'pendiente_baja'",
+            [$id_categoria]
+        );
+        $this->database->execute(
+            "DELETE FROM categorias
+             WHERE id_categoria = ? AND estado = 'pendiente_alta'
+               AND NOT EXISTS (SELECT 1 FROM pregunta p WHERE p.categoria = categorias.nombre)",
             [$id_categoria]
         );
         return $this->database->execute(

@@ -1,7 +1,13 @@
 <main class="pantalla-editor">
     <div class="panel-editor">
+        {{#es_nueva}}
+        <h2 class="titulo-editor">Agregar categoría</h2>
+        <p class="aviso-edicion">{{aviso_alta}}</p>
+        {{/es_nueva}}
+        {{^es_nueva}}
         <h2 class="titulo-editor">Editar categoría</h2>
         <p class="aviso-edicion">Si cambiás el nombre, se actualiza también en todas sus preguntas.</p>
+        {{/es_nueva}}
 
         {{#alerta_error}}<div class="alerta alerta-error">{{alerta_error}}</div>{{/alerta_error}}
 
@@ -11,7 +17,11 @@
             <div class="fila-editor">
                 <label class="label-editor">
                     Nombre
-                    <input type="text" name="nombre" value="{{nombre}}" maxlength="40" required>
+                    <!-- Mismas reglas que valida el servidor: 3 a 40 caracteres, solo letras, números y espacios -->
+                    <input type="text" name="nombre" value="{{nombre}}" minlength="3" maxlength="40" required
+                           pattern="[\p{L}0-9 ]*[\p{L}0-9][\p{L}0-9 ]*"
+                           title="Entre 3 y 40 caracteres: solo letras, números y espacios"
+                           placeholder="Ej: Astronomía">
                 </label>
                 <label class="label-editor label-chico">
                     Color
@@ -20,7 +30,7 @@
             </div>
 
             <div class="acciones-editor">
-                <button type="submit" class="btn-jugar">Guardar cambios</button>
+                <button type="submit" class="btn-jugar">{{#es_nueva}}Crear categoría{{/es_nueva}}{{^es_nueva}}Guardar cambios{{/es_nueva}}</button>
                 <a href="{{base_url}}/editor/categorias" class="btn-secundario">Cancelar</a>
             </div>
         </form>
