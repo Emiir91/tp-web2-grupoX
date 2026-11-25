@@ -58,10 +58,15 @@ class EditorModel
     {
         [$where, $parametros] = $this->armarWhereCatalogo($filtros);
 
-        $sql = "SELECT id_pregunta, texto_pregunta, categoria, dificultad, activa, estado
+        // Orden por defecto: estado (activas primero), dificultad (fácil primero) y categoría (A-Z)
+        $sql = "SELECT id_pregunta, texto_pregunta, categoria, dificultad, activa, estado,
+                       (SELECT c.estado FROM categorias c WHERE c.nombre = pregunta.categoria) AS estado_categoria
                 FROM pregunta
                 WHERE " . $where . "
-                ORDER BY id_pregunta DESC";
+                ORDER BY FIELD(estado, 'activa', 'pendiente_baja', 'pendiente_reactivacion', 'eliminada'),
+                         FIELD(dificultad, 'facil', 'intermedio', 'dificil'),
+                         categoria ASC,
+                         id_pregunta ASC";
 
         $tipos = array_fill(0, count($parametros), \PDO::PARAM_STR);
         if ($limit !== null) {
@@ -79,7 +84,10 @@ class EditorModel
             // Qué botones se muestran según el estado
             $p['puede_editar'] = ($p['estado'] === 'activa');
             $p['puede_eliminar'] = ($p['estado'] === 'activa');
-            $p['puede_reactivar'] = ($p['estado'] === 'eliminada');
+            // Una pregunta eliminada solo se puede reactivar si su categoría sigue activa
+            $categoriaActiva = ($p['estado_categoria'] === 'activa');
+            $p['puede_reactivar'] = ($p['estado'] === 'eliminada') && $categoriaActiva;
+            $p['reactivar_bloqueado'] = ($p['estado'] === 'eliminada') && !$categoriaActiva;
         }
         unset($p);
 
@@ -136,12 +144,15 @@ class EditorModel
     // Admin: vuelve a activa en el momento. Editor: queda pendiente de reactivación para el admin.
     public function reactivar($id_pregunta, $directa = false)
     {
+        // Solo si su categoría sigue activa (si la categoría está dada de baja, primero hay que reactivarla)
+        $condicionCategoria = " AND EXISTS (SELECT 1 FROM categorias c WHERE c.nombre = pregunta.categoria AND c.estado = 'activa')";
+
         if ($directa) {
             $sql = "UPDATE pregunta SET activa = 1, estado = 'activa'
-                    WHERE id_pregunta = ? AND estado = 'eliminada'";
+                    WHERE id_pregunta = ? AND estado = 'eliminada'" . $condicionCategoria;
         } else {
             $sql = "UPDATE pregunta SET estado = 'pendiente_reactivacion'
-                    WHERE id_pregunta = ? AND estado = 'eliminada'";
+                    WHERE id_pregunta = ? AND estado = 'eliminada'" . $condicionCategoria;
         }
         return $this->database->execute($sql, [$id_pregunta]);
     }
@@ -263,6 +274,12 @@ class EditorModel
         foreach ($sugeridas as &$s) {
             $s['respuestas'] = $this->obtenerRespuestasDePregunta($s['id_pregunta']);
             $s['es_categoria_nueva'] = ($s['estado_categoria'] !== 'activa');
+            // Solo se puede crear si la categoría es realmente nueva (sugerida).
+            // Si ya fue propuesta por otro editor o está dada de baja, hay que elegir una existente.
+            $s['puede_crear_categoria'] = ($s['estado_categoria'] === 'sugerida');
+            $s['aviso_categoria'] = $s['estado_categoria'] === 'inactiva'
+                ? 'Esta categoría está dada de baja.'
+                : 'Esta categoría ya fue propuesta y espera la aprobación del administrador.';
         }
         unset($s);
 
