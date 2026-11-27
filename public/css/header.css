@@ -168,3 +168,34 @@
         padding: 6px 15px;
     }
 }
+
+/* ── Celulares angostos: que Editor, Admin y el usuario entren en una sola línea ── */
+@media (max-width: 420px) {
+    .barra-superior {
+        padding: 8px 10px;
+    }
+
+    .logo-nav {
+        max-height: 38px;
+    }
+
+    .barra-opciones {
+        gap: 6px;
+    }
+
+    .btn-nav-panel {
+        padding: 6px 10px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    /* Nombres largos se recortan con "..." en vez de partir el botón en dos renglones */
+    .btn-icono-perfil {
+        padding: 6px 10px;
+        font-size: 13px;
+        white-space: nowrap;
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}

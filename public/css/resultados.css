@@ -401,3 +401,12 @@
     font-size: 0.85rem;
     margin-top: 6px;
 }
+
+/* ── Celular: que las palabras de las cajitas (ej: "Abandonada") no se corten por la mitad ── */
+@media (max-width: 767px) {
+    .estadistica-item .valor {
+        font-size: clamp(0.8rem, 3.6vw, 1.1rem);
+        word-break: normal;
+        overflow-wrap: normal;
+    }
+}
