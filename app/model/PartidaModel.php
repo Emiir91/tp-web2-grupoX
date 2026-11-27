@@ -54,7 +54,7 @@ class PartidaModel
 
     public function obtenerPreguntaAleatoria($id_partida)
     {
-        $sql_partida = "SELECT modo_juego, nivel_actual, preguntas_usadas
+        $sql_partida = "SELECT id_usuario, modo_juego, nivel_actual, preguntas_usadas
                     FROM partida WHERE id_partida = ?";
 
         $partida = $this->database->queryOne($sql_partida, [$id_partida]);
@@ -124,11 +124,18 @@ class PartidaModel
                 . implode(',', $ids_usados) . ")";
         }
 
-        $sql .= " ORDER BY RAND() LIMIT 1";
+        $sql .= " ORDER BY EXISTS (
+                SELECT 1
+                FROM partida_pregunta pp
+                JOIN partida p ON p.id_partida = pp.id_partida
+                WHERE p.id_usuario = ?
+                  AND pp.id_pregunta = pregunta.id_pregunta
+            ) ASC, RAND()
+            LIMIT 1";
 
         return $this->database->queryOne(
             $sql,
-            [$nivel_actual]
+            [$nivel_actual, $partida['id_usuario']]
         ) ?: false;
     }
 
