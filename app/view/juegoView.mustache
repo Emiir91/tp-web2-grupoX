@@ -42,7 +42,7 @@
             {{^es_feedback}}
             {{#respuestas}}
             <form action="{{base_url}}/juego/procesarRespuesta" method="POST" class="form-respuesta">
-                <input type="hidden" name="id_respuesta" value="{{id_respuesta}}">
+                <input type="hidden" name="codigo_respuesta" value="{{codigo_respuesta}}">
                 <button type="submit" class="btn-respuesta">{{texto_respuesta}}</button>
             </form>
             {{/respuestas}}

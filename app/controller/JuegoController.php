@@ -114,6 +114,19 @@ class JuegoController
         // Se guarda el orden en que se mostraron, para que el feedback las muestre en el mismo lugar
         $_SESSION['orden_respuestas'] = array_column($respuestas, 'id_respuesta');
 
+        $respuestasParaVista = [];
+
+        foreach ($respuestas as $respuesta) {
+            $idRespuesta = (int) $respuesta['id_respuesta'];
+
+            $_SESSION['codigos_respuestas'][$idRespuesta] ??= bin2hex(random_bytes(16));
+
+            $respuestasParaVista[] = [
+                'codigo_respuesta' => $_SESSION['codigos_respuestas'][$idRespuesta],
+                'texto_respuesta' => $respuesta['texto_respuesta']
+            ];
+        }
+
         $vidas_array = array_fill(0, $vidas_actuales, '❤️');
 
         // Color de la categoría (guardado en la tabla categorias)
@@ -124,7 +137,7 @@ class JuegoController
             'pregunta' => $pregunta['texto_pregunta'],
             'categoria' => $pregunta['categoria'],
             'color_categoria' => $colorCategoria,
-            'respuestas' => $respuestas,
+            'respuestas' => $respuestasParaVista,
             'id_partida' => $id_partida,
             'tiempo_restante' => $tiempo_restante,
             'vidas' => $vidas_array,
@@ -141,10 +154,14 @@ class JuegoController
             exit();
         }
 
-        $id_respuesta = $_POST['id_respuesta'] ?? null;
+        $codigoRespuesta = $_POST['codigo_respuesta'] ?? null;
 
-        if (!$id_respuesta || !isset($_SESSION['id_partida'])) {
-            header("Location: " . BASE_URL . "/lobby");
+        $id_respuesta = is_string($codigoRespuesta)
+            ? array_search($codigoRespuesta, $_SESSION['codigos_respuestas'] ?? [], true)
+            : false;
+
+        if ($id_respuesta === false || !isset($_SESSION['id_partida'])) {
+            header("Location: " . BASE_URL . "/juego/mostrar");
             exit();
         }
 
@@ -238,6 +255,11 @@ class JuegoController
         // Si no hay una pregunta pendiente es porque ya se respondió (por ejemplo,
         // se eligió una respuesta en el último segundo). No se resta otra vida.
         if (!$id_pregunta_actual) {
+            header("Location: " . BASE_URL . "/juego/mostrar");
+            exit();
+        }
+
+        if ($this->partidaModel->validarTiempo($id_partida) > 0) {
             header("Location: " . BASE_URL . "/juego/mostrar");
             exit();
         }
@@ -450,5 +472,6 @@ class JuegoController
     {
         unset($_SESSION['id_pregunta_actual']);
         unset($_SESSION['tiempo_inicio_pregunta']);
+        unset($_SESSION['codigos_respuestas']);
     }
 }
