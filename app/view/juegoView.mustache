@@ -18,8 +18,12 @@
             {{/es_feedback}}
             <div class="vidas">
                 {{#vidas}}
-                ❤️
+                <span class="corazon">❤️</span>
                 {{/vidas}}
+                {{#perdio_vida}}
+                <!-- La vida que se acaba de perder: late, se pone gris y se desvanece -->
+                <span class="corazon corazon-perdido">❤️</span>
+                {{/perdio_vida}}
             </div>
             {{#nivel}}
             <span class="distintivo-nivel">{{icono}} {{etiqueta}}</span>
@@ -70,4 +74,5 @@
 <form id="formTimeout" action="{{base_url}}/juego/tiempoAgotado" method="POST" style="display: none;">
 </form>
 
+<script src="{{base_url}}/public/js/sonido.js?v={{version_sonido_js}}"></script>
 <script src="{{base_url}}/public/js/juego.js?v={{version_js}}"></script>

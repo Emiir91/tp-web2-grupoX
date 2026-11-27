@@ -313,6 +313,8 @@ class JuegoController
             'color_categoria' => $this->categoriaModel->obtenerColor($pregunta['categoria']),
             'respuestas' => $respuestas,
             'vidas' => array_fill(0, max(0, (int) $vidas), '❤️'),
+            // Si no acertó, perdió una vida: se muestra el corazón rompiéndose
+            'perdio_vida' => !$acerto,
             'ocultar_layout' => true
         ]);
     }

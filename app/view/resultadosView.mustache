@@ -1,4 +1,4 @@
-<main class="pantalla-resultados">
+<main class="pantalla-resultados" data-sonido-final="{{sonido_final}}">
     <div class="panel-resultados">
         <div class="header-resultados">
             <h1>Resultados de la Partida</h1>
@@ -11,7 +11,8 @@
         <div class="estadisticas">
             <div class="estadistica-item">
                 <h3>Puntaje Final</h3>
-                <p class="valor">{{puntaje}}</p>
+                <!-- Cuenta de 0 al puntaje final (resultados.js) -->
+                <p class="valor" id="puntaje-final" data-puntaje="{{puntaje}}">{{puntaje}}</p>
             </div>
 
             <div class="estadistica-item">
@@ -105,4 +106,5 @@
     });
 </script>
 <script>const BASE_URL = '{{base_url}}';</script>
+<script src="{{base_url}}/public/js/sonido.js?v={{version_sonido_js}}"></script>
 <script src="{{base_url}}/public/js/resultados.js?v={{version_js}}"></script>

@@ -87,6 +87,8 @@ class ResultadosController
             'puntaje' => $datos_partida['puntaje'],
             'racha' => $datos_partida['racha'],
             'estado' => $estado_visible,
+            // Para el sonido del final: victoria, derrota o nada (abandonada ya sonó el apagón)
+            'sonido_final' => $estado === 'finalizada' ? 'victoria' : ($estado === 'sin_vidas' ? 'derrota' : ''),
             'mensaje' => $mensaje,
             'preguntas_partida' => $preguntas,
             'ocultar_layout' => true

@@ -50,6 +50,7 @@ class MustacheRender
         $data['version_css'] = $this->versionCss($view);
         $data['version_header_css'] = $this->versionCss('header');
         $data['version_js'] = $this->versionJs($view);
+        $data['version_sonido_js'] = $this->versionJs('sonido');
 
         // En la pantalla de login no mostramos el botón "Iniciar Sesión" del header (ya estás ahí)
         $data['en_login'] = ($view === 'login');

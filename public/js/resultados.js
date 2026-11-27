@@ -116,3 +116,32 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+// Final de partida: el puntaje cuenta de 0 al valor real y suena la fanfarria o el bajón
+document.addEventListener('DOMContentLoaded', function () {
+    const puntaje = document.getElementById('puntaje-final');
+    if (puntaje) {
+        const final = parseInt(puntaje.dataset.puntaje, 10) || 0;
+        const duracion = 1000;
+        const inicio = performance.now();
+        puntaje.textContent = '0';
+
+        function contar(ahora) {
+            const avance = Math.min((ahora - inicio) / duracion, 1);
+            // Arranca rápido y frena al final, como un marcador
+            const suavizado = 1 - Math.pow(1 - avance, 3);
+            puntaje.textContent = Math.round(final * suavizado);
+            if (avance < 1) {
+                requestAnimationFrame(contar);
+            }
+        }
+        requestAnimationFrame(contar);
+    }
+
+    const pantalla = document.querySelector('.pantalla-resultados');
+    const sonido = pantalla ? pantalla.dataset.sonidoFinal : '';
+    if (typeof Sonido !== 'undefined') {
+        if (sonido === 'victoria') Sonido.victoria();
+        if (sonido === 'derrota') Sonido.derrota();
+    }
+});

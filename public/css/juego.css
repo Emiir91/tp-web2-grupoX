@@ -82,6 +82,49 @@
     color: #ff6a00;
     font-size: 1.4rem;
     text-shadow: 0 0 10px rgba(255, 106, 0, 0.8);
+    display: inline-block;
+}
+
+/* Últimos 3 segundos: el número se pone rojo y late */
+#temporizador.alerta {
+    color: #ff3b3b;
+    text-shadow: 0 0 14px rgba(255, 59, 59, 0.9);
+    animation: temporizador-alerta 1s ease-in-out infinite;
+}
+
+@keyframes temporizador-alerta {
+    0%, 100% { transform: scale(1); }
+    30% { transform: scale(1.35); }
+}
+
+/* Corazones: la vida recién perdida late, se pone gris y se desvanece */
+.corazon {
+    display: inline-block;
+}
+
+.corazon-perdido {
+    animation: corazon-roto 1.2s ease forwards;
+}
+
+@keyframes corazon-roto {
+    0%   { transform: scale(1); filter: none; opacity: 1; }
+    25%  { transform: scale(1.45); filter: none; opacity: 1; }
+    45%  { transform: scale(1) rotate(-12deg); filter: grayscale(1); opacity: 1; }
+    100% { transform: scale(0.4) rotate(20deg) translateY(10px); filter: grayscale(1); opacity: 0; }
+}
+
+/* Las 4 respuestas entran en cascada al aparecer la pregunta (no en el feedback) */
+.pantalla-juego:not([data-feedback]) .form-respuesta {
+    animation: respuesta-entra 0.35s ease both;
+}
+
+.pantalla-juego:not([data-feedback]) .form-respuesta:nth-child(2) { animation-delay: 0.08s; }
+.pantalla-juego:not([data-feedback]) .form-respuesta:nth-child(3) { animation-delay: 0.16s; }
+.pantalla-juego:not([data-feedback]) .form-respuesta:nth-child(4) { animation-delay: 0.24s; }
+
+@keyframes respuesta-entra {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
 }
 
 /* ── Distintivo de nivel (modo progresivo) ── */
