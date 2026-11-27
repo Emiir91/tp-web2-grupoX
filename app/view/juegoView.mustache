@@ -1,13 +1,29 @@
-<main class="pantalla-juego" data-tiempo="{{tiempo_restante}}">
-    <div class="panel-juego" style="--color-categoria: {{color_categoria}};">
+<main class="pantalla-juego" data-tiempo="{{tiempo_restante}}"{{#es_feedback}} data-feedback="1" data-acerto="{{#acerto}}1{{/acerto}}{{^acerto}}0{{/acerto}}"{{/es_feedback}}>
+    <div class="panel-juego{{#nivel}} nivel-{{clase}}{{/nivel}}" style="--color-categoria: {{color_categoria}};">
+        {{#nivel}}
+        {{#subio_nivel}}
+        <!-- Aviso de cambio de nivel: aparece en la primera pregunta del nivel nuevo y se va solo (animación CSS) -->
+        <div class="aviso-nivel">⚡ ¡Subiste a nivel {{nombre}}!</div>
+        {{/subio_nivel}}
+        {{/nivel}}
         <div class="header-juego">
+            <!-- Grilla 7.2: botón para silenciar el sonido (se recuerda entre preguntas y partidas) -->
+            <button type="button" id="btn-sonido" class="btn-sonido" aria-label="Silenciar sonido" title="Silenciar sonido">🔊</button>
             <h1>⚡ CORTOCIRCUITO ⚡</h1>
+            {{^es_feedback}}
             <h2>Tiempo restante: <span id="temporizador">{{tiempo_restante}}</span>s</h2>
+            {{/es_feedback}}
+            {{#es_feedback}}
+            <h2 class="mensaje-feedback {{#acerto}}feedback-bien{{/acerto}}{{^acerto}}feedback-mal{{/acerto}}">{{mensaje_feedback}}</h2>
+            {{/es_feedback}}
             <div class="vidas">
                 {{#vidas}}
                 ❤️
                 {{/vidas}}
             </div>
+            {{#nivel}}
+            <span class="distintivo-nivel">{{icono}} Nivel {{numero}} · {{nombre}}</span>
+            {{/nivel}}
         </div>
 
         <div class="categoria">
@@ -19,12 +35,24 @@
         </div>
 
         <div class="respuestas">
+            {{^es_feedback}}
             {{#respuestas}}
             <form action="{{base_url}}/juego/procesarRespuesta" method="POST" class="form-respuesta">
                 <input type="hidden" name="id_respuesta" value="{{id_respuesta}}">
                 <button type="submit" class="btn-respuesta">{{texto_respuesta}}</button>
             </form>
             {{/respuestas}}
+            {{/es_feedback}}
+            {{#es_feedback}}
+            <!-- Feedback: correcta en verde, la elegida en rojo si estaba mal. Pasa sola a la siguiente (juego.js). -->
+            {{#respuestas}}
+            <div class="form-respuesta">
+                <div class="btn-respuesta respuesta-feedback {{#es_la_correcta}}respuesta-correcta{{/es_la_correcta}}{{#es_error}}respuesta-incorrecta{{/es_error}}">
+                    {{#es_la_correcta}}✓ {{/es_la_correcta}}{{#es_error}}✗ {{/es_error}}{{texto_respuesta}}
+                </div>
+            </div>
+            {{/respuestas}}
+            {{/es_feedback}}
         </div>
     </div>
 <div id="modal-abandonar" class="modal-overlay modal-oculto">
@@ -42,4 +70,4 @@
 <form id="formTimeout" action="{{base_url}}/juego/tiempoAgotado" method="POST" style="display: none;">
 </form>
 
-<script src="{{base_url}}/public/js/juego.js"></script>
+<script src="{{base_url}}/public/js/juego.js?v={{version_js}}"></script>
