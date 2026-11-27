@@ -57,8 +57,9 @@ class UsuarioModel
     }
 
     public function buscarUsuario($usuario_o_mail) {
-        $sql = "SELECT * FROM usuarios WHERE mail = '$usuario_o_mail' OR nombre_usuario = '$usuario_o_mail'";
-        $resultado = $this->database->queryAll($sql);
+        // Consulta preparada: lo que escribe el usuario viaja aparte y nunca se interpreta como SQL
+        $sql = "SELECT * FROM usuarios WHERE mail = ? OR nombre_usuario = ?";
+        $resultado = $this->database->queryAll($sql, [$usuario_o_mail, $usuario_o_mail]);
 
         // Si el array vuelve vacío, el usuario no está registrado
         if (empty($resultado)) {
@@ -92,12 +93,24 @@ class UsuarioModel
         return $resultado ?: false;
     }
 
+    // Activa la cuenta del token recibido. Devuelve true solo si había una cuenta sin activar con ese token.
     public function activarUsuario($token)
     {
-        // Armamos la consulta inyectando el token directamente (entre comillas simples)
-        $sql = "UPDATE usuarios SET cuenta_validada = 1 WHERE token_validacion = '$token'";
+        // Consulta preparada: el token nunca se interpreta como SQL
+        $usuario = $this->database->queryOne(
+            "SELECT id_usuario FROM usuarios WHERE token_validacion = ? AND cuenta_validada = 0",
+            [$token]
+        );
 
-        // Usamos el método execute que ya tenés armado en tu helper MyDatabase
-        return $this->database->execute($sql);
+        // Token inventado o cuenta ya activada
+        if (!$usuario) {
+            return false;
+        }
+
+        // Se borra el token para que el link sirva una sola vez
+        return $this->database->execute(
+            "UPDATE usuarios SET cuenta_validada = 1, token_validacion = NULL WHERE id_usuario = ?",
+            [$usuario['id_usuario']]
+        );
     }
 }
