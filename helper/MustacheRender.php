@@ -25,6 +25,13 @@ class MustacheRender
         return file_exists($archivo) ? filemtime($archivo) : 1;
     }
 
+    // Igual que versionCss, para el JS que tiene el mismo nombre que la vista (ej: juego.js)
+    private function versionJs($nombre)
+    {
+        $archivo = dirname(__DIR__) . "/public/js/" . $nombre . ".js";
+        return file_exists($archivo) ? filemtime($archivo) : 1;
+    }
+
     // Deja en $data si hay pendientes y el texto del globito (más de 9 se muestra como "9+")
     private function agregarPendientes(&$data, $panel, $cantidad)
     {
@@ -42,6 +49,7 @@ class MustacheRender
         // Así, cada vez que se edita un CSS, el navegador lo vuelve a descargar en vez de usar el de la caché.
         $data['version_css'] = $this->versionCss($view);
         $data['version_header_css'] = $this->versionCss('header');
+        $data['version_js'] = $this->versionJs($view);
 
         // En la pantalla de login no mostramos el botón "Iniciar Sesión" del header (ya estás ahí)
         $data['en_login'] = ($view === 'login');
