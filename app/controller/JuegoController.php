@@ -401,23 +401,34 @@ class JuegoController
         }
     }
 
-    // Distintivo de nivel para el modo progresivo (solo visual: el cambio de nivel lo decide el modelo).
-    // Devuelve null en los otros modos. 'subio_nivel' es true solo en la primera pregunta de un nivel nuevo.
+    // Distintivo de nivel (solo visual: el cambio de nivel lo decide el modelo).
+    // Progresivo: "Nivel 1 · Fácil" y avisa al subir. Modos fijos: "Modo Fácil" (no cambia nunca).
+    // 'subio_nivel' es true solo en la primera pregunta de un nivel nuevo del progresivo.
     private function datosNivel($id_partida, $preguntaNueva)
     {
         $partida = $this->partidaModel->obtenerModoYNivel($id_partida);
-        if (!$partida || $partida['modo_juego'] !== 'progresivo') {
+        if (!$partida) {
             return null;
         }
+        $esProgresivo = ($partida['modo_juego'] === 'progresivo');
 
         $niveles = [
             'facil' => ['numero' => 1, 'nombre' => 'Fácil', 'icono' => '🟢'],
             'intermedio' => ['numero' => 2, 'nombre' => 'Medio', 'icono' => '🟡'],
             'dificil' => ['numero' => 3, 'nombre' => 'Difícil', 'icono' => '🔴']
         ];
-        $clave = $partida['nivel_actual'];
+        // En los modos fijos, el nivel es el propio modo
+        $clave = $esProgresivo ? $partida['nivel_actual'] : $partida['modo_juego'];
         if (!isset($niveles[$clave])) {
             return null;
+        }
+
+        $etiqueta = $esProgresivo
+            ? 'Nivel ' . $niveles[$clave]['numero'] . ' · ' . $niveles[$clave]['nombre']
+            : 'Modo ' . $niveles[$clave]['nombre'];
+
+        if (!$esProgresivo) {
+            return $niveles[$clave] + ['clase' => $clave, 'etiqueta' => $etiqueta, 'subio_nivel' => false];
         }
 
         // Se recuerda el último nivel mostrado de esta partida para detectar cuándo sube
@@ -430,7 +441,7 @@ class JuegoController
             $_SESSION['nivel_partida'] = ['id_partida' => $id_partida, 'nivel' => $clave];
         }
 
-        return $niveles[$clave] + ['clase' => $clave, 'subio_nivel' => $subio];
+        return $niveles[$clave] + ['clase' => $clave, 'etiqueta' => $etiqueta, 'subio_nivel' => $subio];
     }
 
     private function limpiarSesionPregunta()
