@@ -27,6 +27,35 @@
     color: #ffffff;
 }
 
+/* Botón de sonido (grilla 7.2) */
+.btn-sonido {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 120, 0, 0.4);
+    background: rgba(0, 0, 0, 0.4);
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    z-index: 3;
+}
+
+.btn-sonido:hover {
+    background: rgba(255, 106, 0, 0.2);
+}
+
+.btn-sonido:active {
+    transform: scale(0.92);
+}
+
+.btn-sonido.silenciado {
+    opacity: 0.6;
+}
+
 .header-juego {
     text-align: center;
     margin-bottom: 30px;
@@ -53,6 +82,106 @@
     color: #ff6a00;
     font-size: 1.4rem;
     text-shadow: 0 0 10px rgba(255, 106, 0, 0.8);
+    display: inline-block;
+}
+
+/* Últimos 3 segundos: el número se pone rojo y late */
+#temporizador.alerta {
+    color: #ff3b3b;
+    text-shadow: 0 0 14px rgba(255, 59, 59, 0.9);
+    animation: temporizador-alerta 1s ease-in-out infinite;
+}
+
+@keyframes temporizador-alerta {
+    0%, 100% { transform: scale(1); }
+    30% { transform: scale(1.35); }
+}
+
+/* Corazones: la vida recién perdida late, se pone gris y se desvanece */
+.corazon {
+    display: inline-block;
+}
+
+.corazon-perdido {
+    animation: corazon-roto 1.2s ease forwards;
+}
+
+@keyframes corazon-roto {
+    0%   { transform: scale(1); filter: none; opacity: 1; }
+    25%  { transform: scale(1.45); filter: none; opacity: 1; }
+    45%  { transform: scale(1) rotate(-12deg); filter: grayscale(1); opacity: 1; }
+    100% { transform: scale(0.4) rotate(20deg) translateY(10px); filter: grayscale(1); opacity: 0; }
+}
+
+/* Las 4 respuestas entran en cascada al aparecer la pregunta (no en el feedback) */
+.pantalla-juego:not([data-feedback]) .form-respuesta {
+    animation: respuesta-entra 0.35s ease both;
+}
+
+.pantalla-juego:not([data-feedback]) .form-respuesta:nth-child(2) { animation-delay: 0.08s; }
+.pantalla-juego:not([data-feedback]) .form-respuesta:nth-child(3) { animation-delay: 0.16s; }
+.pantalla-juego:not([data-feedback]) .form-respuesta:nth-child(4) { animation-delay: 0.24s; }
+
+@keyframes respuesta-entra {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Distintivo de nivel (modo progresivo) ── */
+.panel-juego.nivel-facil { --color-nivel: #2ecc71; }
+.panel-juego.nivel-intermedio { --color-nivel: #ffc000; }
+.panel-juego.nivel-dificil { --color-nivel: #ff3b3b; }
+
+.panel-juego[class*="nivel-"] {
+    border: 2px solid var(--color-nivel);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8),
+                0 0 22px color-mix(in srgb, var(--color-nivel) 45%, transparent);
+    transition: border-color 0.4s, box-shadow 0.4s;
+}
+
+.distintivo-nivel {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--color-nivel);
+    background: color-mix(in srgb, var(--color-nivel) 15%, transparent);
+    color: var(--color-nivel);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Cartel "¡Subiste de nivel!": baja y queda montado sobre el borde superior del panel, se queda un momento y se va solo.
+   No tapa la pregunta ni las respuestas. */
+.aviso-nivel {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: 100;
+    width: max-content;
+    max-width: 90%;
+    padding: 10px 24px;
+    border-radius: 30px;
+    background: rgba(15, 8, 25, 0.95);
+    border: 2px solid var(--color-nivel);
+    box-shadow: 0 0 25px color-mix(in srgb, var(--color-nivel) 60%, transparent);
+    color: var(--color-nivel);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-align: center;
+    pointer-events: none;
+    animation: aviso-nivel 2.2s ease forwards;
+}
+
+@keyframes aviso-nivel {
+    0%   { opacity: 0; transform: translate(-50%, -30px); }
+    15%  { opacity: 1; transform: translate(-50%, 0); }
+    80%  { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, -30px); visibility: hidden; }
 }
 
 .categoria {
@@ -130,6 +259,67 @@
 .btn-respuesta:active {
     transform: translateY(6px);
     box-shadow: 0 0px 0 #7a0b00, 0 4px 5px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Feedback de respuesta ── */
+.mensaje-feedback {
+    font-size: 1.4rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 1px;
+    animation: feedback-aparece 0.3s ease;
+}
+
+.feedback-bien { color: #2ecc71 !important; text-shadow: 0 0 12px rgba(46, 204, 113, 0.7); }
+.feedback-mal { color: #ff4d4d !important; text-shadow: 0 0 12px rgba(255, 77, 77, 0.7); }
+
+.respuesta-feedback {
+    cursor: default;
+    text-align: center;
+    opacity: 0.45;
+}
+
+.respuesta-feedback:hover,
+.respuesta-feedback:active {
+    transform: none;
+    background: linear-gradient(180deg, #ff6a00 0%, #cc1c00 100%);
+    box-shadow: 0 6px 0 #7a0b00, 0 10px 15px rgba(0, 0, 0, 0.6);
+}
+
+.respuesta-feedback.respuesta-correcta,
+.respuesta-feedback.respuesta-correcta:hover {
+    opacity: 1;
+    background: linear-gradient(180deg, #2ecc71 0%, #1e8f4e 100%);
+    border-color: #a8f5c8;
+    box-shadow: 0 6px 0 #10552c, 0 0 22px rgba(46, 204, 113, 0.6);
+    animation: feedback-pulso 0.6s ease;
+}
+
+.respuesta-feedback.respuesta-incorrecta,
+.respuesta-feedback.respuesta-incorrecta:hover {
+    opacity: 1;
+    background: linear-gradient(180deg, #ff4d4d 0%, #b30000 100%);
+    border-color: #ffb3b3;
+    box-shadow: 0 6px 0 #5c0000, 0 0 22px rgba(255, 77, 77, 0.6);
+    animation: feedback-temblor 0.45s ease;
+}
+
+@keyframes feedback-pulso {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes feedback-temblor {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+}
+
+@keyframes feedback-aparece {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 .modal-overlay {
@@ -257,5 +447,59 @@
 
     .acciones-modal {
         flex-direction: row;
+    }
+}
+
+/* ── Celular: todo más compacto para que las 4 respuestas entren sin scrollear ── */
+@media (max-width: 767px) {
+    .pantalla-juego {
+        padding: 24px 12px;
+    }
+
+    .panel-juego {
+        padding: 22px 16px;
+    }
+
+    .header-juego {
+        margin-bottom: 16px;
+    }
+
+    /* Título en una sola línea (con los rayos al costado) y sin pisar el botón de sonido */
+    .header-juego h1 {
+        font-size: clamp(1rem, 5.2vw, 1.4rem);
+        letter-spacing: 1px;
+        white-space: nowrap;
+        margin: 0 34px 8px;
+    }
+
+    .btn-sonido {
+        top: 10px;
+        right: 10px;
+        width: 34px;
+        height: 34px;
+        font-size: 0.95rem;
+    }
+
+    .categoria {
+        margin-bottom: 14px;
+    }
+
+    .pregunta {
+        margin-bottom: 18px;
+        padding: 14px;
+    }
+
+    .respuestas {
+        gap: 12px;
+    }
+
+    .btn-respuesta {
+        padding: 14px 16px;
+        font-size: 1rem;
+    }
+
+    .aviso-nivel {
+        font-size: 0.95rem;
+        padding: 8px 16px;
     }
 }

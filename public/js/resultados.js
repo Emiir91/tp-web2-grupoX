@@ -77,3 +77,71 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+// Ventanita "Cambiar modo": se abre desde el link de abajo de "Nueva partida"
+document.addEventListener('DOMContentLoaded', function () {
+    const modalModo = document.getElementById('modal-modo');
+    const btnAbrir = document.getElementById('btn-cambiar-modo');
+    const btnCancelar = document.getElementById('btn-cancelar-modo');
+    if (!modalModo || !btnAbrir) return;
+
+    btnAbrir.addEventListener('click', function () {
+        modalModo.classList.remove('modal-oculto');
+    });
+
+    btnCancelar.addEventListener('click', function () {
+        modalModo.classList.add('modal-oculto');
+    });
+
+    // Elegir un modo: queda marcado, se actualiza "Modo: ..." y se cierra la ventanita.
+    // La partida arranca recién cuando el usuario toca "Nueva partida".
+    const inputModo = document.getElementById('modo-nueva-partida');
+    const nombreModo = document.getElementById('nombre-modo-elegido');
+    const opciones = modalModo.querySelectorAll('.opcion-modo');
+
+    opciones.forEach(function (opcion) {
+        opcion.addEventListener('click', function () {
+            opciones.forEach(function (o) { o.classList.remove('activo'); });
+            opcion.classList.add('activo');
+            inputModo.value = opcion.dataset.modo;
+            nombreModo.textContent = opcion.textContent.trim();
+            modalModo.classList.add('modal-oculto');
+        });
+    });
+
+    // Tocar afuera de la caja también la cierra
+    modalModo.addEventListener('click', function (e) {
+        if (e.target === modalModo) {
+            modalModo.classList.add('modal-oculto');
+        }
+    });
+});
+
+// Final de partida: el puntaje cuenta de 0 al valor real y suena la fanfarria o el bajón
+document.addEventListener('DOMContentLoaded', function () {
+    const puntaje = document.getElementById('puntaje-final');
+    if (puntaje) {
+        const final = parseInt(puntaje.dataset.puntaje, 10) || 0;
+        const duracion = 1000;
+        const inicio = performance.now();
+        puntaje.textContent = '0';
+
+        function contar(ahora) {
+            const avance = Math.min((ahora - inicio) / duracion, 1);
+            // Arranca rápido y frena al final, como un marcador
+            const suavizado = 1 - Math.pow(1 - avance, 3);
+            puntaje.textContent = Math.round(final * suavizado);
+            if (avance < 1) {
+                requestAnimationFrame(contar);
+            }
+        }
+        requestAnimationFrame(contar);
+    }
+
+    const pantalla = document.querySelector('.pantalla-resultados');
+    const sonido = pantalla ? pantalla.dataset.sonidoFinal : '';
+    if (typeof Sonido !== 'undefined') {
+        if (sonido === 'victoria') Sonido.victoria();
+        if (sonido === 'derrota') Sonido.derrota();
+    }
+});

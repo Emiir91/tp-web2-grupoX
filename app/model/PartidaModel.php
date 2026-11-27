@@ -363,6 +363,15 @@ class PartidaModel
         return $resultado ? $resultado['racha'] : 0;
     }
 
+    // Modo de juego y nivel actual (para mostrar el distintivo de nivel en el progresivo)
+    public function obtenerModoYNivel($id_partida)
+    {
+        return $this->database->queryOne(
+            "SELECT modo_juego, nivel_actual FROM partida WHERE id_partida = ?",
+            [$id_partida]
+        );
+    }
+
     public function obtenerDatosPartida($id_partida)
     {
         $sql = "SELECT puntaje, racha, estado, nivel_actual, vidas FROM partida WHERE id_partida = ?";

@@ -67,10 +67,28 @@ class ResultadosController
             $mensaje = 'La partida terminó.';
         }
 
+        // "Nueva partida" repite el modo de la partida recién jugada.
+        // "Cambiar modo" abre una ventanita con los 4 modos (el actual queda marcado).
+        $modo = $this->partidaModel->obtenerModoYNivel($id_partida);
+        $nombresModos = ['progresivo' => '⚡ Progresivo', 'facil' => '🟢 Fácil', 'intermedio' => '🟡 Intermedio', 'dificil' => '🔴 Difícil'];
+        $modoActual = $modo['modo_juego'] ?? 'progresivo';
+        if (!isset($nombresModos[$modoActual])) {
+            $modoActual = 'progresivo';
+        }
+        $modos = [];
+        foreach ($nombresModos as $valor => $texto) {
+            $modos[] = ['valor' => $valor, 'texto' => $texto, 'activo' => ($valor === $modoActual)];
+        }
+
         $datosParaVista = [
+            'modo_juego' => $modoActual,
+            'nombre_modo' => $nombresModos[$modoActual],
+            'modos' => $modos,
             'puntaje' => $datos_partida['puntaje'],
             'racha' => $datos_partida['racha'],
             'estado' => $estado_visible,
+            // Para el sonido del final: victoria, derrota o nada (abandonada ya sonó el apagón)
+            'sonido_final' => $estado === 'finalizada' ? 'victoria' : ($estado === 'sin_vidas' ? 'derrota' : ''),
             'mensaje' => $mensaje,
             'preguntas_partida' => $preguntas,
             'ocultar_layout' => true
