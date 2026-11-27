@@ -77,3 +77,42 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+// Ventanita "Cambiar modo": se abre desde el link de abajo de "Nueva partida"
+document.addEventListener('DOMContentLoaded', function () {
+    const modalModo = document.getElementById('modal-modo');
+    const btnAbrir = document.getElementById('btn-cambiar-modo');
+    const btnCancelar = document.getElementById('btn-cancelar-modo');
+    if (!modalModo || !btnAbrir) return;
+
+    btnAbrir.addEventListener('click', function () {
+        modalModo.classList.remove('modal-oculto');
+    });
+
+    btnCancelar.addEventListener('click', function () {
+        modalModo.classList.add('modal-oculto');
+    });
+
+    // Elegir un modo: queda marcado, se actualiza "Modo: ..." y se cierra la ventanita.
+    // La partida arranca recién cuando el usuario toca "Nueva partida".
+    const inputModo = document.getElementById('modo-nueva-partida');
+    const nombreModo = document.getElementById('nombre-modo-elegido');
+    const opciones = modalModo.querySelectorAll('.opcion-modo');
+
+    opciones.forEach(function (opcion) {
+        opcion.addEventListener('click', function () {
+            opciones.forEach(function (o) { o.classList.remove('activo'); });
+            opcion.classList.add('activo');
+            inputModo.value = opcion.dataset.modo;
+            nombreModo.textContent = opcion.textContent.trim();
+            modalModo.classList.add('modal-oculto');
+        });
+    });
+
+    // Tocar afuera de la caja también la cierra
+    modalModo.addEventListener('click', function (e) {
+        if (e.target === modalModo) {
+            modalModo.classList.add('modal-oculto');
+        }
+    });
+});

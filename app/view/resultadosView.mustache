@@ -51,11 +51,31 @@
         </details>
 
         <div class="acciones">
-            <a href="{{base_url}}/juego/iniciar" class="btn-jugar">⚡ NUEVA PARTIDA ⚡</a>
+            <!-- Nueva partida: por defecto con el mismo modo que la anterior; "Cambiar modo" permite elegir otro -->
+            <form action="{{base_url}}/juego/iniciar" method="POST" class="form-nueva-partida">
+                <input type="hidden" name="modo_juego" id="modo-nueva-partida" value="{{modo_juego}}">
+                <button type="submit" class="btn-jugar">⚡ NUEVA PARTIDA ⚡</button>
+            </form>
+            <p class="texto-modo">Modo: <strong id="nombre-modo-elegido">{{nombre_modo}}</strong> · <button type="button" id="btn-cambiar-modo" class="link-cambiar-modo">Cambiar modo</button></p>
             <a href="{{base_url}}/lobby" class="btn-secundario">Volver al Lobby</a>
         </div>
     </div>
 </main>
+
+<!-- Ventanita para elegir otro modo: solo lo selecciona; la partida arranca recién con "Nueva partida" -->
+<div id="modal-modo" class="modal-overlay modal-oculto">
+    <div class="modal-caja">
+        <h3>Elegí el modo</h3>
+        <div class="selector-modos">
+            {{#modos}}
+            <button type="button" data-modo="{{valor}}" class="opcion-modo{{#activo}} activo{{/activo}}">{{texto}}</button>
+            {{/modos}}
+        </div>
+        <div class="acciones-modal">
+            <button id="btn-cancelar-modo" class="btn-secundario" type="button">Cancelar</button>
+        </div>
+    </div>
+</div>
 
 <div id="modal-reporte" class="modal-overlay modal-oculto">
     <div class="modal-caja">
@@ -85,4 +105,4 @@
     });
 </script>
 <script>const BASE_URL = '{{base_url}}';</script>
-<script src="{{base_url}}/public/js/resultados.js"></script>
+<script src="{{base_url}}/public/js/resultados.js?v={{version_js}}"></script>

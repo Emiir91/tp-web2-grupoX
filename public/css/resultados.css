@@ -117,6 +117,79 @@
     box-shadow: 0 6px 0 #7a0b00, 0 10px 15px rgba(0, 0, 0, 0.6);
 }
 
+/* "Nueva partida" es un formulario (para mandar el modo de juego): el botón se ve igual que el link */
+.form-nueva-partida {
+    margin: 0;
+}
+
+/* "Modo: Progresivo · Cambiar modo" debajo del botón */
+.texto-modo {
+    margin: -4px 0 4px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #d1c4e9;
+}
+
+.texto-modo strong {
+    color: #ffffff;
+}
+
+.link-cambiar-modo {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #ffc000;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.link-cambiar-modo:hover {
+    color: #ff8c00;
+}
+
+/* Opciones de la ventanita "Elegí el modo" (mismo estilo que los modos del lobby) */
+.selector-modos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    margin: 6px 0 12px;
+}
+
+.opcion-modo {
+    background: rgba(0, 0, 0, 0.6);
+    color: #bbb;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    font-size: 13px;
+}
+
+.opcion-modo:hover {
+    border-color: rgba(255, 106, 0, 0.8);
+    color: #fff;
+}
+
+.opcion-modo.activo {
+    background: linear-gradient(135deg, #ff6a00, #ee0979);
+    color: #fff;
+    border-color: #ff6a00;
+    box-shadow: 0 0 10px rgba(255, 106, 0, 0.4);
+}
+
+.form-nueva-partida .btn-jugar {
+    font-family: inherit;
+    cursor: pointer;
+}
+
 .btn-jugar:hover {
     background: linear-gradient(180deg, #ff8533 0%, #e62600 100%);
     transform: translateY(-2px);
