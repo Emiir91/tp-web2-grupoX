@@ -183,6 +183,11 @@ body {
     visibility: hidden;
 }
 
+.btn-jugar-categoria:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
 .btn-jugar-categoria:hover,
 .btn-jugar-categoria:focus-visible {
     background: linear-gradient(180deg, #a9155a, #6b0d43);
