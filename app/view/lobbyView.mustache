@@ -44,14 +44,14 @@
                         <div class="botones-iniciar">
                             <button type="submit" class="btn-jugar">Jugar categorías mixtas</button>
 
-                            {{#categoria_sorteada}}
-                                <button type="submit"
-                                        name="alcance"
-                                        value="categoria"
-                                        class="btn-secundario btn-jugar-categoria sorteo-pendiente">
-                                    Jugar {{categoria_sorteada}}
-                                </button>
-                            {{/categoria_sorteada}}
+                            <button type="submit"
+                                    id="btn-jugar-categoria"
+                                    name="alcance"
+                                    value="categoria"
+                                    class="btn-secundario btn-jugar-categoria"
+                                    disabled>
+                                Jugar categoría
+                            </button>
                         </div>
                     </form>
 
