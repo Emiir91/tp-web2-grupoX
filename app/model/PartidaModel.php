@@ -51,8 +51,22 @@ class PartidaModel
         return $resultado ? $resultado['vidas'] : 0;
     }
 
+    public function contarPreguntasPorNivel($categoria)
+    {
+        $sql = "SELECT dificultad, COUNT(*) AS cantidad
+            FROM pregunta
+            WHERE categoria = ?
+              AND activa = 1
+              AND estado = 'activa'
+            GROUP BY dificultad";
 
-    public function obtenerPreguntaAleatoria($id_partida)
+        $filas = $this->database->queryAll($sql, [$categoria]);
+
+        return array_column($filas, 'cantidad', 'dificultad');
+    }
+
+
+    public function obtenerPreguntaAleatoria($id_partida, $categoria = null)
     {
         $sql_partida = "SELECT id_usuario, modo_juego, nivel_actual, preguntas_usadas
                     FROM partida WHERE id_partida = ?";
@@ -66,7 +80,6 @@ class PartidaModel
         $modo_juego = $partida['modo_juego'];
         $nivel_actual = $partida['nivel_actual'];
         $preguntas_usadas = trim($partida['preguntas_usadas'] ?? '');
-
         $ids_usados = [];
 
         if ($preguntas_usadas !== '') {
@@ -80,49 +93,44 @@ class PartidaModel
         }
 
         $cantidad_usadas = count($ids_usados);
-
-        // Límite de preguntas según la modalidad.
         $limite = ($modo_juego === 'progresivo') ? 18 : 12;
 
         if ($cantidad_usadas >= $limite) {
             return false;
         }
 
-        // En progresivo, la dificultad cambia según
-        // la cantidad de preguntas presentadas.
         if ($modo_juego === 'progresivo') {
-
             if ($cantidad_usadas < 8) {
                 $nivel_requerido = 'facil';
-
             } elseif ($cantidad_usadas < 14) {
                 $nivel_requerido = 'intermedio';
-
             } else {
                 $nivel_requerido = 'dificil';
             }
 
             if ($nivel_actual !== $nivel_requerido) {
-                $this->actualizarNivelPartida(
-                    $id_partida,
-                    $nivel_requerido
-                );
-
+                $this->actualizarNivelPartida($id_partida, $nivel_requerido);
                 $nivel_actual = $nivel_requerido;
             }
         }
 
-        // Seleccionar una pregunta del nivel correspondiente.
         $sql = "SELECT * FROM pregunta
             WHERE activa = 1
-            AND estado = 'activa'
-            AND dificultad = ?";
+              AND estado = 'activa'
+              AND dificultad = ?";
 
-        // Excluir preguntas ya utilizadas en la partida.
         if ($ids_usados) {
-            $sql .= " AND id_pregunta NOT IN ("
-                . implode(',', $ids_usados) . ")";
+            $sql .= " AND id_pregunta NOT IN (" . implode(',', $ids_usados) . ")";
         }
+
+        $parametros = [$nivel_actual];
+
+        if ($categoria !== null) {
+            $sql .= " AND pregunta.categoria = ?";
+            $parametros[] = $categoria;
+        }
+
+        $parametros[] = $partida['id_usuario'];
 
         $sql .= " ORDER BY EXISTS (
                 SELECT 1
@@ -133,10 +141,7 @@ class PartidaModel
             ) ASC, RAND()
             LIMIT 1";
 
-        return $this->database->queryOne(
-            $sql,
-            [$nivel_actual, $partida['id_usuario']]
-        ) ?: false;
+        return $this->database->queryOne($sql, $parametros) ?: false;
     }
 
 

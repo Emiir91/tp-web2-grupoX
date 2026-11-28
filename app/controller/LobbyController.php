@@ -38,7 +38,40 @@ class LobbyController
             $datosParaVista['alerta_exito'] = '¡Gracias! Tu sugerencia quedó pendiente de revisión por el equipo editor.';
         }
 
+        $datosParaVista['categoria_sorteada'] = $_SESSION['categoria_sorteada'] ?? null;
+        $datosParaVista['sin_categorias'] = ($_GET['mensaje'] ?? '') === 'sin_categorias';
+
+        $datosParaVista['categorias_animacion'] = $this->categoriaModel->obtenerCategoriasJugables();
+
+        $datosParaVista['requiere_lobby'] = true;
+
         $this->renderer->renderiza('lobby', $datosParaVista);
+    }
+
+    public function sortearCategoria()
+    {
+        if (empty($_SESSION['usuario_logueado'])) {
+            header("Location: " . BASE_URL . "/login");
+            exit();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: " . BASE_URL . "/lobby");
+            exit();
+        }
+
+        $categorias = $this->categoriaModel->obtenerCategoriasJugables();
+
+        if (!$categorias) {
+            unset($_SESSION['categoria_sorteada']);
+            header("Location: " . BASE_URL . "/lobby?mensaje=sin_categorias");
+            exit();
+        }
+
+        $_SESSION['categoria_sorteada'] = $categorias[array_rand($categorias)]['nombre'];
+
+        header("Location: " . BASE_URL . "/lobby");
+        exit();
     }
 
     public function sugerir()

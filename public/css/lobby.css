@@ -174,6 +174,21 @@ body {
     border-color: #ffffff;
 }
 
+.btn-jugar-categoria {
+    background: linear-gradient(180deg, #93104d, #590a38);
+    border-color: #e84d91;
+}
+
+.sorteo-pendiente {
+    visibility: hidden;
+}
+
+.btn-jugar-categoria:hover,
+.btn-jugar-categoria:focus-visible {
+    background: linear-gradient(180deg, #a9155a, #6b0d43);
+    border-color: #ff87b5;
+}
+
 .seccion-historial h3 {
     font-size: 0.95rem;
     color: #d1c4e9;
@@ -307,6 +322,38 @@ body {
     box-shadow: 0 0 10px rgba(255, 106, 0, 0.4);
 }
 
+/* Botón de sorteo y categoría elegida */
+.btn-sorteo {
+    display: grid;
+    justify-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+#resultado-sorteo {
+    max-width: 100%;
+    color: #ffc000;
+    font-size: 1.25em;
+    overflow-wrap: anywhere;
+}
+
+#resultado-sorteo:empty {
+    display: none;
+}
+
+/* En celular, los dos botones quedan apilados */
+.botones-iniciar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+}
+
+.botones-iniciar > button {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+}
+
 /* ------------------------------------------------ */
 /* ESTILOS PARA COMPUTADORAS Y PANTALLAS GRANDES    */
 /* ------------------------------------------------ */
@@ -358,6 +405,19 @@ body {
     .btn-secundario {
         font-size: 1.2rem;
         padding: 18px;
+    }
+
+    .botones-iniciar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .botones-iniciar > button {
+        padding: 14px 12px;
+        font-size: 1rem;
+    }
+
+    .botones-iniciar > :only-child {
+        grid-column: 1 / -1;
     }
 
     .lista-partidas {

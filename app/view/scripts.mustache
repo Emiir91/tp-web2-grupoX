@@ -15,6 +15,10 @@
 <script src="{{base_url}}/public/js/perfil.js"></script>
 {{/requiere_perfil}}
 
+{{#requiere_lobby}}
+    <script src="{{base_url}}/public/js/lobby.js?v={{version_js}}"></script>
+{{/requiere_lobby}}
+
 <script src="{{base_url}}/public/js/header.js"></script>
 
 </body>

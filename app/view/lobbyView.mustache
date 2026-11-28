@@ -3,12 +3,14 @@
         <a href="{{base_url}}/home" class="btn-volver-lobby">← Home</a>
         <h2 class="saludo-lobby">Lobby de <span>{{nombre_usuario}}</span></h2>
 
-        {{#alerta_exito}}<div class="alerta alerta-exito" style="text-align:center; margin-bottom:15px;">{{alerta_exito}}</div>{{/alerta_exito}}
+        {{#alerta_exito}}
+            <div class="alerta alerta-exito" style="text-align:center; margin-bottom:15px;">
+                {{alerta_exito}}
+            </div>
+        {{/alerta_exito}}
 
         <div class="lobby-grid">
-
             <div class="info-jugador">
-                <!-- Puntaje del ranking (mes actual) destacado y el histórico como dato secundario -->
                 <div class="caja-puntaje">
                     <p class="etiqueta-puntaje">Puntaje del mes (ranking)</p>
                     <h3 class="valor-puntaje">{{puntaje_mensual}}</h3>
@@ -16,9 +18,20 @@
                 </div>
 
                 <div class="acciones-lobby">
-                    <form action="{{base_url}}/juego/iniciar" method="POST" class="form-modo-juego">
+                    <form action="{{base_url}}/lobby/sortearCategoria"
+                          method="POST"
+                          id="form-sorteo-categoria">
+                        <button type="submit" class="btn-secundario btn-sorteo">
+                            <span>🎰 Sortear categoría</span>
+                            <strong id="resultado-sorteo" class="sorteo-pendiente">{{categoria_sorteada}}</strong>
+                        </button>
+                    </form>
 
-                        <!-- Botones interactivos de modo de juego -->
+                    {{#sin_categorias}}
+                        <p>Por ahora no hay categorías disponibles para sortear.</p>
+                    {{/sin_categorias}}
+
+                    <form action="{{base_url}}/juego/iniciar" method="POST" class="form-modo-juego">
                         <div class="selector-modos">
                             <button type="button" class="btn-modo activo" data-modo="progresivo">⚡ Progresivo</button>
                             <button type="button" class="btn-modo" data-modo="facil">🟢 Fácil</button>
@@ -26,11 +39,28 @@
                             <button type="button" class="btn-modo" data-modo="dificil">🔴 Difícil</button>
                         </div>
 
-                        <!-- Campo oculto que viaja por POST con el modo elegido -->
                         <input type="hidden" name="modo_juego" id="input_modo_juego" value="progresivo">
 
-                        <button type="submit" class="btn-jugar">⚡ NUEVA PARTIDA ⚡</button>
+                        <div class="botones-iniciar">
+                            <button type="submit" class="btn-jugar">Jugar categorías mixtas</button>
+
+                            {{#categoria_sorteada}}
+                                <button type="submit"
+                                        name="alcance"
+                                        value="categoria"
+                                        class="btn-secundario btn-jugar-categoria sorteo-pendiente">
+                                    Jugar {{categoria_sorteada}}
+                                </button>
+                            {{/categoria_sorteada}}
+                        </div>
                     </form>
+
+                    <div id="categorias-animacion" hidden>
+                        {{#categorias_animacion}}
+                            <span>{{nombre}}</span>
+                        {{/categorias_animacion}}
+                    </div>
+
                     <a href="{{base_url}}/ranking" class="btn-secundario">Ver Ranking Global</a>
                     <a href="{{base_url}}/lobby/sugerir" class="btn-secundario">💡 Sugerir pregunta</a>
                 </div>
@@ -38,8 +68,8 @@
 
             <div class="seccion-historial">
                 <h3>Tus últimas partidas</h3>
-                <div class="lista-partidas">
 
+                <div class="lista-partidas">
                     {{#partidas}}
                         <div class="item-partida">
                             <span class="fecha-partida">{{fecha}}</span>
@@ -49,15 +79,12 @@
                     {{/partidas}}
 
                     {{^partidas}}
-                        <div class="alerta alerta-info" style="text-align: center;">
+                        <div class="alerta alerta-info" style="text-align:center;">
                             Todavía no jugaste ninguna partida. ¡Animate a la primera!
                         </div>
                     {{/partidas}}
-
                 </div>
             </div>
-
         </div>
     </div>
 </main>
-
