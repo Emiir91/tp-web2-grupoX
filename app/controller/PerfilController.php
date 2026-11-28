@@ -2,17 +2,17 @@
 
 namespace app\controller;
 
+use app\service\PerfilService;
+
 class PerfilController
 {
     private $renderer;
-    private $model;
-    private $partidaModel;
+    private PerfilService $perfilService;
 
-    public function __construct($model, $renderer, $partidaModel)
+    public function __construct(PerfilService $perfilService, $renderer)
     {
-        $this->model = $model;
+        $this->perfilService = $perfilService;
         $this->renderer = $renderer;
-        $this->partidaModel = $partidaModel;
     }
 
     // Perfil propio (solo logueados): muestra todos los datos, incluido el mail
@@ -24,16 +24,16 @@ class PerfilController
             exit();
         }
 
-        $usuario = $this->model->buscarPorNombreUsuario($_SESSION['nombre_usuario']);
-
-        $this->mostrarPerfil($usuario, true);
+        $perfil = $this->perfilService->obtenerPerfil($_SESSION['nombre_usuario'] ?? '', true);
+        $this->mostrarPerfil($perfil);
     }
 
     // Perfil público: perfil/publico?usuario=xxx
     // Lo puede ver cualquiera (es a donde lleva el QR y el ranking). No muestra el mail.
     public function publico()
     {
-        $nombre_usuario = trim($_GET['usuario'] ?? '');
+        $usuario = $_GET['usuario'] ?? '';
+        $nombre_usuario = is_string($usuario) ? trim($usuario) : '';
 
         // Si estás logueado y es tu propio perfil, te mandamos a tu perfil completo
         if (!empty($_SESSION['usuario_logueado']) && $nombre_usuario === ($_SESSION['nombre_usuario'] ?? null)) {
@@ -41,41 +41,22 @@ class PerfilController
             exit();
         }
 
-        $usuario = $nombre_usuario !== '' ? $this->model->buscarPorNombreUsuario($nombre_usuario) : false;
-
-        $this->mostrarPerfil($usuario, false);
+        $perfil = $this->perfilService->obtenerPerfil($nombre_usuario, false);
+        $this->mostrarPerfil($perfil);
     }
 
-    private function mostrarPerfil($usuario, $es_propio)
+    private function mostrarPerfil(?array $perfil)
     {
-        if (!$usuario) {
+        if ($perfil === null) {
             $this->renderer->renderiza('perfil', ['perfil_no_encontrado' => true]);
             return;
         }
 
-        $url_perfil_publico = $this->urlPerfilPublico($usuario['nombre_usuario']);
-
-        // Pasamos solo los datos que se muestran (nunca la contraseña ni el token).
-        // Van dentro de "perfil" porque MustacheRender pisa "nombre_usuario" con el usuario logueado.
-        $perfil = [
-            'es_propio' => $es_propio,
-            'nombre_usuario' => $usuario['nombre_usuario'],
-            'nombre_completo' => $usuario['nombre_completo'],
-            'mail' => $es_propio ? $usuario['mail'] : null,
-            'anio_nacimiento' => $usuario['anio_nacimiento'],
-            'sexo' => $usuario['sexo'],
-            'pais' => $usuario['pais'],
-            'ciudad' => $usuario['ciudad'],
-            'foto_perfil' => $this->fotoPerfil($usuario['foto_perfil']),
-            'puntaje_mensual' => $this->partidaModel->obtenerPuntajeMensualUsuario($usuario['id_usuario']),
-            'puntaje_total' => $this->partidaModel->obtenerPuntajeTotalUsuario($usuario['id_usuario']),
-            'cantidad_partidas' => $this->partidaModel->obtenerCantidadPartidasUsuario($usuario['id_usuario']),
-            'url_perfil_publico' => $url_perfil_publico,
-            // En el perfil público se muestra el historial de partidas del jugador (grilla 1.5).
-            // Se traen todas y la lista tiene scroll propio para no agrandar la pantalla.
-            'historial' => $es_propio ? [] : $this->partidaModel->obtenerHistorialUsuario($usuario['id_usuario'], 200),
-            'url_qr' => "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($url_perfil_publico)
-        ];
+        $url_perfil_publico = $this->urlPerfilPublico($perfil['nombre_usuario']);
+        $perfil['foto_perfil'] = $this->fotoPerfil($perfil['foto_perfil']);
+        $perfil['url_perfil_publico'] = $url_perfil_publico;
+        $perfil['url_qr'] = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data='
+            . urlencode($url_perfil_publico);
 
         $this->renderer->renderiza('perfil', [
             'perfil' => $perfil,

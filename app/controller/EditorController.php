@@ -45,7 +45,7 @@ class EditorController
         } elseif ($mensaje === 'baja_enviada') {
             $datosParaVista['alerta_exito'] = 'La baja fue enviada y queda pendiente de aprobación del administrador.';
         } elseif ($mensaje === 'sugerencia_aprobada') {
-            $datosParaVista['alerta_exito'] = 'La sugerencia fue aprobada.';
+            $datosParaVista['alerta_exito'] = 'La sugerencia fue aprobada y ya está activa en el juego.';
         } elseif ($mensaje === 'sugerencia_rechazada') {
             $datosParaVista['alerta_exito'] = 'La sugerencia fue rechazada y eliminada.';
         } elseif ($mensaje === 'categoria_invalida') {
@@ -443,35 +443,41 @@ class EditorController
         $id_pregunta = $_POST['id_pregunta'] ?? null;
         $pregunta = $id_pregunta ? $this->editorModel->obtenerPreguntaPorId($id_pregunta) : null;
 
-        if ($pregunta && $pregunta['estado'] === 'sugerida') {
-            $categoria = $this->categoriaModel->buscarPorNombre($pregunta['categoria']);
-
-            // La sugerencia trae una categoría nueva: el editor la crea (eligiendo el color) o pasa la pregunta a una existente
-            if ($categoria && $categoria['estado'] !== 'activa') {
-                $accion = $_POST['accion_categoria'] ?? 'crear';
-
-                if ($accion === 'existente') {
-                    $existente = $_POST['categoria_existente'] ?? '';
-                    if (!in_array($existente, $this->categoriaModel->obtenerNombresActivos(), true)) {
-                        header("Location: " . BASE_URL . "/editor/index?mensaje=categoria_invalida");
-                        exit();
-                    }
-                    $this->editorModel->cambiarCategoria($id_pregunta, $existente);
-                    // La categoría sugerida ya no la usa nadie: se descarta
-                    $this->categoriaModel->eliminarSiNoSeUsa($categoria['nombre']);
-                } else {
-                    // Solo se crea si es realmente nueva: si ya está propuesta o dada de baja, hay que usar una existente
-                    $color = $_POST['color_categoria'] ?? '';
-                    if ($categoria['estado'] !== 'sugerida' || !\app\model\CategoriaModel::colorValido($color)) {
-                        header("Location: " . BASE_URL . "/editor/index?mensaje=categoria_invalida");
-                        exit();
-                    }
-                    $this->categoriaModel->crearOAprobar($categoria['nombre'], $color, $this->esAdmin());
-                }
-            }
-
-            $this->editorModel->aprobarSugerencia($id_pregunta, $this->esAdmin());
+        if (!$pregunta || $pregunta['estado'] !== 'sugerida') {
+            header("Location: " . BASE_URL . "/editor/index");
+            exit();
         }
+
+        $categoria = $this->categoriaModel->buscarPorNombre($pregunta['categoria']);
+
+        // La sugerencia trae una categoría nueva: el editor la crea (eligiendo el color) o pasa la pregunta a una existente
+        if (!$categoria || $categoria['estado'] !== 'activa') {
+            $accion = $_POST['accion_categoria'] ?? 'crear';
+
+            if ($accion === 'existente') {
+                $existente = $_POST['categoria_existente'] ?? '';
+                if (!in_array($existente, $this->categoriaModel->obtenerNombresActivos(), true)) {
+                    header("Location: " . BASE_URL . "/editor/index?mensaje=categoria_invalida");
+                    exit();
+                }
+                $this->editorModel->cambiarCategoria($id_pregunta, $existente);
+                // La categoría sugerida ya no la usa nadie: se descarta
+                if ($categoria) {
+                    $this->categoriaModel->eliminarSiNoSeUsa($categoria['nombre']);
+                }
+            } else {
+                // Solo se crea si es realmente nueva: si ya está propuesta o dada de baja, hay que usar una existente
+                $color = $_POST['color_categoria'] ?? '';
+                if (($categoria['estado'] ?? null) !== 'sugerida' || !\app\model\CategoriaModel::colorValido($color)) {
+                    header("Location: " . BASE_URL . "/editor/index?mensaje=categoria_invalida");
+                    exit();
+                }
+                // La categoría nueva se activa junto con la sugerencia aprobada.
+                $this->categoriaModel->crearOAprobar($categoria['nombre'], $color, true);
+            }
+        }
+
+        $this->editorModel->aprobarSugerencia($id_pregunta);
 
         header("Location: " . BASE_URL . "/editor/index?mensaje=sugerencia_aprobada");
         exit();

@@ -2,14 +2,16 @@
 
 namespace app\controller;
 
+use app\service\LoginService;
+
 class LoginController
 {
     private $renderer;
-    private $model;
+    private LoginService $loginService;
 
-    public function __construct($model, $renderer)
+    public function __construct(LoginService $loginService, $renderer)
     {
-        $this->model = $model;
+        $this->loginService = $loginService;
         $this->renderer = $renderer;
     }
 
@@ -29,29 +31,22 @@ class LoginController
 
     public function procesarLogin()
     {
-        $usuario_o_mail = $_POST['usuario_o_mail'] ?? '';
-        $contrasenia = $_POST['contrasenia'] ?? '';
+        $resultado = $this->loginService->autenticar(
+            $_POST['usuario_o_mail'] ?? '',
+            $_POST['contrasenia'] ?? ''
+        );
 
-        $usuario = $this->model->buscarUsuario($usuario_o_mail);
-
-        if (!$usuario) {
-            $datosParaVista = ['alerta_error' => 'No estás registrado con este correo o usuario. ¡Creá una cuenta!'];
-            $this->renderer->renderiza('login', $datosParaVista);
+        if (isset($resultado['error'])) {
+            $mensajes = [
+                LoginService::USUARIO_NO_ENCONTRADO => 'No estás registrado con este correo o usuario. ¡Creá una cuenta!',
+                LoginService::CONTRASENIA_INCORRECTA => 'La contraseña es incorrecta. Intentá de nuevo.',
+                LoginService::CUENTA_SIN_ACTIVAR => 'Tu cuenta aún no está activada. Por favor, revisá tu correo (y la carpeta SPAM).'
+            ];
+            $this->renderer->renderiza('login', ['alerta_error' => $mensajes[$resultado['error']]]);
             return;
         }
 
-        if (!password_verify($contrasenia, $usuario['contrasenia'])) {
-            $datosParaVista = ['alerta_error' => 'La contraseña es incorrecta. Intentá de nuevo.'];
-            $this->renderer->renderiza('login', $datosParaVista);
-            return;
-        }
-
-        if ($usuario['cuenta_validada'] == 0) {
-            $datosParaVista = ['alerta_error' => 'Tu cuenta aún no está activada. Por favor, revisá tu correo (y la carpeta SPAM).'];
-            $this->renderer->renderiza('login', $datosParaVista);
-            return;
-        }
-
+        $usuario = $resultado['usuario'];
         $_SESSION['usuario_logueado'] = true;
         $_SESSION['nombre_usuario'] = $usuario['nombre_usuario'];
         $_SESSION['id_rol'] = $usuario['id_rol'];

@@ -2,22 +2,19 @@
 
 namespace app\controller;
 
+use app\model\CategoriaModel;
+use app\service\ResultadosService;
+
 class ResultadosController
 {
-    private $partidaModel;
     private $renderer;
-    private $categoriaModel;
+    private ResultadosService $resultadosService;
 
-    // Motivos rápidos que puede elegir el jugador al reportar una pregunta
-    private const TIPOS_REPORTE = ['respuesta_incorrecta', 'categoria_incorrecta', 'mal_redactada', 'otro'];
-
-    public function __construct($partidaModel, $renderer, $categoriaModel)
+    public function __construct(ResultadosService $resultadosService, $renderer)
     {
-        $this->partidaModel = $partidaModel;
+        $this->resultadosService = $resultadosService;
         $this->renderer = $renderer;
-        $this->categoriaModel = $categoriaModel;
     }
-
 
     public function index()
     {
@@ -26,27 +23,28 @@ class ResultadosController
             exit();
         }
 
-        $id_partida = $_SESSION['id_partida_resultados'];
-        $datos_partida = $this->partidaModel->obtenerDatosPartida($id_partida);
+        $resultados = $this->resultadosService->obtenerResultados($_SESSION['id_partida_resultados']);
+        unset($_SESSION['id_partida_resultados']);
 
-        if (!$datos_partida) {
-            unset($_SESSION['id_partida_resultados']);
+        if ($resultados === null) {
             header("Location: " . BASE_URL . "/lobby");
             exit();
         }
 
-        $preguntas = $this->partidaModel->obtenerPreguntasRespondidas($id_partida);
+        $this->renderer->renderiza('resultados', $this->prepararVista($resultados));
+    }
 
-        // Mantener los colores de las categorías.
-        $colores = $this->categoriaModel->obtenerMapaColores();
+    private function prepararVista(array $resultados): array
+    {
+        $datos_partida = $resultados['partida'];
+        $preguntas = $resultados['preguntas'];
+        $colores = $resultados['colores'];
 
-        foreach ($preguntas as &$p) {
-            $p['color_categoria'] = $colores[$p['categoria']]
-                ?? \app\model\CategoriaModel::COLOR_POR_DEFECTO;
+        foreach ($preguntas as $indice => $pregunta) {
+            $preguntas[$indice]['color_categoria'] = $colores[$pregunta['categoria']]
+                ?? CategoriaModel::COLOR_POR_DEFECTO;
         }
-        unset($p);
 
-        // Determinar el resultado real de la partida.
         $estado = $datos_partida['estado'];
 
         if ($estado === 'finalizada') {
@@ -69,9 +67,8 @@ class ResultadosController
 
         // "Nueva partida" repite el modo de la partida recién jugada.
         // "Cambiar modo" abre una ventanita con los 4 modos (el actual queda marcado).
-        $modo = $this->partidaModel->obtenerModoYNivel($id_partida);
         $nombresModos = ['progresivo' => '⚡ Progresivo', 'facil' => '🟢 Fácil', 'intermedio' => '🟡 Intermedio', 'dificil' => '🔴 Difícil'];
-        $modoActual = $modo['modo_juego'] ?? 'progresivo';
+        $modoActual = $resultados['modo_juego'];
         if (!isset($nombresModos[$modoActual])) {
             $modoActual = 'progresivo';
         }
@@ -80,7 +77,7 @@ class ResultadosController
             $modos[] = ['valor' => $valor, 'texto' => $texto, 'activo' => ($valor === $modoActual)];
         }
 
-        $datosParaVista = [
+        return [
             'modo_juego' => $modoActual,
             'nombre_modo' => $nombresModos[$modoActual],
             'modos' => $modos,
@@ -93,12 +90,7 @@ class ResultadosController
             'preguntas_partida' => $preguntas,
             'ocultar_layout' => true
         ];
-
-        unset($_SESSION['id_partida_resultados']);
-
-        $this->renderer->renderiza('resultados', $datosParaVista);
     }
-
 
     public function reportarPregunta()
     {
@@ -109,25 +101,15 @@ class ResultadosController
             return;
         }
 
-        $data = json_decode(file_get_contents('php://input'), true);
-        $id_pregunta = $data['id_pregunta'] ?? null;
-        $tipo = $data['tipo'] ?? 'otro';
-        $motivo = trim($data['motivo'] ?? '');
+        $datos = json_decode(file_get_contents('php://input'), true);
+        $error = $this->resultadosService->reportarPregunta(
+            $_SESSION['id_usuario'],
+            is_array($datos) ? $datos : []
+        );
 
-        if (!in_array($tipo, self::TIPOS_REPORTE, true)) {
-            $tipo = 'otro';
-        }
-
-        // El detalle es obligatorio solo si el motivo es "Otro"
-        if (!$id_pregunta || ($tipo === 'otro' && $motivo === '')) {
-            echo json_encode(['success' => false, 'mensaje' => 'Datos incompletos']);
-            return;
-        }
-
-        $fecha = date('Y-m-d H:i:s');
-        $this->partidaModel->registrarReporte($id_pregunta, $_SESSION['id_usuario'], $motivo, $fecha, $tipo);
-
-        echo json_encode(['success' => true]);
+        echo json_encode($error === null
+            ? ['success' => true]
+            : ['success' => false, 'mensaje' => $error]);
     }
 
     private function generarMensajeSegunPuntaje($puntaje)

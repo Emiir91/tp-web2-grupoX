@@ -18,6 +18,13 @@ use app\model\EditorModel;
 use app\model\AdminModel;
 use app\model\CategoriaModel;
 use app\model\NotificacionModel;
+use app\service\AdminService;
+use app\service\LobbyService;
+use app\service\LoginService;
+use app\service\PartidaService;
+use app\service\PerfilService;
+use app\service\RegistroService;
+use app\service\ResultadosService;
 
 use MustacheRender;
 use MyDatabase;
@@ -41,51 +48,48 @@ class Configuration
 
     public function getRegistroController(){
         return new RegistroController(
-            $this->getUsuarioModel(),
-            $this->getRender(),
-            $this->getMailer()
+            new RegistroService($this->getUsuarioModel(), $this->getMailer()),
+            $this->getRender()
         );
     }
 
     public function getLoginController(){
         return new LoginController(
-            $this->getUsuarioModel(),
+            new LoginService($this->getUsuarioModel()),
             $this->getRender()
         );
     }
 
     public function getHomeController()
     {
-        return new HomeController(
-            $this->getRender(),
-            $this->getPartidaModel()
-        );
+        return new HomeController($this->getRender());
     }
 
     public function getLobbyController()
     {
         return new LobbyController(
             $this->getRender(),
-            $this->getPartidaModel(),
-            $this->getCategoriaModel()
+            new LobbyService($this->getPartidaModel(), $this->getCategoriaModel())
         );
     }
 
     public function getJuegoController()
     {
+        $partidaModel = $this->getPartidaModel();
+
         return new JuegoController(
-            $this->getPartidaModel(),
+            $partidaModel,
             $this->getRender(),
-            $this->getCategoriaModel()
+            $this->getCategoriaModel(),
+            new PartidaService($partidaModel)
         );
     }
 
     public function getPerfilController()
     {
         return new PerfilController(
-            $this->getUsuarioModel(),
-            $this->getRender(),
-            $this->getPartidaModel()
+            new PerfilService($this->getUsuarioModel(), $this->getPartidaModel()),
+            $this->getRender()
         );
     }
 
@@ -146,9 +150,8 @@ class Configuration
     public function getResultadosController()
     {
         return new ResultadosController(
-            $this->getPartidaModel(),
-            $this->getRender(),
-            $this->getCategoriaModel()
+            new ResultadosService($this->getPartidaModel(), $this->getCategoriaModel()),
+            $this->getRender()
         );
     }
 
@@ -165,7 +168,7 @@ class Configuration
     {
         return new AdminController(
             $this->getRender(),
-            $this->getAdminModel()
+            new AdminService($this->getAdminModel())
         );
     }
 

@@ -2,17 +2,21 @@
 
 namespace app\controller;
 
+use app\service\PartidaService;
+
 class JuegoController
 {
     private $partidaModel;
     private $renderer;
     private $categoriaModel;
+    private $partidaService;
 
-    public function __construct($partidaModel, $renderer, $categoriaModel)
+    public function __construct($partidaModel, $renderer, $categoriaModel, $partidaService)
     {
         $this->partidaModel = $partidaModel;
         $this->renderer = $renderer;
         $this->categoriaModel = $categoriaModel;
+        $this->partidaService = $partidaService;
 
         header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
         header("Cache-Control: post-check=0, pre-check=0", false);
@@ -26,33 +30,29 @@ class JuegoController
             exit();
         }
 
-        $id_usuario = $_SESSION['id_usuario'];
+        $esTematica = ($_POST['alcance'] ?? '') === 'categoria';
+        $categoria = $esTematica ? ($_SESSION['categoria_sorteada'] ?? null) : null;
+        $modo_juego = $_POST['modo_juego'] ?? 'progresivo';
 
-        $enCurso = $this->partidaModel->obtenerPartidaEnCurso($id_usuario);
+        $inicio = $this->partidaService->iniciarORecuperar(
+            $_SESSION['id_usuario'],
+            $modo_juego,
+            $esTematica,
+            $categoria
+        );
 
-        if ($enCurso) {
-            $this->retomarPartida($enCurso);
+        if ($inicio === null) {
+            header("Location: " . BASE_URL . "/lobby");
+            exit();
+        }
+
+        if (isset($inicio['en_curso'])) {
+            $this->retomarPartida($inicio['en_curso']);
             header("Location: " . BASE_URL . "/juego/mostrar");
             exit();
         }
 
-        $esTematica = ($_POST['alcance'] ?? '') === 'categoria';
-        $categoria = $esTematica ? ($_SESSION['categoria_sorteada'] ?? null) : null;
-
-        if ($esTematica && !$categoria) {
-            header("Location: " . BASE_URL . "/lobby");
-            exit();
-        }
-
-        $modo_juego = $_POST['modo_juego'] ?? 'progresivo';
-
-        $id_partida = $this->partidaModel->iniciarPartida($id_usuario, $modo_juego);
-
-        if (!$id_partida) {
-            header("Location: " . BASE_URL . "/lobby");
-            exit();
-        }
-
+        $id_partida = $inicio['id_nueva'];
         $_SESSION['id_partida'] = $id_partida;
         $_SESSION['ronda_categoria'] = [
             'id_partida' => (int) $id_partida,
@@ -81,56 +81,35 @@ class JuegoController
         $preguntaNueva = false;
 
         if (isset($_SESSION['id_pregunta_actual'], $_SESSION['tiempo_inicio_pregunta'])) {
-            $tiempo_transcurrido = time() - $_SESSION['tiempo_inicio_pregunta'];
-            $tiempo_restante = 10 - $tiempo_transcurrido;
+            $id_pregunta_actual = $_SESSION['id_pregunta_actual'];
+            $tiempo_restante = $this->partidaService->tiempoRestanteDesde(
+                $_SESSION['tiempo_inicio_pregunta']
+            );
 
-            if ($tiempo_restante <= 0) {
-                $id_pregunta_actual = $_SESSION['id_pregunta_actual'];
-
+            if ($this->partidaService->registrarVencimientoSiCorresponde(
+                $id_partida,
+                $id_pregunta_actual,
+                $tiempo_restante
+            )) {
                 $this->limpiarSesionPregunta();
-                $this->partidaModel->registrarRespuestaPartida(
-                    $id_partida,
-                    $id_pregunta_actual,
-                    null,
-                    0
-                );
-                $this->partidaModel->restarVida($id_partida);
-
-                $vidas_restantes = $this->partidaModel->obtenerVidasActuales($id_partida);
-
-                if ($vidas_restantes <= 0) {
-                    $this->partidaModel->finalizarPartida($id_partida, 'sin_vidas');
-                }
-
                 $this->irAFeedback($id_partida, $id_pregunta_actual, null);
             }
 
-            $pregunta = $this->partidaModel->obtenerPreguntaPorId(
-                $_SESSION['id_pregunta_actual']
-            );
+            $pregunta = $this->partidaModel->obtenerPreguntaPorId($id_pregunta_actual);
         } else {
             $rondaCategoria = $_SESSION['ronda_categoria'] ?? [];
             $categoria = ($rondaCategoria['id_partida'] ?? null) === (int) $id_partida
                 ? $rondaCategoria['categoria']
                 : null;
 
-            $pregunta = $this->partidaModel->obtenerPreguntaAleatoria(
-                $id_partida,
-                $categoria
-            );
+            $pregunta = $this->partidaService->prepararSiguientePregunta($id_partida, $categoria);
 
-            if (!$pregunta) {
-                $this->partidaModel->finalizarPartida($id_partida, 'finalizada');
+            if ($pregunta === PartidaService::SIN_PREGUNTAS) {
                 header("Location: " . BASE_URL . "/juego/resultados");
                 exit();
             }
 
-            $asignada = $this->partidaModel->asignarPreguntaAPartida(
-                $id_partida,
-                $pregunta['id_pregunta']
-            );
-
-            if (!$asignada) {
+            if ($pregunta === PartidaService::ASIGNACION_FALLIDA) {
                 header("Location: " . BASE_URL . "/lobby");
                 exit();
             }
@@ -138,7 +117,7 @@ class JuegoController
             $_SESSION['id_pregunta_actual'] = $pregunta['id_pregunta'];
             $_SESSION['tiempo_inicio_pregunta'] = time();
 
-            $tiempo_restante = 10;
+            $tiempo_restante = PartidaService::DURACION_TURNO;
             $preguntaNueva = true;
         }
 
@@ -199,78 +178,37 @@ class JuegoController
         $id_partida = $_SESSION['id_partida'];
         $id_pregunta_actual = $_SESSION['id_pregunta_actual'] ?? null;
 
-        // Grilla 4.6: si no hay una pregunta pendiente (ya se respondió) o esa pregunta ya figura
-        // como respondida en la partida, es un reenvío: no se procesa ni suma nada.
-        if (!$id_pregunta_actual || $this->partidaModel->preguntaYaRespondida($id_partida, $id_pregunta_actual)) {
+        if (!$id_pregunta_actual) {
             $this->limpiarSesionPregunta();
             header("Location: " . BASE_URL . "/juego/mostrar");
             exit();
         }
 
-        // Grilla 4.4: la respuesta tiene que ser una de las opciones de la pregunta que se mostró.
-        // Si no lo es (id cambiado a mano), se ignora y la pregunta sigue pendiente.
-        if (!$this->partidaModel->respuestaPerteneceAPregunta($id_respuesta, $id_pregunta_actual)) {
+        $resultado = $this->partidaService->resolverRespuesta(
+            $id_partida,
+            $id_pregunta_actual,
+            $id_respuesta
+        );
+
+        if ($resultado === PartidaService::RESPUESTA_INVALIDA) {
             header("Location: " . BASE_URL . "/juego/mostrar");
             exit();
         }
 
         $this->limpiarSesionPregunta();
 
-        if (!$this->partidaModel->verificarPartidaActiva($id_partida)) {
+        if ($resultado === PartidaService::PREGUNTA_YA_RESPONDIDA) {
+            header("Location: " . BASE_URL . "/juego/mostrar");
+            exit();
+        }
+
+        if ($resultado === PartidaService::PARTIDA_CERRADA) {
             header("Location: " . BASE_URL . "/juego/resultados");
             exit();
         }
 
-        $tiempo_restante = $this->partidaModel->validarTiempo($id_partida);
-
-        if ($tiempo_restante <= 0) {
-            if ($id_pregunta_actual) {
-                $this->partidaModel->registrarRespuestaPartida($id_partida, $id_pregunta_actual, null, 0);
-            }
-            $this->partidaModel->restarVida($id_partida);
-            $vidas_restantes = $this->partidaModel->obtenerVidasActuales($id_partida);
-
-            if ($vidas_restantes <= 0) {
-                $this->partidaModel->finalizarPartida($id_partida, 'sin_vidas');
-            }
-
-            $this->irAFeedback($id_partida, $id_pregunta_actual, null);
-        }
-
-        $es_correcta = $this->partidaModel->validarRespuesta($id_respuesta);
-
-        if ($id_pregunta_actual) {
-            $this->partidaModel->registrarRespuestaPartida($id_partida, $id_pregunta_actual, $id_respuesta, $es_correcta ? 1 : 0);
-        }
-
-        if ($es_correcta) {
-            $datos_partida = $this->partidaModel->obtenerDatosPartida($id_partida);
-            $nivel_actual = $datos_partida['nivel_actual'] ?? 'facil';
-
-            $puntos_a_sumar = 10;
-            if ($nivel_actual === 'intermedio') {
-                $puntos_a_sumar = 15;
-            } elseif ($nivel_actual === 'dificil') {
-                $puntos_a_sumar = 20;
-            }
-
-            $nuevo_puntaje = $this->partidaModel->obtenerPuntajeActual($id_partida) + $puntos_a_sumar;
-            $nueva_racha = $this->partidaModel->obtenerRachaActual($id_partida) + 1;
-
-            $this->partidaModel->registrarRespuestaCorrecta($id_partida, $nuevo_puntaje, $nueva_racha);
-        } else {
-            $this->partidaModel->restarVida($id_partida);
-            $vidas_restantes = $this->partidaModel->obtenerVidasActuales($id_partida);
-
-            if ($vidas_restantes <= 0) {
-                $this->partidaModel->finalizarPartida($id_partida, 'sin_vidas');
-            } else {
-                $nuevo_puntaje = $this->partidaModel->obtenerPuntajeActual($id_partida);
-                $this->partidaModel->registrarRespuestaCorrecta($id_partida, $nuevo_puntaje, 0);
-            }
-        }
-
-        $this->irAFeedback($id_partida, $id_pregunta_actual, $id_respuesta);
+        $id_elegida = $resultado === PartidaService::TIEMPO_AGOTADO ? null : $id_respuesta;
+        $this->irAFeedback($id_partida, $id_pregunta_actual, $id_elegida);
     }
 
     public function tiempoAgotado()
@@ -283,28 +221,15 @@ class JuegoController
         $id_partida = $_SESSION['id_partida'];
         $id_pregunta_actual = $_SESSION['id_pregunta_actual'] ?? null;
 
-        // Si no hay una pregunta pendiente es porque ya se respondió (por ejemplo,
-        // se eligió una respuesta en el último segundo). No se resta otra vida.
-        if (!$id_pregunta_actual) {
-            header("Location: " . BASE_URL . "/juego/mostrar");
-            exit();
-        }
-
-        if ($this->partidaModel->validarTiempo($id_partida) > 0) {
+        if (!$id_pregunta_actual || !$this->partidaService->registrarVencimientoSiCorresponde(
+                $id_partida,
+                $id_pregunta_actual
+            )) {
             header("Location: " . BASE_URL . "/juego/mostrar");
             exit();
         }
 
         $this->limpiarSesionPregunta();
-
-        $this->partidaModel->registrarRespuestaPartida($id_partida, $id_pregunta_actual, null, 0);
-
-        $this->partidaModel->restarVida($id_partida);
-        $vidas_restantes = $this->partidaModel->obtenerVidasActuales($id_partida);
-
-        if ($vidas_restantes <= 0) {
-            $this->partidaModel->finalizarPartida($id_partida, 'sin_vidas');
-        }
 
         $this->irAFeedback($id_partida, $id_pregunta_actual, null);
     }
@@ -396,7 +321,7 @@ class JuegoController
 
         $this->limpiarSesionPregunta();
 
-        $this->partidaModel->finalizarPartida($id_partida, 'abandonada');
+        $this->partidaService->abandonarPartida($id_partida);
 
         header("Location: " . BASE_URL . "/juego/resultados");
         exit();
@@ -424,15 +349,6 @@ class JuegoController
 
         header("Location: " . BASE_URL . "/resultados/index");
         exit();
-    }
-
-    private function generarMensajeSegunPuntaje($puntaje)
-    {
-        if ($puntaje >= 150) return "¡Impresionante! Dominas todas las categorías al máximo.";
-        if ($puntaje >= 100) return "¡Excelente! Eres un verdadero experto en Triviador.";
-        if ($puntaje >= 50) return "¡Muy bien! Tienes buenos conocimientos.";
-        if ($puntaje >= 20) return "¡Buen intento! Sigue practicando.";
-        return "¡No te rindas! La próxima vez lo harás mejor.";
     }
 
     // Deja la sesión apuntando a la partida en curso. Si la pregunta que se le estaba mostrando

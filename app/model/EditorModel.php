@@ -293,13 +293,10 @@ class EditorModel
         return $this->database->execute($sql, [$categoria, $id_pregunta]);
     }
 
-    public function aprobarSugerencia($id_pregunta, $es_admin)
+    public function aprobarSugerencia($id_pregunta)
     {
-        if ($es_admin) {
-            $sql = "UPDATE pregunta SET activa = 1, estado = 'activa' WHERE id_pregunta = ? AND estado = 'sugerida'";
-        } else {
-            $sql = "UPDATE pregunta SET activa = 0, estado = 'pendiente_alta' WHERE id_pregunta = ? AND estado = 'sugerida'";
-        }
+        $sql = "UPDATE pregunta SET activa = 1, estado = 'activa'
+                WHERE id_pregunta = ? AND estado = 'sugerida'";
         return $this->database->execute($sql, [$id_pregunta]);
     }
 
