@@ -30,33 +30,39 @@
             <summary class="btn-ver-preguntas">Ver Preguntas</summary>
             <div class="lista-revision">
                 {{#preguntas_partida}}
-                <div class="item-revision" style="--color-categoria: {{color_categoria}};">
-                    <div class="contenido-revision">
-                        <span class="chip-categoria">{{categoria}}</span>
-                        <p class="texto-pregunta">{{texto_pregunta}}</p>
-                        <p class="respuesta-elegida {{#es_correcta}}correcta{{/es_correcta}}{{^es_correcta}}incorrecta{{/es_correcta}}">
-                            Tu respuesta: {{respuesta_elegida}}
-                        </p>
-                        {{^es_correcta}}
-                        <p class="respuesta-correcta">Correcta: {{respuesta_correcta}}</p>
-                        {{/es_correcta}}
+                    <div class="item-revision" style="--color-categoria: {{color_categoria}};">
+                        <div class="contenido-revision">
+                            <span class="chip-categoria">{{categoria}}</span>
+                            <p class="texto-pregunta">{{texto_pregunta}}</p>
+                            <p class="respuesta-elegida {{#es_correcta}}correcta{{/es_correcta}}{{^es_correcta}}incorrecta{{/es_correcta}}">
+                                Tu respuesta: {{respuesta_elegida}}
+                            </p>
+                            {{^es_correcta}}
+                                <p class="respuesta-correcta">Correcta: {{respuesta_correcta}}</p>
+                            {{/es_correcta}}
+                        </div>
+                        <button type="button" class="btn-reportar" data-id-pregunta="{{id_pregunta}}" data-texto="{{texto_pregunta}}" title="Reportar pregunta">🚩</button>
                     </div>
-                    <button type="button" class="btn-reportar" data-id-pregunta="{{id_pregunta}}" data-texto="{{texto_pregunta}}" title="Reportar pregunta">🚩</button>
-                </div>
                 {{/preguntas_partida}}
 
                 {{^preguntas_partida}}
-                <p class="sin-preguntas">No se registraron preguntas en esta partida.</p>
+                    <p class="sin-preguntas">No se registraron preguntas en esta partida.</p>
                 {{/preguntas_partida}}
             </div>
         </details>
 
         <div class="acciones">
-            <!-- Nueva partida: por defecto con el mismo modo que la anterior; "Cambiar modo" permite elegir otro -->
+            <!-- Nueva partida conserva la categoría y el modo, salvo que se elija otro modo -->
             <form action="{{base_url}}/juego/iniciar" method="POST" class="form-nueva-partida">
                 <input type="hidden" name="modo_juego" id="modo-nueva-partida" value="{{modo_juego}}">
+                {{#id_partida_anterior}}
+                    <input type="hidden" name="id_partida_anterior" value="{{id_partida_anterior}}">
+                {{/id_partida_anterior}}
                 <button type="submit" class="btn-jugar">⚡ NUEVA PARTIDA ⚡</button>
             </form>
+            {{#categoria_anterior}}
+                <p class="texto-modo">Categoría: <strong>{{categoria_anterior}}</strong></p>
+            {{/categoria_anterior}}
             <p class="texto-modo">Modo: <strong id="nombre-modo-elegido">{{nombre_modo}}</strong> · <button type="button" id="btn-cambiar-modo" class="link-cambiar-modo">Cambiar modo</button></p>
             <a href="{{base_url}}/lobby" class="btn-secundario">Volver al Lobby</a>
         </div>
@@ -69,7 +75,7 @@
         <h3>Elegí el modo</h3>
         <div class="selector-modos">
             {{#modos}}
-            <button type="button" data-modo="{{valor}}" class="opcion-modo{{#activo}} activo{{/activo}}">{{texto}}</button>
+                <button type="button" data-modo="{{valor}}" class="opcion-modo{{#activo}} activo{{/activo}}">{{texto}}</button>
             {{/modos}}
         </div>
         <div class="acciones-modal">

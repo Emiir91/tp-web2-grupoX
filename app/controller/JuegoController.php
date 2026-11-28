@@ -32,6 +32,22 @@ class JuegoController
 
         $esTematica = ($_POST['alcance'] ?? '') === 'categoria';
         $categoria = $esTematica ? ($_SESSION['categoria_sorteada'] ?? null) : null;
+
+        if (isset($_POST['id_partida_anterior'])) {
+            $rondaAnterior = $_SESSION['ronda_categoria'] ?? [];
+            $idAnterior = $_POST['id_partida_anterior'];
+
+            // Recuperar la categoría usada en esa ronda, aunque el sorteo haya cambiado.
+            if (!isset($rondaAnterior['id_partida']) || !is_string($idAnterior)
+                || $idAnterior !== (string) $rondaAnterior['id_partida']) {
+                header("Location: " . BASE_URL . "/lobby");
+                exit();
+            }
+
+            $categoria = $rondaAnterior['categoria'] ?? null;
+            $esTematica = $categoria !== null;
+        }
+
         $modo_juego = $_POST['modo_juego'] ?? 'progresivo';
 
         $inicio = $this->partidaService->iniciarORecuperar(

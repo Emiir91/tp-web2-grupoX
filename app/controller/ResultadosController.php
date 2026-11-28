@@ -23,7 +23,8 @@ class ResultadosController
             exit();
         }
 
-        $resultados = $this->resultadosService->obtenerResultados($_SESSION['id_partida_resultados']);
+        $idPartida = (int) $_SESSION['id_partida_resultados'];
+        $resultados = $this->resultadosService->obtenerResultados($idPartida);
         unset($_SESSION['id_partida_resultados']);
 
         if ($resultados === null) {
@@ -31,7 +32,15 @@ class ResultadosController
             exit();
         }
 
-        $this->renderer->renderiza('resultados', $this->prepararVista($resultados));
+        $rondaAnterior = $_SESSION['ronda_categoria'] ?? [];
+        $datosParaVista = $this->prepararVista($resultados);
+
+        if (($rondaAnterior['id_partida'] ?? null) === $idPartida) {
+            $datosParaVista['id_partida_anterior'] = $idPartida;
+            $datosParaVista['categoria_anterior'] = $rondaAnterior['categoria'] ?? null;
+        }
+
+        $this->renderer->renderiza('resultados', $datosParaVista);
     }
 
     private function prepararVista(array $resultados): array
