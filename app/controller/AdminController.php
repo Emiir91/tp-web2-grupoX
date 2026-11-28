@@ -2,12 +2,14 @@
 
 namespace app\controller;
 
+use app\service\AdminService;
+
 class AdminController
 {
     private $renderer;
-    private $adminModel;
+    private $adminService;
 
-    public function __construct($renderer, $adminModel)
+    public function __construct($renderer, AdminService $adminService)
     {
         if (empty($_SESSION['usuario_logueado'])) {
             header("Location: " . BASE_URL . "/login");
@@ -20,29 +22,12 @@ class AdminController
         }
 
         $this->renderer = $renderer;
-        $this->adminModel = $adminModel;
+        $this->adminService = $adminService;
     }
 
     public function index()
     {
-        $altas = $this->adminModel->obtenerPendientesAltas();
-        foreach ($altas as &$a) {
-            $a['respuestas'] = $this->adminModel->obtenerRespuestasDePregunta($a['id_pregunta']);
-        }
-        unset($a);
-
-        $bajas = $this->adminModel->obtenerPendientesBajas();
-        foreach ($bajas as &$b) {
-            $b['respuestas'] = $this->adminModel->obtenerRespuestasDePregunta($b['id_pregunta']);
-        }
-        unset($b);
-
-        $datosParaVista = [
-            'altas' => $altas,
-            'bajas' => $bajas,
-            'ediciones' => $this->adminModel->obtenerEdicionesPendientes(),
-            'categorias_pendientes' => $this->adminModel->obtenerCategoriasPendientes()
-        ];
+        $datosParaVista = $this->adminService->obtenerPendientes();
 
         if (($_GET['mensaje'] ?? '') === 'procesado') {
             $datosParaVista['alerta_exito'] = 'La acción fue procesada correctamente.';
@@ -62,13 +47,10 @@ class AdminController
     // Devuelve las estadísticas en JSON para el período elegido (dia, semana, mes, anio o todo)
     public function datosEstadisticas()
     {
-        $periodo = $_GET['periodo'] ?? 'todo';
-        if (!in_array($periodo, ['dia', 'semana', 'mes', 'anio', 'todo'], true)) {
-            $periodo = 'todo';
-        }
+        $estadisticas = $this->adminService->obtenerEstadisticas($_GET['periodo'] ?? 'todo');
 
         header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($this->adminModel->obtenerEstadisticas($periodo));
+        echo json_encode($estadisticas);
     }
 
     public function aprobarAlta()
@@ -118,27 +100,7 @@ class AdminController
             exit();
         }
 
-        $id = $_POST['id'] ?? null;
-
-        if ($id) {
-            if ($tipo === 'alta') {
-                $decision === 'aprobar'
-                    ? $this->adminModel->aprobarAlta($id)
-                    : $this->adminModel->rechazarAlta($id);
-            } elseif ($tipo === 'baja') {
-                $decision === 'aprobar'
-                    ? $this->adminModel->aprobarBaja($id)
-                    : $this->adminModel->rechazarBaja($id);
-            } elseif ($tipo === 'categoria') {
-                $decision === 'aprobar'
-                    ? $this->adminModel->aprobarCategoria($id)
-                    : $this->adminModel->rechazarCategoria($id);
-            } else {
-                $decision === 'aprobar'
-                    ? $this->adminModel->aprobarEdicion($id)
-                    : $this->adminModel->rechazarEdicion($id);
-            }
-        }
+        $this->adminService->resolverSolicitud($tipo, $decision, $_POST['id'] ?? null);
 
         header("Location: " . BASE_URL . "/admin/index?mensaje=procesado");
         exit();
