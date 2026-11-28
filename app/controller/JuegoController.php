@@ -28,12 +28,19 @@ class JuegoController
 
         $id_usuario = $_SESSION['id_usuario'];
 
-        // Grilla 4.5: si ya tiene una partida en curso (otra pestaña, F5, cerró el navegador...),
-        // se retoma esa en lugar de crear otra, con la misma pregunta y el tiempo que le quedaba.
         $enCurso = $this->partidaModel->obtenerPartidaEnCurso($id_usuario);
+
         if ($enCurso) {
             $this->retomarPartida($enCurso);
             header("Location: " . BASE_URL . "/juego/mostrar");
+            exit();
+        }
+
+        $esTematica = ($_POST['alcance'] ?? '') === 'categoria';
+        $categoria = $esTematica ? ($_SESSION['categoria_sorteada'] ?? null) : null;
+
+        if ($esTematica && !$categoria) {
+            header("Location: " . BASE_URL . "/lobby");
             exit();
         }
 
@@ -47,6 +54,10 @@ class JuegoController
         }
 
         $_SESSION['id_partida'] = $id_partida;
+        $_SESSION['ronda_categoria'] = [
+            'id_partida' => (int) $id_partida,
+            'categoria' => $categoria
+        ];
 
         header("Location: " . BASE_URL . "/juego/mostrar");
         exit();
@@ -67,16 +78,24 @@ class JuegoController
         }
 
         $vidas_actuales = $this->partidaModel->obtenerVidasActuales($id_partida);
+        $preguntaNueva = false;
 
-        if (isset($_SESSION['id_pregunta_actual']) && isset($_SESSION['tiempo_inicio_pregunta'])) {
+        if (isset($_SESSION['id_pregunta_actual'], $_SESSION['tiempo_inicio_pregunta'])) {
             $tiempo_transcurrido = time() - $_SESSION['tiempo_inicio_pregunta'];
             $tiempo_restante = 10 - $tiempo_transcurrido;
 
             if ($tiempo_restante <= 0) {
                 $id_pregunta_actual = $_SESSION['id_pregunta_actual'];
+
                 $this->limpiarSesionPregunta();
-                $this->partidaModel->registrarRespuestaPartida($id_partida, $id_pregunta_actual, null, 0);
+                $this->partidaModel->registrarRespuestaPartida(
+                    $id_partida,
+                    $id_pregunta_actual,
+                    null,
+                    0
+                );
                 $this->partidaModel->restarVida($id_partida);
+
                 $vidas_restantes = $this->partidaModel->obtenerVidasActuales($id_partida);
 
                 if ($vidas_restantes <= 0) {
@@ -86,9 +105,19 @@ class JuegoController
                 $this->irAFeedback($id_partida, $id_pregunta_actual, null);
             }
 
-            $pregunta = $this->partidaModel->obtenerPreguntaPorId($_SESSION['id_pregunta_actual']);
+            $pregunta = $this->partidaModel->obtenerPreguntaPorId(
+                $_SESSION['id_pregunta_actual']
+            );
         } else {
-            $pregunta = $this->partidaModel->obtenerPreguntaAleatoria($id_partida);
+            $rondaCategoria = $_SESSION['ronda_categoria'] ?? [];
+            $categoria = ($rondaCategoria['id_partida'] ?? null) === (int) $id_partida
+                ? $rondaCategoria['categoria']
+                : null;
+
+            $pregunta = $this->partidaModel->obtenerPreguntaAleatoria(
+                $id_partida,
+                $categoria
+            );
 
             if (!$pregunta) {
                 $this->partidaModel->finalizarPartida($id_partida, 'finalizada');
@@ -96,7 +125,10 @@ class JuegoController
                 exit();
             }
 
-            $asignada = $this->partidaModel->asignarPreguntaAPartida($id_partida, $pregunta['id_pregunta']);
+            $asignada = $this->partidaModel->asignarPreguntaAPartida(
+                $id_partida,
+                $pregunta['id_pregunta']
+            );
 
             if (!$asignada) {
                 header("Location: " . BASE_URL . "/lobby");
@@ -110,8 +142,9 @@ class JuegoController
             $preguntaNueva = true;
         }
 
-        $respuestas = $this->partidaModel->obtenerRespuestasDePregunta($pregunta['id_pregunta']);
-        // Se guarda el orden en que se mostraron, para que el feedback las muestre en el mismo lugar
+        $respuestas = $this->partidaModel->obtenerRespuestasDePregunta(
+            $pregunta['id_pregunta']
+        );
         $_SESSION['orden_respuestas'] = array_column($respuestas, 'id_respuesta');
 
         $respuestasParaVista = [];
@@ -128,12 +161,10 @@ class JuegoController
         }
 
         $vidas_array = array_fill(0, $vidas_actuales, '❤️');
-
-        // Color de la categoría (guardado en la tabla categorias)
         $colorCategoria = $this->categoriaModel->obtenerColor($pregunta['categoria']);
 
         $datosParaVista = [
-            'nivel' => $this->datosNivel($id_partida, !empty($preguntaNueva)),
+            'nivel' => $this->datosNivel($id_partida, $preguntaNueva),
             'pregunta' => $pregunta['texto_pregunta'],
             'categoria' => $pregunta['categoria'],
             'color_categoria' => $colorCategoria,

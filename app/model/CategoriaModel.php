@@ -45,6 +45,22 @@ class CategoriaModel
         );
     }
 
+    public function obtenerCategoriasJugables()
+    {
+        $sql = "SELECT c.nombre
+            FROM categorias c
+            WHERE c.estado = 'activa'
+              AND EXISTS (
+                  SELECT 1
+                  FROM pregunta p
+                  WHERE p.categoria = c.nombre
+                    AND p.activa = 1
+                    AND p.estado = 'activa'
+              )";
+
+        return $this->database->queryAll($sql);
+    }
+
     // Color de todas las categorías: ['Historia' => '#c8813a', ...]
     public function obtenerMapaColores()
     {
